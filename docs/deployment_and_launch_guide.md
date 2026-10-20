@@ -32,9 +32,9 @@ IndianTimers is built on **Astro SSG** with zero-drift client React islands. It 
 
 ### Google Search Console
 1. Add property via **Domain Property** (DNS verification via TXT record in Cloudflare DNS) or **URL Prefix** (`https://indiantimers.com`).
-2. Submit the canonical sitemap index:
+2. Submit the canonical sitemap:
    ```
-   https://indiantimers.com/sitemap-index.xml
+   https://indiantimers.com/sitemap.xml
    ```
 3. Run **URL Inspection** on:
    - `https://indiantimers.com/`
@@ -44,7 +44,7 @@ IndianTimers is built on **Astro SSG** with zero-drift client React islands. It 
 
 ### Bing Webmaster Tools
 1. Import property directly from Google Search Console or add via DNS/HTML meta tag.
-2. Submit `https://indiantimers.com/sitemap-index.xml`.
+2. Submit `https://indiantimers.com/sitemap.xml`.
 
 ---
 
@@ -59,11 +59,11 @@ If you choose to enable analytics:
 
 ## 5. Pre-Launch Verification Audit Checklist
 
-- [x] All 24 core sample routes return `200 OK`
+- [x] All 29 core sample routes return `200 OK`
 - [x] Robots.txt allows all public routes and canonicalizes sitemap
 - [x] Robots.txt disallows private client `/dashboard/` route
-- [x] Sitemap index generated with 116 indexable URLs
+- [x] Single sitemap generated with 114 indexable canonical URLs
 - [x] Valid JSON-LD structured data on all pages (Organization, BreadcrumbList, WebPage/Event, WebApplication, Article)
 - [x] `llms.txt` accurately generated in `dist/`
 - [x] Web app manifest and SVG favicon configured
-- [x] Automated test suite passing (15/15 tests)
+- [x] Automated test suite passing (20/20 tests)

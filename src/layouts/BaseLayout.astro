@@ -18,7 +18,7 @@ interface Props {
 const {
   title = `${siteConfig.name} - ${siteConfig.tagline}`,
   description = siteConfig.description,
-  canonicalUrl = Astro.url.href,
+  canonicalUrl,
   robots = 'index, follow',
   ogType = 'website',
   ogImage = `${siteConfig.url}/og-image.png`,
@@ -26,8 +26,14 @@ const {
   breadcrumbs,
 } = Astro.props;
 
-// Ensure clean canonical URL
-const formattedCanonical = canonicalUrl.endsWith('/') ? canonicalUrl : `${canonicalUrl}/`;
+// Ensure clean canonical URL strictly on production canonical domain
+let formattedCanonical: string;
+if (canonicalUrl) {
+  formattedCanonical = canonicalUrl.endsWith('/') ? canonicalUrl : `${canonicalUrl}/`;
+} else {
+  const cleanPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+  formattedCanonical = `${siteConfig.url}${cleanPath}`;
+}
 
 // Organization Schema
 const orgSchema = {

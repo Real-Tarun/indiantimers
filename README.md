@@ -28,7 +28,7 @@ IndianTimers is a high-performance, technical-SEO-optimized web platform enginee
 4. **Technical SEO Architecture**:
    - 116 statically generated pages with zero layout shift (CLS < 0.05).
    - Valid JSON-LD structured data: `WebSite`, `Organization`, `BreadcrumbList`, `WebApplication`, `Event`, and `Article`.
-   - Automated RFC 5545 `.ics` export, Google Calendar web intents, `/robots.txt`, `/sitemap-index.xml`, and `/llms.txt`.
+   - Automated RFC 5545 `.ics` export, Google Calendar web intents, `/robots.txt`, `/sitemap.xml`, and `/llms.txt`.
 
 ---
 
@@ -44,7 +44,7 @@ IndianTimers is a high-performance, technical-SEO-optimized web platform enginee
 ├── public/
 │   ├── favicon.svg                     # High-resolution vector favicon
 │   ├── manifest.json                   # Progressive Web App (PWA) manifest
-│   ├── robots.txt                      # Crawler directives with sitemap index link
+│   ├── robots.txt                      # Crawler directives with sitemap link
 │   └── llms.txt                        # Machine-readable LLM documentation index
 ├── scripts/
 │   ├── test-exams.test.mjs             # Automated test suite (15 unit & validation tests)
