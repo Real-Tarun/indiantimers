@@ -75,47 +75,47 @@ export default function PersonalDashboard() {
 
   return (
     <div className="space-y-10">
-      {/* Overview Analytics Bar */}
+      {/* Overview Analytics Bar (Flux Bento Style) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold mb-2">
+        <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold mb-2">
             <span>Today's Focus</span>
-            <Clock className="w-4 h-4 text-blue-500" />
+            <Clock className="w-4 h-4 text-slate-400" />
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+          <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-display">
             {Math.floor(todayFocusMins / 60)}h {todayFocusMins % 60}m
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Logged study intervals today</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold mb-2">
+        <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold mb-2">
             <span>Past 7 Days Focus</span>
             <Sparkles className="w-4 h-4 text-amber-500" />
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+          <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-display">
             {Math.floor(weeklyFocusMins / 60)}h {weeklyFocusMins % 60}m
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Weekly total focus time</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold mb-2">
+        <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold mb-2">
             <span>Saved Target Exams</span>
             <Bookmark className="w-4 h-4 text-emerald-500" />
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+          <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-display">
             {favoriteExams.length}
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Pin exams to track closely</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold mb-2">
+        <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold mb-2">
             <span>Custom Deadlines</span>
             <Calendar className="w-4 h-4 text-purple-500" />
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+          <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-display">
             {customItems.length}
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Mocks, school tests, targets</p>
@@ -126,7 +126,7 @@ export default function PersonalDashboard() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white font-display">
               My Saved Examinations
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -135,7 +135,7 @@ export default function PersonalDashboard() {
           </div>
           <a
             href="/exams/"
-            className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-[#D4FF4F] flex items-center gap-1 transition-colors"
           >
             <span>Browse All Exams</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -149,9 +149,9 @@ export default function PersonalDashboard() {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="p-8 text-center rounded-[24px] border border-dashed border-slate-300 dark:border-slate-800 bg-white dark:bg-[#171923]">
             <Bookmark className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
               No saved examinations yet
             </h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto mb-4">
@@ -159,7 +159,7 @@ export default function PersonalDashboard() {
             </p>
             <a
               href="/exams/"
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors inline-block"
+              className="btn-primary"
             >
               Discover Upcoming Exams
             </a>
@@ -171,7 +171,7 @@ export default function PersonalDashboard() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white font-display">
               Personal Deadlines & Mock Tests
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -180,7 +180,7 @@ export default function PersonalDashboard() {
           </div>
           <a
             href="/tools/countdown/"
-            className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors flex items-center gap-1"
+            className="px-4 py-2 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] transition-all flex items-center gap-1 shadow-xs cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Create New Countdown</span>

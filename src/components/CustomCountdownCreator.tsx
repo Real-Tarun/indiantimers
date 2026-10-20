@@ -16,6 +16,7 @@ export default function CustomCountdownCreator() {
   const [notes, setNotes] = useState('Target: Complete 45 questions with >80% accuracy.');
   const [copiedLink, setCopiedLink] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Read URL query params on load if visiting a shared link
   useEffect(() => {
@@ -31,6 +32,31 @@ export default function CustomCountdownCreator() {
       if (urlNotes) setNotes(urlNotes);
     }
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  const toggleFullscreen = () => {
+    const next = !isFullscreen;
+    setIsFullscreen(next);
+    if (next) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      if (document.fullscreenElement) {
+        document.exitFullscreen?.().catch(() => {});
+      }
+    }
+  };
 
   const [previewCountdown, setPreviewCountdown] = useState<CountdownResult>(() =>
     calculateCountdown(date, time, 'official', siteConfig.defaultTimezone)
@@ -199,20 +225,20 @@ export default function CustomCountdownCreator() {
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="pt-2 flex flex-wrap items-center gap-3">
+          {/* Action Buttons (Flux Pills) */}
+          <div className="pt-2 flex flex-wrap items-center gap-2.5">
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors flex items-center gap-1.5 shadow-xs"
+              className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#18181B] dark:bg-white hover:bg-black text-white dark:text-[#111406] transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
             >
               {savedSuccess ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-300" />
+                  <Check className="w-4 h-4 text-[#D4FF4F]" />
                   <span>Saved to Dashboard!</span>
                 </>
               ) : (
                 <>
-                  <PlusCircle className="w-4 h-4" />
+                  <PlusCircle className="w-4 h-4 text-[#D4FF4F] dark:text-[#111406]" />
                   <span>Save to My Dashboard</span>
                 </>
               )}
@@ -221,7 +247,7 @@ export default function CustomCountdownCreator() {
             <button
               type="button"
               onClick={handleCopyShareLink}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-full text-xs font-bold border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               {copiedLink ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
               <span>{copiedLink ? 'Link Copied!' : 'Copy Share Link'}</span>
@@ -230,7 +256,7 @@ export default function CustomCountdownCreator() {
             <button
               type="button"
               onClick={downloadPersonalICS}
-              className="px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-full text-xs font-bold border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <Calendar className="w-4 h-4" />
               <span>Download .ICS</span>
@@ -240,54 +266,54 @@ export default function CustomCountdownCreator() {
       </div>
 
       {/* Live Preview Card */}
-      <div className="rounded-2xl border border-blue-100 dark:border-blue-900/40 bg-gradient-to-br from-blue-50/50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/40 p-6 sm:p-7 shadow-xs">
+      <div className="rounded-[24px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 sm:p-7 shadow-xs">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Live Countdown Preview
           </span>
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406]">
             {category}
           </span>
         </div>
 
-        <h4 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+        <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2 font-display">
           {title || 'Your Event Title'}
         </h4>
 
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
-          Scheduled for: <strong className="text-slate-800 dark:text-slate-200">{previewCountdown.formattedTargetDate}</strong> at {time} IST
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium">
+          Scheduled for: <strong className="text-slate-900 dark:text-slate-200">{previewCountdown.formattedTargetDate}</strong> at {time} IST
         </p>
 
         {/* Big Preview Digits */}
         {!previewCountdown.isPast ? (
-          <div className="grid grid-cols-4 gap-2 py-4 px-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center mb-6 shadow-xs">
+          <div className="grid grid-cols-4 gap-2 py-4 px-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-black/[0.05] dark:border-white/[0.06] text-center mb-6">
             <div>
-              <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 font-tabular">
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono-digits">
                 {previewCountdown.days}
               </span>
               <span className="text-[10px] uppercase font-bold text-slate-400 block mt-1">Days</span>
             </div>
             <div>
-              <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 font-tabular">
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono-digits">
                 {previewCountdown.hours.toString().padStart(2, '0')}
               </span>
               <span className="text-[10px] uppercase font-bold text-slate-400 block mt-1">Hours</span>
             </div>
             <div>
-              <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 font-tabular">
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono-digits">
                 {previewCountdown.minutes.toString().padStart(2, '0')}
               </span>
               <span className="text-[10px] uppercase font-bold text-slate-400 block mt-1">Mins</span>
             </div>
             <div>
-              <span className="text-3xl sm:text-4xl font-extrabold text-blue-600 dark:text-blue-400 font-tabular">
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono-digits">
                 {previewCountdown.seconds.toString().padStart(2, '0')}
               </span>
               <span className="text-[10px] uppercase font-bold text-slate-400 block mt-1">Secs</span>
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs text-center mb-6">
+          <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 text-xs text-center mb-6 font-bold">
             This target date has already passed.
           </div>
         )}
@@ -300,13 +326,99 @@ export default function CustomCountdownCreator() {
         )}
 
         <div className="pt-4 border-t border-slate-200/80 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
-          <span>Saved to your browser storage</span>
-          <a href="/dashboard/" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="font-bold text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-[#D4FF4F] flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <span>Full Screen View ⛶</span>
+          </button>
+          <a href="/dashboard/" className="text-slate-700 dark:text-slate-300 font-semibold hover:underline flex items-center gap-1">
             <span>View in Dashboard</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>
       </div>
+
+      {/* Fullscreen Overlay Mode */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-[100] flex flex-col justify-between p-6 sm:p-12 bg-white dark:bg-[#0E1017] transition-all overflow-y-auto">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between w-full max-w-5xl mx-auto">
+            <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#D4FF4F] text-[#111406]">
+              {category}
+            </span>
+
+            <button
+              onClick={toggleFullscreen}
+              type="button"
+              className="px-4 py-2 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+              title="Exit Fullscreen (Esc)"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>Exit Fullscreen (Esc)</span>
+            </button>
+          </div>
+
+          {/* Center Main Countdown Stage */}
+          <div className="text-center my-auto py-8 w-full max-w-5xl mx-auto">
+            <h2 className="font-display font-black text-3xl sm:text-5xl md:text-6xl text-slate-900 dark:text-white tracking-tight mb-4 leading-tight">
+              {title || 'Untitled Countdown'}
+            </h2>
+            <p className="text-sm sm:text-lg font-bold text-slate-600 dark:text-slate-300 mb-10">
+              Target: <strong className="text-slate-900 dark:text-white">{previewCountdown.formattedTargetDate}</strong> at {time} IST
+            </p>
+
+            {/* Giant Digits */}
+            {!previewCountdown.isPast ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto">
+                <div className="p-6 sm:p-8 rounded-[24px] bg-slate-50 dark:bg-slate-800/80 border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+                  <span className="font-mono-digits font-black text-5xl sm:text-7xl md:text-8xl text-slate-900 dark:text-white block leading-none">
+                    {previewCountdown.days}
+                  </span>
+                  <span className="text-xs sm:text-sm uppercase font-bold tracking-widest text-slate-400 mt-3 block">Days</span>
+                </div>
+                <div className="p-6 sm:p-8 rounded-[24px] bg-slate-50 dark:bg-slate-800/80 border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+                  <span className="font-mono-digits font-black text-5xl sm:text-7xl md:text-8xl text-slate-900 dark:text-white block leading-none">
+                    {previewCountdown.hours.toString().padStart(2, '0')}
+                  </span>
+                  <span className="text-xs sm:text-sm uppercase font-bold tracking-widest text-slate-400 mt-3 block">Hours</span>
+                </div>
+                <div className="p-6 sm:p-8 rounded-[24px] bg-slate-50 dark:bg-slate-800/80 border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+                  <span className="font-mono-digits font-black text-5xl sm:text-7xl md:text-8xl text-slate-900 dark:text-white block leading-none">
+                    {previewCountdown.minutes.toString().padStart(2, '0')}
+                  </span>
+                  <span className="text-xs sm:text-sm uppercase font-bold tracking-widest text-slate-400 mt-3 block">Minutes</span>
+                </div>
+                <div className="p-6 sm:p-8 rounded-[24px] bg-[#D4FF4F] text-[#111406] shadow-md">
+                  <span className="font-mono-digits font-black text-5xl sm:text-7xl md:text-8xl block leading-none">
+                    {previewCountdown.seconds.toString().padStart(2, '0')}
+                  </span>
+                  <span className="text-xs sm:text-sm uppercase font-extrabold tracking-widest text-[#111406]/80 mt-3 block">Seconds</span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 rounded-[24px] bg-slate-100 dark:bg-slate-800 text-sm font-bold text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+                Target date has passed.
+              </div>
+            )}
+
+            {notes && (
+              <p className="mt-8 text-sm text-slate-500 italic max-w-lg mx-auto">
+                "{notes}"
+              </p>
+            )}
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400 w-full max-w-5xl mx-auto pt-6 border-t border-black/[0.05] dark:border-white/[0.05]">
+            <span>Tip: Press <kbd className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">Esc</kbd> anytime to exit Fullscreen</span>
+            <span className="font-semibold text-slate-600 dark:text-slate-400">IndianTimers Personal Focus</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

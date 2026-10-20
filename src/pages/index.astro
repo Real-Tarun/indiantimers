@@ -4,10 +4,10 @@ import CountdownCard from '../components/CountdownCard';
 import { EXAM_REGISTRY } from '../data/exams';
 import { siteConfig } from '../config/site';
 
-// Featured upcoming exams for instant hero grid
+// Featured upcoming exams for hero grid
 const featuredExams = EXAM_REGISTRY.filter((e) => e.isFeatured).slice(0, 6);
 
-// Structured data for WebSite with potential SearchAction
+// Structured data
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -19,6 +19,16 @@ const websiteSchema = {
     'query-input': 'required name=search_term_string',
   },
 };
+
+const catMeta: Record<string, { emoji: string; color: string; bg: string }> = {
+  medical:     { emoji: '🩺', color: '#E11D48', bg: '#FFF1F2' },
+  engineering: { emoji: '⚙️', color: '#4338CA', bg: '#EEF2FF' },
+  'board-exams':{ emoji: '📚', color: '#047857', bg: '#ECFDF5' },
+  government:  { emoji: '🏛️', color: '#C2410C', bg: '#FFF7ED' },
+  law:         { emoji: '⚖️', color: '#6D28D9', bg: '#F5F3FF' },
+  management:  { emoji: '💼', color: '#B45309', bg: '#FFFBEB' },
+  'other-entrance-exams': { emoji: '✨', color: '#0E7490', bg: '#ECFEFF' },
+};
 ---
 
 <BaseLayout
@@ -26,285 +36,321 @@ const websiteSchema = {
   description="Accurate countdowns, verified official schedules, and distraction-free study timers for NEET, JEE Main, UPSC, GATE, CBSE Board, and Indian competitive exams."
   schema={websiteSchema}
 >
-  {/* Hero Section: Compact, Tool-first, Non-bloated */}
-  <section class="mb-10 text-center max-w-3xl mx-auto pt-2 sm:pt-4">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-900 mb-4">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span>Official 2027 Schedules Audited & Live</span>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       HERO SECTION (FLUX BENTO AESTHETIC)
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="relative text-center pt-6 pb-12 sm:pb-16 mb-4">
+    <!-- Live status pill -->
+    <div class="inline-flex items-center gap-2 bg-[#18181B] text-white dark:bg-white dark:text-[#111406] px-4 py-1.5 rounded-full text-[11px] font-bold mb-6 shadow-xs animate-fade-in-up">
+      <span class="w-2 h-2 rounded-full bg-[#D4FF4F] animate-pulse"></span>
+      <span class="tracking-wide">2026–27 Schedules — Live & Officially Verified</span>
     </div>
 
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 leading-tight mb-4">
-      India's Premier <span class="text-blue-600 dark:text-blue-400">Exam Countdown</span> & Focus Suite
+    <!-- Hero headline -->
+    <h1 class="font-display font-black text-slate-900 dark:text-white text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-5 max-w-4xl mx-auto animate-fade-in-up anim-delay-1">
+      India's Most Trusted
+      <span class="block mt-2">
+        <span class="inline-block px-4 py-1 rounded-2xl bg-[#D4FF4F] text-[#111406] shadow-xs transform -rotate-1">
+          Live Exam Countdown
+        </span>
+      </span>
     </h1>
 
-    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-      Verified countdowns backed by official circulars from NTA, UPSC, IITs, and CBSE. Zero speculative dates. Built-in Pomodoro, mock test pacing, and personal deadline tracking.
+    <!-- Sub-headline -->
+    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-in-up anim-delay-2">
+      Precise countdowns verified against official circulars from NTA, UPSC, IITs, and CBSE.
+      Zero speculative dates. Built-in Pomodoro, mock pacing, and personal deadline tracking.
     </p>
 
-    {/* Quick Action Navigation Buttons */}
-    <div class="flex flex-wrap items-center justify-center gap-3">
-      <a
-        href="/exams/"
-        class="px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-xs transition-colors"
-      >
-        Explore All 50+ Exams
+    <!-- Flux Pill Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-3 animate-fade-in-up anim-delay-3">
+      <a href="/exams/" class="btn-primary">
+        <svg class="w-4 h-4 text-[#D4FF4F] dark:text-[#111406]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        Explore 50+ Exams
       </a>
-      <a
-        href="/calendar/2027/"
-        class="px-5 py-2.5 rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
-      >
+      <a href="/calendar/2027/" class="btn-lime">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
         2027 Master Calendar
       </a>
-      <a
-        href="/tools/pomodoro-timer/"
-        class="px-5 py-2.5 rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
-      >
+      <a href="/tools/pomodoro-timer/" class="btn-ghost">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>
+        </svg>
         Focus Timer
       </a>
-      <a
-        href="/tools/mock-test-timer/"
-        class="px-5 py-2.5 rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
-      >
-        Mock Test Simulator
-      </a>
+    </div>
+
+    <!-- Flux Stat Badges -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mt-10 animate-fade-in-up anim-delay-4">
+      {[
+        { value: '50+', label: 'Exams Tracked' },
+        { value: '100%', label: 'Official Circulars' },
+        { value: 'Live', label: 'Synced Countdown' },
+        { value: 'Free', label: 'No Signup Needed' },
+      ].map((stat) => (
+        <div class="bg-white dark:bg-[#171923] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl py-3 px-4 shadow-xs text-center">
+          <div class="font-display font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white leading-none mb-1">
+            {stat.value}
+          </div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+            {stat.label}
+          </div>
+        </div>
+      ))}
     </div>
   </section>
 
-  {/* High Priority Upcoming Exam Countdowns */}
-  <section class="mb-14">
-    <div class="flex items-center justify-between mb-6">
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       FEATURED COUNTDOWN GRID
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="mb-16">
+    <div class="flex items-end justify-between mb-7">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
-          Featured Examination Countdowns
-        </h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          Audited dates for major 2026-2027 national entrance and board examinations.
+        <div class="section-eyebrow">
+          <span class="w-2 h-2 rounded-full bg-[#D4FF4F]"></span>
+          <span>Live Examination Timers</span>
+        </div>
+        <h2 class="section-title">Upcoming National Exam Countdowns</h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Audited dates for major 2026–27 national entrance and board examinations.
         </p>
       </div>
       <a
         href="/exams/"
-        class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+        class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-[#D4FF4F] transition-colors shrink-0"
       >
-        View All Exams →
+        <span>View all 50+</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
       </a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {featuredExams.map((exam) => (
-        <CountdownCard client:load exam={exam} />
+      {featuredExams.map((exam, i) => (
+        <div class={`animate-fade-in-up anim-delay-${Math.min(i + 1, 6)}`}>
+          <CountdownCard client:load exam={exam} />
+        </div>
       ))}
     </div>
   </section>
 
-  {/* Category Directory Cards */}
-  <section class="mb-14">
-    <div class="mb-6">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
-        Browse by Examination Discipline
-      </h2>
-      <p class="text-xs text-slate-500 dark:text-slate-400">
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       CATEGORY DIRECTORY (FLUX BENTO CARDS)
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="mb-16">
+    <div class="mb-7">
+      <div class="section-eyebrow">
+        <span class="w-2 h-2 rounded-full bg-[#D4FF4F]"></span>
+        <span>Browse by Stream</span>
+      </div>
+      <h2 class="section-title">Examination Categories</h2>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
         Dedicated schedule hubs with official announcements and syllabus timelines.
       </p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {siteConfig.categories.map((cat) => (
-        <a
-          href={`/exams/${cat.slug}/`}
-          class="group p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 hover:border-blue-500 dark:hover:border-blue-500/60 hover:shadow-sm transition-all"
-        >
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {siteConfig.categories.map((cat, i) => {
+        const meta = catMeta[cat.id] ?? catMeta['other-entrance-exams'];
+        return (
+          <a
+            href={`/exams/${cat.slug}/`}
+            class={`card group p-5 bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-[22px] hover:-translate-y-1 transition-all duration-200 animate-fade-in-up anim-delay-${Math.min(i + 1, 6)}`}
+          >
+            <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-3 shadow-xs bg-[#F6F7FB] dark:bg-slate-800 border border-black/[0.04] dark:border-white/[0.05]">
+              {meta.emoji}
+            </div>
+
+            <h3 class="font-display font-bold text-[15px] text-slate-900 dark:text-white mb-1">
               {cat.name}
             </h3>
-            <span class="text-xs text-blue-600 dark:text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">
-              →
-            </span>
-          </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            {cat.description}
-          </p>
-        </a>
-      ))}
+            <p class="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
+              {cat.description}
+            </p>
+
+            <div class="flex items-center gap-1 mt-4 text-[12px] font-bold text-slate-900 dark:text-[#D4FF4F] group-hover:gap-2 transition-all">
+              <span>View Timers</span>
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </a>
+        );
+      })}
     </div>
   </section>
 
-  {/* Interactive Study Tools Suite Promo */}
-  <section class="mb-14 rounded-2xl border border-slate-200 dark:border-slate-800 bg-gradient-to-r from-blue-50/70 via-slate-50 to-indigo-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/80 p-6 sm:p-8">
-    <div class="max-w-2xl mb-6">
-      <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-        Student Focus Tools
-      </span>
-      <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2">
-        Integrated Preparation Tools for Indian Aspirants
-      </h2>
-      <p class="text-xs text-slate-600 dark:text-slate-300">
-        Beyond countdowns: measure your speed, practice official 3-hour exam mocks, and maintain disciplined Pomodoro study cycles with synthesized audio cues.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <a
-        href="/tools/pomodoro-timer/"
-        class="p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-blue-400 transition-all"
-      >
-        <span class="text-sm font-bold text-slate-900 dark:text-slate-100 block mb-1">
-          Pomodoro Focus
-        </span>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400">
-          25/5 and 50/10 intervals with wake lock and study session logging.
-        </p>
-      </a>
-
-      <a
-        href="/tools/mock-test-timer/"
-        class="p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-blue-400 transition-all"
-      >
-        <span class="text-sm font-bold text-slate-900 dark:text-slate-100 block mb-1">
-          Mock Test Simulator
-        </span>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400">
-          NEET 200m, JEE 180m, UPSC 120m presets with questions-per-minute pacing.
-        </p>
-      </a>
-
-      <a
-        href="/tools/stopwatch/"
-        class="p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-blue-400 transition-all"
-      >
-        <span class="text-sm font-bold text-slate-900 dark:text-slate-100 block mb-1">
-          Precision Stopwatch
-        </span>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400">
-          Lap split times and keyboard shortcut support for speed drills.
-        </p>
-      </a>
-
-      <a
-        href="/tools/countdown/"
-        class="p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-blue-400 transition-all"
-      >
-        <span class="text-sm font-bold text-slate-900 dark:text-slate-100 block mb-1">
-          Custom Deadlines
-        </span>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400">
-          Personal timers for coaching tests, assignments, and application cutoffs.
-        </p>
-      </a>
-    </div>
-  </section>
-
-  {/* Researched Guides & Articles Preview */}
-  <section class="mb-14">
-    <div class="flex items-center justify-between mb-6">
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       FLUX-STYLE DARK ACCENT BANNER (FOCUS TOOLS SUITE)
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="mb-16 relative overflow-hidden rounded-[26px] p-8 sm:p-10 bg-[#18181B] text-white shadow-xl">
+    <div class="relative grid md:grid-cols-2 gap-8 items-center z-10">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
-          Editorial Preparation & Schedule Guides
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider mb-4 bg-white/10 text-[#D4FF4F] border border-white/15">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#D4FF4F] animate-pulse"></span>
+          Student Focus Suite
+        </div>
+        <h2 class="font-display font-black text-2xl sm:text-3xl lg:text-4xl leading-tight mb-3 tracking-tight">
+          Tools Built for High-Stakes Indian Exams
         </h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400">
-          Fact-checked guides on exam notification cycles, calendar analysis, and study pacing.
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6 max-w-md">
+          Beyond countdowns: Pomodoro intervals, official mock pacing with question-per-minute tracking,
+          and personal deadline management with local device storage.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/tools/pomodoro-timer/" class="btn-lime">
+            Start Focus Session
+          </a>
+          <a href="/tools/mock-test-timer/" class="btn-ghost bg-white/10 text-white border-white/20 hover:bg-white/20">
+            Mock Test Timer
+          </a>
+        </div>
+      </div>
+
+      <!-- Bento tool cards -->
+      <div class="grid grid-cols-2 gap-3">
+        {[
+          { href: '/tools/pomodoro-timer/', icon: '⏱️', title: 'Pomodoro Focus', desc: '25/5 & 50/10 intervals with wake lock' },
+          { href: '/tools/mock-test-timer/', icon: '📝', title: 'Mock Test Simulator', desc: 'NEET 200m, JEE 180m presets' },
+          { href: '/tools/stopwatch/', icon: '🏁', title: 'Lap Stopwatch', desc: 'Precision splits for question speed drills' },
+          { href: '/tools/countdown/', icon: '🎯', title: 'Custom Deadlines', desc: 'Private local timers for mock tests' },
+        ].map((tool) => (
+          <a
+            href={tool.href}
+            class="p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all hover:-translate-y-0.5 group"
+          >
+            <div class="text-2xl mb-2">{tool.icon}</div>
+            <div class="font-bold text-[13px] text-white group-hover:text-[#D4FF4F] transition-colors mb-1">{tool.title}</div>
+            <div class="text-[11px] text-slate-400 leading-relaxed">{tool.desc}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       EDITORIAL GUIDES
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="mb-16">
+    <div class="flex items-end justify-between mb-7">
+      <div>
+        <div class="section-eyebrow">
+          <span class="w-2 h-2 rounded-full bg-[#D4FF4F]"></span>
+          <span>Editorial Hub</span>
+        </div>
+        <h2 class="section-title">Preparation & Schedule Guides</h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Fact-checked guides on exam cycles, calendar analysis, and study pacing strategies.
         </p>
       </div>
-      <a href="/blog/" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
-        All Guides →
+      <a href="/blog/" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-[#D4FF4F] transition-colors shrink-0">
+        <span>All Guides</span>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
       </a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <article class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between">
-        <div>
-          <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Exam Analysis</span>
-          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2">
-            <a href="/blog/exam-calendar-2027-india/" class="hover:underline">
-              Indian Examination Calendar 2027: Official vs Tentative Dates
+      {[
+        {
+          tag: 'Exam Analysis',
+          href: '/blog/exam-calendar-2027-india/',
+          title: 'Indian Examination Calendar 2027: Official vs Tentative Dates',
+          excerpt: 'A comprehensive audit of national entrance schedules, explaining how conducting bodies determine testing windows.',
+          readTime: '7 min read',
+        },
+        {
+          tag: 'Strategy',
+          href: '/blog/pomodoro-technique-for-competitive-exams/',
+          title: 'Pomodoro for NEET & JEE: Adapting the 25-Minute Loop',
+          excerpt: 'Adapting the standard interval into 50-minute blocks to match the stamina required for 3-hour competitive papers.',
+          readTime: '6 min read',
+        },
+        {
+          tag: 'Planning',
+          href: '/blog/how-to-plan-study-time-around-exam-countdown/',
+          title: 'Reverse Timeline Planning: Schedules from Countdowns',
+          excerpt: 'How to divide remaining countdown days into syllabus completion, revision cycles, and full-length mock simulations.',
+          readTime: '8 min read',
+        },
+      ].map((article) => (
+        <article class="card p-6 bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-[22px] flex flex-col justify-between hover:-translate-y-1 transition-all duration-200">
+          <div>
+            <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-3">
+              {article.tag}
+            </span>
+            <h3 class="font-display font-bold text-[15px] text-slate-900 dark:text-white leading-snug mb-2">
+              <a href={article.href} class="hover:underline underline-offset-2">{article.title}</a>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{article.excerpt}</p>
+          </div>
+          <div class="flex items-center justify-between mt-5 pt-3 border-t border-black/[0.05] dark:border-white/[0.05]">
+            <span class="text-[11px] font-semibold text-slate-400">{article.readTime}</span>
+            <a href={article.href} class="text-[12px] font-bold text-slate-900 dark:text-[#D4FF4F] hover:underline flex items-center gap-1">
+              Read Guide →
             </a>
-          </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            A comprehensive audit of national entrance schedules, explaining how conducting bodies determine testing windows.
-          </p>
-        </div>
-        <div class="pt-3 mt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-          <span>7 min read</span>
-          <a href="/blog/exam-calendar-2027-india/" class="font-semibold text-blue-600 hover:underline">Read →</a>
-        </div>
-      </article>
-
-      <article class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between">
-        <div>
-          <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Strategy</span>
-          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2">
-            <a href="/blog/pomodoro-technique-for-competitive-exams/" class="hover:underline">
-              Using the Pomodoro Technique for NEET & JEE Preparation
-            </a>
-          </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Adapting the standard 25-minute loop into 50-minute blocks to match the stamina required for 3-hour competitive papers.
-          </p>
-        </div>
-        <div class="pt-3 mt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-          <span>6 min read</span>
-          <a href="/blog/pomodoro-technique-for-competitive-exams/" class="font-semibold text-blue-600 hover:underline">Read →</a>
-        </div>
-      </article>
-
-      <article class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between">
-        <div>
-          <span class="text-[10px] font-bold text-purple-600 uppercase tracking-wider">Planning</span>
-          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2">
-            <a href="/blog/how-to-plan-study-time-around-exam-countdown/" class="hover:underline">
-              Reverse Timeline Planning: Building Schedules from Countdowns
-            </a>
-          </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            How to divide remaining countdown days into syllabus completion, revision cycles, and full-length mock simulations.
-          </p>
-        </div>
-        <div class="pt-3 mt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-          <span>8 min read</span>
-          <a href="/blog/how-to-plan-study-time-around-exam-countdown/" class="font-semibold text-blue-600 hover:underline">Read →</a>
-        </div>
-      </article>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 
-  {/* Compact FAQ Section */}
-  <section class="max-w-3xl mx-auto mb-10">
-    <div class="text-center mb-6">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
-        Frequently Asked Questions
-      </h2>
-      <p class="text-xs text-slate-500 dark:text-slate-400">
-        Direct answers regarding our schedule provenance and timer tools.
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       FAQ ACCORDION
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="max-w-2xl mx-auto mb-12">
+    <div class="text-center mb-8">
+      <div class="section-eyebrow justify-center">
+        <span class="w-2 h-2 rounded-full bg-[#D4FF4F]"></span>
+        <span>Got Questions?</span>
+      </div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        Direct answers about our schedule provenance and timer tools.
       </p>
     </div>
 
     <div class="space-y-3">
-      <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
-          How does IndianTimers verify examination dates?
-        </h3>
-        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-          Every date is audited against official circulars published by conducting bodies such as NTA, UPSC, IIT Joint Admission Boards, and CBSE. We explicitly distinguish between Official Confirmed dates, Tentative calendar dates, and unannounced dates. We never manufacture speculative countdowns.
-        </p>
-      </div>
-
-      <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
-          Are my saved countdowns and study sessions private?
-        </h3>
-        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-          Yes. All personal favorites, custom deadlines, and study session records are stored 100% locally on your device using browser LocalStorage. No account or mobile number is required, and you can export or wipe your data anytime.
-        </p>
-      </div>
-
-      <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
-          Can I export examination dates to Google Calendar or Apple Calendar?
-        </h3>
-        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-          Yes. Every exam detail page and countdown card offers a one-click downloadable standard RFC 5545 .ICS file and direct Google Calendar import links.
-        </p>
-      </div>
+      {[
+        {
+          q: 'How does IndianTimers verify examination dates?',
+          a: 'Every date is audited against official circulars published by conducting bodies — NTA, UPSC, IIT Joint Admission Boards, and CBSE. We explicitly distinguish Official Confirmed, Tentative, and Not Announced dates. We never manufacture speculative countdowns.',
+        },
+        {
+          q: 'Are my saved countdowns and study sessions private?',
+          a: 'Yes. All personal favorites, custom deadlines, and study session records are stored 100% locally on your device using browser LocalStorage. No account or mobile number is required.',
+        },
+        {
+          q: 'Can I export examination dates to Google Calendar or Apple Calendar?',
+          a: 'Yes. Every exam detail page and countdown card offers a one-click downloadable RFC 5545 .ICS file and direct Google Calendar import links.',
+        },
+        {
+          q: 'How accurate are the study timers?',
+          a: 'Our Pomodoro, mock test, and stopwatch timers use the Web Performance API for millisecond-precision timing and the Wake Lock API to prevent screens from sleeping during focus sessions.',
+        },
+      ].map((faq) => (
+        <details class="card p-5 bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-[22px] cursor-pointer group">
+          <summary class="flex items-center justify-between gap-3 list-none font-display font-bold text-[14px] text-slate-900 dark:text-white select-none">
+            <span>{faq.q}</span>
+            <span class="shrink-0 w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center transition-transform group-open:rotate-45">
+              <svg class="w-3.5 h-3.5 text-slate-700 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            {faq.a}
+          </p>
+        </details>
+      ))}
     </div>
   </section>
+
 </BaseLayout>

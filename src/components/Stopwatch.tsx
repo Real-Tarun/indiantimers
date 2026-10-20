@@ -111,8 +111,8 @@ export default function Stopwatch() {
   return (
     <div
       ref={containerRef}
-      className={`rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all ${
-        isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center items-center p-8' : 'p-6 sm:p-8 shadow-xs'
+      className={`rounded-[26px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] transition-all ${
+        isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center items-center p-8 bg-white dark:bg-[#0E1017]' : 'p-6 sm:p-8 shadow-xs'
       }`}
     >
       {/* Top Header */}
@@ -122,7 +122,7 @@ export default function Stopwatch() {
         </span>
         <button
           onClick={toggleFullscreen}
-          className="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800"
           title="Fullscreen Mode"
         >
           {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -131,47 +131,47 @@ export default function Stopwatch() {
 
       {/* Main Digits with millisecond precision */}
       <div className="text-center my-6">
-        <div className="text-6xl sm:text-7xl md:text-8xl font-black font-tabular tracking-tight text-slate-900 dark:text-slate-50 leading-none select-none">
+        <div className="text-6xl sm:text-7xl md:text-8xl font-black font-tabular tracking-tight text-slate-900 dark:text-white leading-none select-none">
           <span>{currentDisplay.minutes}:</span>
           <span>{currentDisplay.seconds}</span>
-          <span className="text-3xl sm:text-4xl md:text-5xl text-blue-600 dark:text-blue-400 font-semibold ml-1">
+          <span className="text-3xl sm:text-4xl md:text-5xl text-slate-500 dark:text-[#D4FF4F] font-extrabold ml-1">
             .{currentDisplay.centis}
           </span>
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="flex items-center justify-center gap-4 mb-8">
+      {/* Buttons (Flux Pills) */}
+      <div className="flex items-center justify-center gap-3 mb-8">
         <button
           onClick={handleReset}
-          className="p-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="w-12 h-12 rounded-full border border-black/[0.08] dark:border-white/[0.1] bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-all"
           title="Reset Stopwatch (R)"
           aria-label="Reset stopwatch"
         >
-          <RotateCcw className="w-5 h-5" />
+          <RotateCcw className="w-4 h-4" />
         </button>
 
         <button
           onClick={() => setIsActive(!isActive)}
-          className={`px-8 py-4 rounded-2xl text-base font-bold flex items-center gap-2.5 shadow-md transition-transform active:scale-95 ${
+          className={`px-8 py-3.5 rounded-full text-sm font-bold flex items-center gap-2.5 shadow-md transition-all active:scale-95 ${
             isActive
-              ? 'bg-amber-500 hover:bg-amber-600 text-white'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038]'
+              : 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black'
           }`}
           aria-label={isActive ? 'Pause' : 'Start'}
         >
-          {isActive ? <Pause className="w-5 h-5 fill-white" /> : <Play className="w-5 h-5 fill-white" />}
+          {isActive ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
           <span>{isActive ? 'Pause' : 'Start'}</span>
         </button>
 
         <button
           onClick={handleLap}
           disabled={!isActive && elapsedMs === 0}
-          className="p-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-40"
+          className="w-12 h-12 rounded-full border border-black/[0.08] dark:border-white/[0.1] bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-all disabled:opacity-40"
           title="Record Lap (L)"
           aria-label="Record lap"
         >
-          <Flag className="w-5 h-5" />
+          <Flag className="w-4 h-4" />
         </button>
       </div>
 

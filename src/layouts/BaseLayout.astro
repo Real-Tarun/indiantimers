@@ -21,7 +21,7 @@ const {
   canonicalUrl = Astro.url.href,
   robots = 'index, follow',
   ogType = 'website',
-  ogImage = `${siteConfig.url}/favicon.svg`,
+  ogImage = `${siteConfig.url}/og-image.png`,
   schema,
   breadcrumbs,
 } = Astro.props;
@@ -35,7 +35,7 @@ const orgSchema = {
   '@type': 'Organization',
   name: siteConfig.name,
   url: siteConfig.url,
-  logo: `${siteConfig.url}/favicon.svg`,
+  logo: `${siteConfig.url}/logo-512.png`,
   description: siteConfig.description,
 };
 
@@ -57,9 +57,20 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    {/* Favicon Suite — Standard, Retina, Google Search Snippet (48px) & iOS */}
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2563eb" />
+    <meta name="theme-color" content="#18181B" />
+    {/* Google Fonts preconnect */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     {/* Primary SEO Meta Tags */}
     <title>{title}</title>
@@ -84,15 +95,16 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={ogImage} />
 
-    {/* Inline Theme Detection (Prevents FOUC) */}
+    {/* Inline Theme Detection — Light Mode by Default */}
     <script is:inline>
-      const storedTheme = localStorage.getItem('indiantimers_theme');
-      if (
-        storedTheme === 'dark' ||
-        (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        document.documentElement.classList.add('dark');
-      } else {
+      try {
+        const storedTheme = localStorage.getItem('indiantimers_theme');
+        if (storedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
         document.documentElement.classList.remove('dark');
       }
     </script>
@@ -109,7 +121,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
       />
     )}
   </head>
-  <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col min-h-screen">
+  <body class="flex flex-col min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)] antialiased transition-colors duration-150">
     {/* Accessible skip link */}
     <a
       href="#main-content"

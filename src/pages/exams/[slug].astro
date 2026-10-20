@@ -70,51 +70,67 @@ const examJsonLd = {
     },
   },
 };
+
+// FAQPage schema for Google Rich Snippets & LLM direct answers
+const faqJsonLd = exam.faqs && exam.faqs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: exam.faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+} : null;
+
+const schemas = faqJsonLd ? [examJsonLd, faqJsonLd] : [examJsonLd];
 ---
 
 <BaseLayout
   title={`${exam.shortName} Countdown: Exam Date, Schedule & Timing | IndianTimers`}
-  description={`Accurate live countdown to ${exam.shortName} (${exam.dates.examDate}). Verified status: ${exam.dateStatus}. Official NTA/Conducting Body notification, session timings, and mock timers.`}
+  description={`Accurate live countdown to ${exam.shortName} (${exam.dates.examDate}). Verified status: ${exam.dateStatus}. Official notification, session timings, and mock timers.`}
   canonicalUrl={`${siteConfig.url}/exams/${exam.slug}/`}
   breadcrumbs={breadcrumbs}
-  schema={examJsonLd}
+  schema={schemas}
 >
   {/* Breadcrumb Bar */}
-  <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
-    <a href="/" class="hover:underline">Home</a>
+  <nav class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium" aria-label="Breadcrumb">
+    <a href="/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Home</a>
     <span>/</span>
-    <a href="/exams/" class="hover:underline">Exams</a>
+    <a href="/exams/" class="hover:text-slate-900 dark:hover:text-white transition-colors">Exams</a>
     <span>/</span>
-    <a href={`/exams/${exam.category}/`} class="hover:underline capitalize">{exam.category.replace('-', ' ')}</a>
+    <a href={`/exams/${exam.category}/`} class="hover:text-slate-900 dark:hover:text-white transition-colors capitalize">{exam.category.replace(/-/g, ' ')}</a>
     <span>/</span>
-    <span class="text-slate-800 dark:text-slate-200 font-semibold">{exam.shortName}</span>
+    <span class="text-slate-900 dark:text-white font-bold">{exam.shortName}</span>
   </nav>
 
   {/* Header Section */}
   <div class="mb-8">
-    <div class="flex flex-wrap items-center gap-2 mb-3">
+    <div class="flex flex-wrap items-center gap-2.5 mb-3">
       {exam.dateStatus === 'official' ? (
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-[#D4FF4F] text-[#111406] shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-[#111406] animate-pulse"></span>
           Official Confirmed Schedule
         </span>
       ) : exam.dateStatus === 'tentative' ? (
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300/40">
           <span class="w-2 h-2 rounded-full bg-amber-500"></span>
           Tentative Official Calendar Schedule
         </span>
       ) : (
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
           Awaiting Official Notification
         </span>
       )}
 
       <span class="text-xs text-slate-500 dark:text-slate-400">
-        Conducting Authority: <strong class="text-slate-700 dark:text-slate-300">{exam.conductingAuthority}</strong>
+        Conducting Authority: <strong class="text-slate-800 dark:text-slate-200">{exam.conductingAuthority}</strong>
       </span>
     </div>
 
-    <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 leading-tight mb-3">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight mb-3 tracking-tight font-display">
       {exam.name}
     </h1>
 
@@ -127,69 +143,75 @@ const examJsonLd = {
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
     {/* Left 2 Cols: Countdown Card Island + Action Links */}
     <div class="lg:col-span-2 space-y-6">
-      <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Live Exam Countdown
-          </span>
-          <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">
-            Timezone: Asia/Kolkata (IST)
-          </span>
+      {/* Live Countdown Hero Card */}
+      <CountdownCard client:load exam={exam} />
+
+      {/* Calendar Sync & Export Pill Row */}
+      <div class="p-5 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <a
+            href={googleCalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-4 py-2 rounded-full font-bold bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black dark:hover:bg-slate-100 transition-all inline-flex items-center gap-1.5 shadow-xs"
+          >
+            <svg class="w-3.5 h-3.5 text-[#D4FF4F] dark:text-[#18181B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Add to Google Calendar
+          </a>
+
+          <button
+            type="button"
+            id="fullscreen-trigger-btn"
+            class="px-4 py-2 rounded-full font-bold bg-white dark:bg-slate-800 border border-black/[0.08] dark:border-white/[0.1] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+            </svg>
+            Full Screen Mode
+          </button>
         </div>
 
-        {/* Client-side Live Countdown Island */}
-        <CountdownCard client:load exam={exam} />
-
-        {/* Calendar Sync & Export Buttons */}
-        <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-3">
-            <a
-              href={googleCalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="px-3.5 py-2 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors inline-flex items-center gap-1.5"
-            >
-              Add to Google Calendar
-            </a>
-          </div>
-
-          <div class="flex items-center gap-2 text-slate-500">
-            <span>Verified on: <strong class="text-slate-700 dark:text-slate-300">{exam.lastVerified}</strong></span>
-          </div>
+        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <span>Verified on: <strong class="text-slate-800 dark:text-slate-200">{exam.lastVerified}</strong></span>
         </div>
       </div>
 
       {/* Official Notification & Audit Provenance Box */}
-      <div class="p-6 rounded-2xl bg-blue-50/60 dark:bg-slate-900/90 border border-blue-200/60 dark:border-slate-800 text-xs">
-        <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">
-          Official Schedule Provenance & Circular Citation
-        </h3>
-        <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-          This examination schedule is published pursuant to: <strong class="text-slate-800 dark:text-slate-200">"{exam.sourceNotificationTitle}"</strong> issued by {exam.conductingAuthority}.
+      <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs text-xs">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-2 h-2 rounded-full bg-[#D4FF4F]"></span>
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white">
+            Official Circular Citation & Provenance
+          </h3>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+          This examination schedule is published pursuant to: <strong class="text-slate-900 dark:text-white">"{exam.sourceNotificationTitle}"</strong> issued by {exam.conductingAuthority}.
         </p>
-        <div class="flex flex-wrap items-center gap-4 pt-2 border-t border-blue-100 dark:border-slate-800">
+        <div class="flex flex-wrap items-center gap-3 pt-3 border-t border-black/[0.05] dark:border-white/[0.05]">
           <a
             href={exam.officialSourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-blue-600 dark:text-blue-400 font-semibold hover:underline inline-flex items-center gap-1"
+            class="btn-ghost btn-sm text-xs font-bold"
           >
-            Open Conducting Body Circular Portal ↗
+            Open Official Circular Portal ↗
           </a>
           <a
             href={exam.officialWebsite}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 inline-flex items-center gap-1"
+            class="btn-ghost btn-sm text-xs font-semibold text-slate-600 dark:text-slate-300"
           >
-            Official Exam Website ↗
+            Conducting Authority Portal ↗
           </a>
         </div>
       </div>
 
       {/* Detailed Overview */}
-      <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">
+      <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 font-display">
           About {exam.name}
         </h2>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
@@ -197,7 +219,7 @@ const examJsonLd = {
         </p>
 
         {/* Instructions */}
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Official Examination Day Guidelines
         </h3>
         <ul class="space-y-2 mb-6 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
@@ -207,7 +229,7 @@ const examJsonLd = {
         </ul>
 
         {/* Preparation Tips */}
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">
           Recommended Pacing & Preparation Strategy
         </h3>
         <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
@@ -218,28 +240,28 @@ const examJsonLd = {
       </div>
     </div>
 
-    {/* Right Sidebar: Timeline Milestones + Study Tools Shortcuts */}
+    {/* Right Sidebar: Timeline Milestones + Study Tools */}
     <div class="space-y-6">
       {/* Important Dates Table */}
-      <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+      <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-4 pb-2 border-b border-black/[0.05] dark:border-white/[0.05]">
           Critical Schedule Milestones
         </h3>
 
         <div class="space-y-3 text-xs">
           <div class="flex items-center justify-between py-1">
-            <span class="text-slate-500">Exam Date:</span>
-            <span class="font-bold text-slate-900 dark:text-slate-100">{exam.dates.examDate}</span>
+            <span class="text-slate-500 dark:text-slate-400">Exam Date:</span>
+            <span class="font-bold text-slate-900 dark:text-white">{exam.dates.examDate}</span>
           </div>
           {exam.dates.examEndDate && (
             <div class="flex items-center justify-between py-1">
-              <span class="text-slate-500">Concluding Date:</span>
-              <span class="font-bold text-slate-900 dark:text-slate-100">{exam.dates.examEndDate}</span>
+              <span class="text-slate-500 dark:text-slate-400">Concluding Date:</span>
+              <span class="font-bold text-slate-900 dark:text-white">{exam.dates.examEndDate}</span>
             </div>
           )}
           {exam.startTime && (
             <div class="flex items-center justify-between py-1">
-              <span class="text-slate-500">Session Timing:</span>
+              <span class="text-slate-500 dark:text-slate-400">Session Timing:</span>
               <span class="font-semibold text-slate-800 dark:text-slate-200">
                 {exam.startTime} - {exam.endTime || 'Closing'} IST
               </span>
@@ -247,25 +269,25 @@ const examJsonLd = {
           )}
           {exam.dates.registrationStart && (
             <div class="flex items-center justify-between py-1">
-              <span class="text-slate-500">Registration Opens:</span>
+              <span class="text-slate-500 dark:text-slate-400">Registration Opens:</span>
               <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.registrationStart}</span>
             </div>
           )}
           {exam.dates.registrationEnd && (
             <div class="flex items-center justify-between py-1">
-              <span class="text-slate-500">Registration Closes:</span>
+              <span class="text-slate-500 dark:text-slate-400">Registration Closes:</span>
               <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.registrationEnd}</span>
             </div>
           )}
           {exam.dates.admitCardRelease && (
             <div class="flex items-center justify-between py-1">
-              <span class="text-slate-500">Admit Card:</span>
+              <span class="text-slate-500 dark:text-slate-400">Admit Card:</span>
               <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.admitCardRelease}</span>
             </div>
           )}
           {exam.dates.resultDate && (
             <div class="flex items-center justify-between py-1">
-              <span class="text-slate-500">Expected Result:</span>
+              <span class="text-slate-500 dark:text-slate-400">Expected Result:</span>
               <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.resultDate}</span>
             </div>
           )}
@@ -273,35 +295,35 @@ const examJsonLd = {
       </div>
 
       {/* Relevant Focus Tools */}
-      <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+      <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2">
           Practice & Timing Tools
         </h3>
-        <p class="text-xs text-slate-500 mb-4">
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
           Prepare under simulated examination conditions.
         </p>
 
         <div class="space-y-2.5">
           <a
             href="/tools/mock-test-timer/"
-            class="block p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/80 dark:border-slate-700 transition-colors"
+            class="block p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#D4FF4F]/15 dark:hover:bg-[#D4FF4F]/10 border border-slate-200/80 dark:border-slate-700/80 transition-all group"
           >
-            <span class="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+            <span class="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-black dark:group-hover:text-[#D4FF4F]">
               Mock Test Pacing Simulator →
             </span>
-            <span class="text-[11px] text-slate-500">
+            <span class="text-[11px] text-slate-500 dark:text-slate-400">
               Run official {exam.durationMinutes || 180} minute test simulation with time-per-question timer.
             </span>
           </a>
 
           <a
             href="/tools/pomodoro-timer/"
-            class="block p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/80 dark:border-slate-700 transition-colors"
+            class="block p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-[#D4FF4F]/15 dark:hover:bg-[#D4FF4F]/10 border border-slate-200/80 dark:border-slate-700/80 transition-all group"
           >
-            <span class="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+            <span class="text-xs font-bold text-slate-900 dark:text-white block group-hover:text-black dark:group-hover:text-[#D4FF4F]">
               50/10 Pomodoro Study Interval →
             </span>
-            <span class="text-[11px] text-slate-500">
+            <span class="text-[11px] text-slate-500 dark:text-slate-400">
               Structured daily focus cycles with wake lock.
             </span>
           </a>
@@ -310,8 +332,8 @@ const examJsonLd = {
 
       {/* Related Examinations */}
       {relatedExams.length > 0 && (
-        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
-          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+        <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">
             Related Examinations
           </h3>
           <ul class="space-y-2 text-xs">
@@ -319,9 +341,9 @@ const examJsonLd = {
               <li>
                 <a
                   href={`/exams/${re.slug}/`}
-                  class="text-blue-600 dark:text-blue-400 hover:underline font-medium block"
+                  class="text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-[#D4FF4F] font-medium block"
                 >
-                  {re.shortName} ({re.dates.examDate})
+                  {re.shortName} <span class="text-slate-400">({re.dates.examDate})</span>
                 </a>
               </li>
             ))}
@@ -334,13 +356,13 @@ const examJsonLd = {
   {/* Real Questions FAQ Section */}
   {exam.faqs.length > 0 && (
     <section class="max-w-3xl mb-12">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
         {exam.shortName} Frequently Asked Questions
       </h2>
       <div class="space-y-3">
         {exam.faqs.map((faq) => (
-          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-            <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100 mb-1">
+          <div class="p-5 rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] shadow-xs">
+            <h3 class="text-xs font-bold text-slate-900 dark:text-white mb-1.5">
               {faq.question}
             </h3>
             <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -351,4 +373,10 @@ const examJsonLd = {
       </div>
     </section>
   )}
+  <script>
+    document.getElementById('fullscreen-trigger-btn')?.addEventListener('click', () => {
+      const trigger = document.querySelector<HTMLButtonElement>('[aria-label="Enter full screen countdown"]');
+      trigger?.click();
+    });
+  </script>
 </BaseLayout>

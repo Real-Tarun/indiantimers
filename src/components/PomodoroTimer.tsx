@@ -197,32 +197,32 @@ export default function PomodoroTimer() {
   return (
     <div
       ref={containerRef}
-      className={`rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all ${
-        isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center items-center p-8' : 'p-6 sm:p-8 shadow-xs'
+      className={`rounded-[26px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] transition-all ${
+        isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center items-center p-8 bg-white dark:bg-[#0E1017]' : 'p-6 sm:p-8 shadow-xs'
       }`}
     >
       {/* Top Controls: Preset selector + Tools */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8 w-full max-w-xl">
-        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-full">
           <button
             onClick={() => setPreset(25, 5)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              workMinutes === 25 ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-600 dark:text-slate-400'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+              workMinutes === 25 ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs' : 'text-slate-600 dark:text-slate-400'
             }`}
           >
             25 / 5 Standard
           </button>
           <button
             onClick={() => setPreset(50, 10)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              workMinutes === 50 ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-600 dark:text-slate-400'
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+              workMinutes === 50 ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs' : 'text-slate-600 dark:text-slate-400'
             }`}
           >
             50 / 10 Deep Focus
           </button>
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
             title="Custom Timer Settings"
           >
             <Settings className="w-4 h-4" />
@@ -236,14 +236,14 @@ export default function PomodoroTimer() {
               soundService.setMuted(nextMute);
               setIsMuted(nextMute);
             }}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 transition-colors"
             title={isMuted ? 'Unmute alerts' : 'Mute alerts'}
           >
             {isMuted ? <VolumeX className="w-4 h-4 text-red-500" /> : <Volume2 className="w-4 h-4" />}
           </button>
           <button
             onClick={toggleFullscreen}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 transition-colors"
             title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -251,15 +251,15 @@ export default function PomodoroTimer() {
         </div>
       </div>
 
-      {/* Settings Modal/Drawer */}
+      {/* Settings Drawer */}
       {showSettings && (
-        <div className="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 w-full max-w-xl">
+        <div className="mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-black/[0.06] dark:border-white/[0.08] w-full max-w-xl">
           <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-3">
             Custom Durations (Minutes)
           </h4>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Focus</label>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Focus</label>
               <input
                 type="number"
                 min="1"
@@ -270,11 +270,11 @@ export default function PomodoroTimer() {
                   setWorkMinutes(val);
                   if (mode === 'work' && !isActive) setTimeLeftSeconds(val * 60);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium"
+                className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium"
               />
             </div>
             <div>
-              <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Short Break</label>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Short Break</label>
               <input
                 type="number"
                 min="1"
@@ -285,11 +285,11 @@ export default function PomodoroTimer() {
                   setShortBreakMinutes(val);
                   if (mode === 'shortBreak' && !isActive) setTimeLeftSeconds(val * 60);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium"
+                className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium"
               />
             </div>
             <div>
-              <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Long Break</label>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Long Break</label>
               <input
                 type="number"
                 min="1"
@@ -300,7 +300,7 @@ export default function PomodoroTimer() {
                   setLongBreakMinutes(val);
                   if (mode === 'longBreak' && !isActive) setTimeLeftSeconds(val * 60);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium"
+                className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium"
               />
             </div>
           </div>
@@ -310,27 +310,27 @@ export default function PomodoroTimer() {
       {/* Mode Indicator Tabs */}
       <div className="flex items-center justify-center gap-2 mb-6">
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
             mode === 'work'
-              ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400'
+              ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
               : 'text-slate-400'
           }`}
         >
           Focus Interval
         </span>
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
             mode === 'shortBreak'
-              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400'
+              ? 'bg-[#D4FF4F] text-[#111406] shadow-xs'
               : 'text-slate-400'
           }`}
         >
           Short Rest
         </span>
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
             mode === 'longBreak'
-              ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400'
+              ? 'bg-[#DDD6FE] text-[#6D28D9] shadow-xs'
               : 'text-slate-400'
           }`}
         >
@@ -340,15 +340,15 @@ export default function PomodoroTimer() {
 
       {/* Big Digits Display with Tabular Figures */}
       <div className="text-center my-6">
-        <div className="text-7xl sm:text-8xl md:text-9xl font-black font-tabular tracking-tight text-slate-900 dark:text-slate-50 leading-none select-none">
+        <div className="text-7xl sm:text-8xl md:text-9xl font-black font-tabular tracking-tight text-slate-900 dark:text-white leading-none select-none">
           {formatTime(timeLeftSeconds)}
         </div>
 
         {/* Linear Progress Bar */}
-        <div className="w-full max-w-md mx-auto mt-6 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+        <div className="w-full max-w-md mx-auto mt-6 h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-1000 ${
-              mode === 'work' ? 'bg-blue-600' : 'bg-emerald-500'
+              mode === 'work' ? 'bg-[#18181B] dark:bg-[#D4FF4F]' : 'bg-[#D4FF4F]'
             }`}
             style={{ width: `${progressPercent}%` }}
           />
@@ -362,48 +362,48 @@ export default function PomodoroTimer() {
           value={subjectLabel}
           onChange={(e) => setSubjectLabel(e.target.value)}
           placeholder="What are you focusing on?"
-          className="w-full text-center text-xs font-medium text-slate-600 dark:text-slate-400 bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 focus:border-blue-500 focus:outline-none py-1"
+          className="w-full text-center text-xs font-semibold text-slate-700 dark:text-slate-300 bg-transparent border-b border-dashed border-slate-300 dark:border-slate-700 focus:border-black dark:focus:border-[#D4FF4F] focus:outline-none py-1.5"
         />
       </div>
 
-      {/* Action Controls */}
-      <div className="flex items-center justify-center gap-4">
+      {/* Action Controls (Flux Pills) */}
+      <div className="flex items-center justify-center gap-3">
         <button
           onClick={handleReset}
-          className="p-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="w-12 h-12 rounded-full border border-black/[0.08] dark:border-white/[0.1] bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-all"
           title="Reset timer (R)"
           aria-label="Reset timer"
         >
-          <RotateCcw className="w-5 h-5" />
+          <RotateCcw className="w-4 h-4" />
         </button>
 
         <button
           onClick={() => setIsActive(!isActive)}
-          className={`px-8 py-4 rounded-2xl text-base font-bold flex items-center gap-2.5 shadow-md transition-transform active:scale-95 ${
+          className={`px-8 py-3.5 rounded-full text-sm font-bold flex items-center gap-2.5 shadow-md transition-all active:scale-95 ${
             isActive
-              ? 'bg-amber-500 hover:bg-amber-600 text-white'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038]'
+              : 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black'
           }`}
           aria-label={isActive ? 'Pause timer' : 'Start timer'}
         >
-          {isActive ? <Pause className="w-5 h-5 fill-white" /> : <Play className="w-5 h-5 fill-white" />}
-          <span>{isActive ? 'Pause' : 'Start Focus'}</span>
+          {isActive ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+          <span>{isActive ? 'Pause Focus' : 'Start Focus'}</span>
         </button>
 
         <button
           onClick={handleSkip}
-          className="p-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="w-12 h-12 rounded-full border border-black/[0.08] dark:border-white/[0.1] bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-all"
           title="Skip to next session (S)"
           aria-label="Skip session"
         >
-          <SkipForward className="w-5 h-5" />
+          <SkipForward className="w-4 h-4" />
         </button>
       </div>
 
       {/* Shortcuts Hint & Completed Count */}
-      <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between text-[11px] text-slate-400 w-full max-w-xl">
-        <span>Completed: <strong className="text-slate-700 dark:text-slate-200">{completedWorkSessions}</strong> focus loops today</span>
-        <span>Shortcuts: <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Space</kbd> Start/Pause • <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">R</kbd> Reset • <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">S</kbd> Skip</span>
+      <div className="mt-8 pt-4 border-t border-black/[0.05] dark:border-white/[0.05] flex flex-wrap items-center justify-between text-[11px] text-slate-400 w-full max-w-xl">
+        <span>Completed: <strong className="text-slate-800 dark:text-slate-200 font-bold">{completedWorkSessions}</strong> loops today</span>
+        <span><kbd className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px]">Space</kbd> Start/Pause • <kbd className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[10px]">R</kbd> Reset</span>
       </div>
     </div>
   );

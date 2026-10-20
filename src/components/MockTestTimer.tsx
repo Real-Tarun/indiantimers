@@ -147,12 +147,12 @@ export default function MockTestTimer() {
     <div
       ref={containerRef}
       className={`rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all ${
-        isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center items-center p-8' : 'p-6 sm:p-8 shadow-xs'
+        isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center items-center p-8 bg-white dark:bg-[#0E1017]' : 'p-6 sm:p-8 shadow-xs rounded-[26px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923]'
       }`}
     >
       {/* Preset Badges Bar */}
       <div className="mb-6">
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
           Select Official Examination Paper Simulation:
         </label>
         <div className="flex flex-wrap gap-2">
@@ -160,9 +160,9 @@ export default function MockTestTimer() {
             <button
               key={p.name}
               onClick={() => handleSelectPreset(p)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 selectedPresetName === p.name
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
@@ -174,33 +174,33 @@ export default function MockTestTimer() {
 
       {/* Main Timer Display */}
       <div className="text-center my-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 mb-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] mb-4 shadow-xs">
           <Clock className="w-3.5 h-3.5" />
           <span>{selectedPresetName} Mock Simulation</span>
         </div>
 
-        <div className="text-6xl sm:text-7xl md:text-8xl font-black font-tabular tracking-tight text-slate-900 dark:text-slate-50 leading-none">
+        <div className="text-6xl sm:text-7xl md:text-8xl font-black font-tabular tracking-tight text-slate-900 dark:text-white leading-none">
           {formatHMS(remainingSeconds)}
         </div>
 
         {/* Elapsed vs Remaining Progress */}
-        <div className="flex items-center justify-between max-w-sm mx-auto text-xs text-slate-400 mt-4 px-1">
+        <div className="flex items-center justify-between max-w-sm mx-auto text-xs text-slate-400 mt-4 px-1 font-semibold">
           <span>Elapsed: {formatHMS(elapsedSeconds)}</span>
           <span>Remaining: {formatHMS(remainingSeconds)}</span>
         </div>
 
         <div className="w-full max-w-md mx-auto mt-2 h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 transition-all duration-500"
+            className="h-full bg-[#18181B] dark:bg-[#D4FF4F] transition-all duration-500"
             style={{ width: `${Math.min(100, (elapsedSeconds / (durationMinutes * 60)) * 100)}%` }}
           />
         </div>
       </div>
 
       {/* Real-time Time-per-question Pacing Insight */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-xs mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-black/[0.05] dark:border-white/[0.06] text-xs mb-8">
         <div>
-          <span className="text-slate-500 dark:text-slate-400 block mb-0.5">Total Questions</span>
+          <span className="text-slate-500 dark:text-slate-400 font-semibold block mb-1">Total Questions</span>
           <div className="flex items-center gap-1.5">
             <input
               type="number"
@@ -208,41 +208,41 @@ export default function MockTestTimer() {
               min="1"
               max="500"
               onChange={(e) => setQuestionCount(parseInt(e.target.value) || 1)}
-              className="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-slate-100"
+              className="w-16 px-2.5 py-1 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-white"
             />
-            <span className="text-slate-400">Questions</span>
+            <span className="text-slate-400 font-semibold">Questions</span>
           </div>
         </div>
         <div>
-          <span className="text-slate-500 dark:text-slate-400 block mb-0.5">Recommended Pacing</span>
-          <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">
+          <span className="text-slate-500 dark:text-slate-400 font-semibold block mb-1">Recommended Pacing</span>
+          <span className="font-extrabold text-slate-900 dark:text-[#D4FF4F] text-sm">
             {timePerQuestionSeconds.toFixed(1)}s / question
           </span>
-          <span className="text-[10px] text-slate-400 block">
+          <span className="text-[10px] text-slate-400 block font-medium">
             ({(timePerQuestionSeconds / 60).toFixed(2)} min)
           </span>
         </div>
       </div>
 
-      {/* Control Buttons */}
-      <div className="flex items-center justify-center gap-4 mb-6">
+      {/* Control Buttons (Flux Pills) */}
+      <div className="flex items-center justify-center gap-3 mb-6">
         <button
           onClick={handleReset}
-          className="p-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="w-12 h-12 rounded-full border border-black/[0.08] dark:border-white/[0.1] bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-all"
           title="Reset timer"
         >
-          <RotateCcw className="w-5 h-5" />
+          <RotateCcw className="w-4 h-4" />
         </button>
 
         <button
           onClick={isActive ? handlePause : handleStart}
-          className={`px-8 py-4 rounded-2xl text-base font-bold flex items-center gap-2.5 shadow-md transition-transform active:scale-95 ${
+          className={`px-8 py-3.5 rounded-full text-sm font-bold flex items-center gap-2.5 shadow-md transition-all active:scale-95 ${
             isActive
-              ? 'bg-amber-500 hover:bg-amber-600 text-white'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038]'
+              : 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black'
           }`}
         >
-          {isActive ? <Pause className="w-5 h-5 fill-white" /> : <Play className="w-5 h-5 fill-white" />}
+          {isActive ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
           <span>{isActive ? 'Pause Exam' : 'Commence Mock Test'}</span>
         </button>
 

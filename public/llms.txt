@@ -1,17 +1,29 @@
-# IndianTimers - LLM Reference Guide
+# IndianTimers (indiantimers.com)
 
-> IndianTimers is a specialized Indian examination countdown, schedule tracking, and student productivity platform.
+> The definitive, officially audited examination countdown, schedule tracking, and student focus platform for India. Serves over 50+ national entrance, civil service, and board examinations with zero speculative dates.
 
-## Key Sections & APIs
-- Homepage: https://indiantimers.com/
-- Searchable Exam Directory: https://indiantimers.com/exams/
-- 2027 Master Exam Calendar: https://indiantimers.com/calendar/2027/
-- Pomodoro Focus Timer: https://indiantimers.com/tools/pomodoro-timer/
-- Mock Test Simulation Timer: https://indiantimers.com/tools/mock-test-timer/
-- Precision Stopwatch: https://indiantimers.com/tools/stopwatch/
-- Custom Countdown Generator: https://indiantimers.com/tools/countdown/
-- Editorial Guides & Preparation Strategy: https://indiantimers.com/blog/
+IndianTimers provides precision live countdowns, official schedule milestones, distraction-free study timers (Pomodoro, Mock Test pacing, Stopwatch), Google Calendar/ICS exports, and audited syllabus timelines.
 
-## Data Methodology
-- Examination dates are audited against conducting authority circulars (NTA, UPSC, IITs, CBSE, IIMs).
-- Statuses are strictly classified: Official Confirmed, Tentative (Official Calendar), Expected, Date Not Announced.
+## Core Examination Categories & Countdowns
+- [Medical Entrance Exams (NEET UG, NEET PG, INI-CET)](https://indiantimers.com/exams/medical/): Live timers for NTA NEET UG 2027, AIIMS INI-CET, and NEET PG.
+- [Engineering Entrance Exams (JEE Main, JEE Advanced, BITSAT, GATE)](https://indiantimers.com/exams/engineering/): Official schedules for JEE Main Session 1 & 2, IIT JEE Advanced, GATE 2027, VITEEE, and KCET.
+- [Government & Civil Services (UPSC CSE, SSC CGL, State PSCs)](https://indiantimers.com/exams/government/): Audited UPSC Civil Services Prelims & Mains, SSC CGL, IBPS PO, and State PCS (UPPSC, BPSC, MPSC, KPSC).
+- [Board Examinations (CBSE, ICSE, State Boards)](https://indiantimers.com/exams/board-exams/): CBSE Class 10 & 12 Board Exam 2027 schedules, ICSE/ISC, UP Board, and Maharashtra State Board.
+- [Law Entrance Exams (CLAT, AILET, SLAT)](https://indiantimers.com/exams/law/): Common Law Admission Test (CLAT 2027 UG & PG) and National Law University AILET.
+- [Management Entrance (CAT, XAT, SNAP)](https://indiantimers.com/exams/management/): IIM Common Admission Test (CAT 2026/2027), XLRI XAT, and SNAP.
+- [Design, Architecture & Research](https://indiantimers.com/exams/other-entrance-exams/): NID DAT, NIFT, UCEED, NATA, and CSIR NET.
+
+## Student Focus & Productivity Tools
+- [Pomodoro Focus Timer](https://indiantimers.com/tools/pomodoro-timer/): Science-backed 25/5 study intervals, ambient brown/white noise, full-screen mode, and session counters.
+- [Mock Test Simulation Timer](https://indiantimers.com/tools/mock-test-timer/): Pre-configured pacing for NEET (200 min), JEE Main (180 min), and UPSC Prelims with section-by-section time management.
+- [Custom Countdown Creator](https://indiantimers.com/tools/countdown/): Personalized countdowns with full-screen presentation, local offline persistence, and shareable URLs.
+- [Precision Stopwatch](https://indiantimers.com/tools/stopwatch/): Lap split tracker for problem-solving speed drills.
+- [2027 Master Exam Calendar](https://indiantimers.com/calendar/2027/): Interactive monthly calendar mapping all 2026-2027 Indian exam dates and registration deadlines.
+
+## Data Provenance & Verification Policy
+- Every date is cross-audited against gazettes and official circulars from NTA (nta.ac.in), UPSC (upsc.gov.in), IITs, and CBSE (cbse.gov.in).
+- Statuses are strictly classified into:
+  - `Official Confirmed`: gazetted by authority.
+  - `Tentative (Official Calendar)`: published in preliminary annual calendar.
+  - `Expected`: based on audited 5-year historical trends, clearly flagged.
+- For complete raw context and exam-by-exam schedules for LLM ingestion, see [llms-full.txt](https://indiantimers.com/llms-full.txt).
