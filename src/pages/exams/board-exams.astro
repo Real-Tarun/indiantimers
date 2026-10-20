@@ -1,22 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const boardExams = EXAM_REGISTRY.filter((e) => e.category === 'board-exams');
+const boardExams = DIRECTORY_EXAMS.filter((e) => e.category === 'board-exams');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Board Exams', url: '/exams/board-exams/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'National & State Board Exam Countdowns 2026-2027',
+  description: 'Audited schedules, countdowns, and official timetables for CBSE Class 10 & 12, ICSE, ISC, and State Secondary Boards.',
+  url: `${siteConfig.url}/exams/board-exams/`,
+};
 ---
 
 <BaseLayout
-  title="Board Exam Countdowns 2026-2027 | CBSE Class 10 & 12, ICSE, ISC, State Boards | IndianTimers"
-  description="Live countdowns and confirmed schedules for CBSE Class 10 & 12 Board Exams 2027, ICSE, ISC, UP Board, Maharashtra SSC/HSC, and Bihar Board."
+  title="Board Exam Countdowns 2026-2027 | CBSE Class 10 & 12, ICSE, State Boards | IndianTimers"
+  description="Live countdowns and verified date sheets for CBSE Class 10 & 12 Board Exams 2027, ICSE Class 10, ISC Class 12, UP Board, Maharashtra Board, and Bihar Board."
   canonicalUrl={`${siteConfig.url}/exams/board-exams/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,51 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Board Exams</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
-      Class 10 & 12 Board Examination Countdowns (2026-2027)
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
+      Secondary & Higher Secondary Board Exam Countdowns (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for CBSE secondary and senior secondary board examinations, CISCE ICSE/ISC, UPMSP, MSBSHSE, BSEB, and Rajasthan Board.
+      Comprehensive schedules and countdowns for Central Board of Secondary Education (CBSE Class 10 & 12), CISCE (ICSE & ISC), and major State Education Boards (UP Board, Maharashtra State Board, Bihar School Examination Board, Rajasthan Board).
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={boardExams} initialCategory="board-exams" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={boardExams} initialCategory="board-exams" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The Academic Milestone of National and State Board Examinations
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Secondary (Class 10) and Senior Secondary (Class 12) board examinations represent a foundational turning point for over 20 million Indian students each year. Conducted between mid-February and early April, board examination performance determines senior secondary stream allocations (Science, Commerce, Humanities) and fulfills essential qualifying thresholds (such as the 75% aggregate requirement for JEE Main and CUET university admission eligibility).
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Modern board examination evaluation incorporates an 80-mark conventional theory paper alongside a 20-mark school-based internal assessment or laboratory practical. The theory papers emphasize competency-based evaluation, analytical case studies, and application-oriented reasoning over rote memorization.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Essential Writing & Presentation Tactics for Board Success
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Step-Marking & Derivation Layout</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Official board examiners follow strict step-marking schemes. Always state given variables, formula definitions, standard SI units, and underline final answers to secure intermediate marks even if minor arithmetic errors occur.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">15-Minute Reading Strategy</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Use the mandatory 10:15 AM to 10:30 AM reading window to review internal choices in Sections C and D. Choose your preferred options in advance to eliminate indecision during writing time.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

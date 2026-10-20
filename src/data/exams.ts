@@ -3437,3 +3437,31 @@ export const EXAM_REGISTRY: ExamRecord[] = [
     ],
   },
 ];
+
+export function toDirectoryExam(exam: ExamRecord): ExamRecord {
+  return {
+    id: exam.id,
+    slug: exam.slug,
+    name: exam.name,
+    shortName: exam.shortName,
+    aliases: exam.aliases,
+    category: exam.category,
+    year: exam.year,
+    conductingAuthority: exam.conductingAuthority,
+    dates: exam.dates,
+    startTime: exam.startTime,
+    endTime: exam.endTime,
+    durationMinutes: exam.durationMinutes,
+    timezone: exam.timezone,
+    dateStatus: exam.dateStatus,
+    officialSourceUrl: exam.officialSourceUrl,
+    sourceNotificationTitle: exam.sourceNotificationTitle,
+    officialWebsite: exam.officialWebsite,
+    lastVerified: exam.lastVerified,
+    isIndexable: exam.isIndexable,
+    isFeatured: exam.isFeatured,
+  };
+}
+
+export const DIRECTORY_EXAMS: ExamRecord[] = EXAM_REGISTRY.map(toDirectoryExam);
+

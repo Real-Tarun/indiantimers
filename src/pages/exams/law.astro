@@ -1,22 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const lawExams = EXAM_REGISTRY.filter((e) => e.category === 'law');
+const lawExams = DIRECTORY_EXAMS.filter((e) => e.category === 'law');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Law Entrance', url: '/exams/law/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'National Law Entrance Exam Countdowns & Schedules 2026-2027',
+  description: 'Audited schedules, countdowns, and official dates for CLAT UG, CLAT PG, AILET, and SLAT.',
+  url: `${siteConfig.url}/exams/law/`,
+};
 ---
 
 <BaseLayout
   title="Law Entrance Exam Countdowns 2026-2027 | CLAT, AILET, SLAT | IndianTimers"
-  description="Verified countdowns for CLAT UG & PG 2027, AILET 2027, SLAT, and top law school entrance examinations in India."
+  description="Live countdowns and audited dates for Common Law Admission Test (CLAT 2027 UG & PG), NLU Delhi AILET 2027, and Symbiosis SLAT."
   canonicalUrl={`${siteConfig.url}/exams/law/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,51 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Law</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
       Law Entrance Examination Countdowns (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for the Consortium of National Law Universities CLAT, NLU Delhi AILET, and Symbiosis SLAT. Official session timings and passage-reading pacing tools.
+      Schedules for national undergraduate and postgraduate law entrances including the Common Law Admission Test (CLAT UG & PG), National Law University Delhi AILET, and Symbiosis Law Admission Test (SLAT).
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={lawExams} initialCategory="law" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={lawExams} initialCategory="law" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The National Law University System & Legal Education in India
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Legal education in India has undergone an institutional transformation since the establishment of the National Law School of India University (NLSIU) Bangalore. Admission to 24 National Law Universities across the country is coordinated through the Consortium of NLUs via the Common Law Admission Test (CLAT), conducted annually in early December for 5-year integrated BA LLB, BBA LLB, and one-year LLM programs. Separately, National Law University Delhi conducts its own autonomous admission test: the All India Law Entrance Test (AILET).
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Unlike traditional memory-based examinations, contemporary law entrance tests are entirely passage-based. Candidates must digest dense 450-word editorial excerpts and apply legal principles, logical inferences, and critical deductions within 120 minutes, necessitating high-speed reading comprehension and cognitive agility.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Mastery Techniques for Passage-Based Legal Reasoning
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Strict Principle Application</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Never import outside legal theories into your answer. The principle provided in the passage must be treated as absolute law, even if it contradicts real-world statutes. Apply the rule mechanically to the facts to avoid subjective trap options.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Speed Reading & Triage</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            With 120 questions across approximately 25 long passages, candidates have less than 60 seconds per question. Develop a reading pace of 300+ words per minute and immediately skip multi-variable quant caselets during your first passage sweep.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

@@ -52,12 +52,12 @@ export interface ExamRecord {
   lastVerified: string; // ISO date YYYY-MM-DD
   isIndexable: boolean;
   isFeatured?: boolean; // Highlighted on home page
-  shortDescription: string;
-  detailedOverview: string;
-  instructions: string[];
-  preparationTips: string[];
-  relatedExamIds: string[];
-  faqs: ExamFAQ[];
+  shortDescription?: string;
+  detailedOverview?: string;
+  instructions?: string[];
+  preparationTips?: string[];
+  relatedExamIds?: string[];
+  faqs?: ExamFAQ[];
   verificationNotes?: string;
 }
 

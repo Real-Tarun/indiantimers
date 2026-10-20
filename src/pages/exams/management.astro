@@ -1,22 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const managementExams = EXAM_REGISTRY.filter((e) => e.category === 'management');
+const managementExams = DIRECTORY_EXAMS.filter((e) => e.category === 'management');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Management Entrance', url: '/exams/management/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Management (MBA) Entrance Exam Countdowns & Schedules 2026-2027',
+  description: 'Audited schedules, countdowns, and official dates for CAT, XAT, SNAP, NMAT, and CMAT.',
+  url: `${siteConfig.url}/exams/management/`,
+};
 ---
 
 <BaseLayout
-  title="MBA & Management Exam Countdowns 2026-2027 | CAT, XAT, SNAP, NMAT, CMAT | IndianTimers"
-  description="Live countdowns and official testing dates for IIM CAT 2026, XLRI XAT 2027, SNAP, NMAT by GMAC, and CMAT."
+  title="MBA & Management Exam Countdowns 2026-2027 | CAT, XAT, SNAP, NMAT | IndianTimers"
+  description="Live countdowns and audited dates for IIM Common Admission Test (CAT 2026/2027), XLRI XAT 2027, Symbiosis SNAP, NMAT by GMAC, and CMAT."
   canonicalUrl={`${siteConfig.url}/exams/management/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,57 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Management</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
-      MBA & Management Entrance Countdowns (2026-2027)
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
+      Management (MBA) Entrance Examination Countdowns (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for IIM CAT, XLRI XAT, SNAP, NMAT, and AICTE CMAT. Includes section-by-section time management and mock simulation tools.
+      Schedules for premier national MBA entrance tests including the IIM Common Admission Test (CAT), XLRI Xavier Aptitude Test (XAT), Symbiosis National Aptitude Test (SNAP), NMAT by GMAC, and CMAT.
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={managementExams} initialCategory="management" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={managementExams} initialCategory="management" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The Indian Business School Admissions Landscape
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Postgraduate management education in India represents one of the most competitive career avenues for engineers, commerce graduates, and liberal arts students. Over 330,000 aspirants register annually for the Common Admission Test (CAT), conducted on a rotational basis by one of the older Indian Institutes of Management (IIMs) on the last Sunday of November. CAT scores are accepted by 21 IIMs and premier non-IIM institutions including FMS Delhi, SPJIMR Mumbai, IIT Delhi/Bombay (DoMS/SJMSOM), and MDI Gurgaon.
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Complementing the IIM entrance, XLRI Jamshedpur administers the Xavier Aptitude Test (XAT) on the first Sunday of January, known for its unique Decision Making (DM) section and absence of rigid sectional time limits. Other notable examinations include SNAP (for Symbiosis institutes like SIBM Pune and SCMHRD) and NMAT (for NMIMS Mumbai), each testing distinctive speed, adaptive scoring, and analytical agility models.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Strategic Sectional Pillars for 99+ Percentile Performance
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">VARC Consistency</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Reading Comprehension accounts for 16 out of 24 questions in CAT. Focus on passage elimination rather than hunting for positive matches. Read diverse long-form essays from Aeon, The Atlantic, and philosophical journals daily.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">DILR Set Selection</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            DILR percentile is determined entirely by set selection. Spend the first 4 minutes evaluating all 4 sets to pick the 2 most deterministic arrangements. Solving 2 complete sets cleanly secures a 95+ percentile.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">QA Round-Based Triage</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Arithmetic and Algebra account for over 70% of Quantitative Aptitude. Execute the 3-round approach: solve instant arithmetic in Round 1, tackle manageable algebra in Round 2, and skip heavy time-consuming questions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

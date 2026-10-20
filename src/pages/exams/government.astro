@@ -1,22 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const govtExams = EXAM_REGISTRY.filter((e) => e.category === 'government');
+const governmentExams = DIRECTORY_EXAMS.filter((e) => e.category === 'government');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Government & Civil Services', url: '/exams/government/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Government & Civil Services Exam Countdowns & Schedules 2026-2027',
+  description: 'Audited schedules, countdowns, and official dates for UPSC CSE, SSC CGL, IBPS PO, State PSCs, and Defence entrances.',
+  url: `${siteConfig.url}/exams/government/`,
+};
 ---
 
 <BaseLayout
-  title="Government & Civil Services Exam Countdowns 2026-2027 | UPSC, SSC, Banking, Defense | IndianTimers"
-  description="Accurate countdowns for UPSC Civil Services 2027, SSC CGL/CHSL, NDA, CDS, IBPS PO, SBI PO, RBI Grade B, and State PSCs."
+  title="Government & Civil Services Exam Countdowns 2026-2027 | UPSC, SSC, Banking | IndianTimers"
+  description="Live countdowns and audited dates for UPSC Civil Services 2027, SSC CGL, NDA, CDS, IBPS PO, SBI PO, RRB NTPC, and major State Public Service Commissions."
   canonicalUrl={`${siteConfig.url}/exams/government/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,51 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Government</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
-      Government & Civil Services Examination Countdowns (2026-2027)
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
+      Government & Civil Services Exam Countdowns (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for UPSC Civil Services Prelims & Mains, Staff Selection Commission (SSC), Banking exams (IBPS & SBI), Defence forces (NDA, CDS, AFCAT), and State Public Service Commissions.
+      Audited examination schedules for Union Public Service Commission (UPSC CSE, NDA, CDS), Staff Selection Commission (SSC CGL, CHSL), Institute of Banking Personnel Selection (IBPS), Railway Recruitment Board (RRB), and State Public Service Commissions (UPPSC, BPSC, MPSC, KPSC).
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={govtExams} initialCategory="government" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={governmentExams} initialCategory="government" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The Structure of Indian Public Sector & Civil Service Recruitments
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Government and civil service recruitments in India represent the largest employment selection process in the country, attracting tens of millions of aspirants annually. The recruitment architecture is organized across three primary levels: constitutional bodies such as the Union Public Service Commission (UPSC) and State Public Service Commissions (PSCs); statutory recruitment agencies like the Staff Selection Commission (SSC) and Railway Recruitment Boards (RRB); and specialized autonomous recruiting bodies such as the Institute of Banking Personnel Selection (IBPS).
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Selection processes typically follow a multi-stage funnel: an initial screening objective preliminary test (Prelims) featuring negative marking, followed by extensive conventional descriptive written examinations (Mains), and culminating in a comprehensive personality test or interview. Managing revision deadlines across multiple overlapping public examinations requires a disciplined countdown methodology.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Core Pillars for Public Service Examination Success
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Static Syllabus Integration</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Current affairs questions in UPSC and State PSCs are invariably rooted in static conceptual frameworks. Ground your daily reading of economic surveys, budget bills, and constitutional amendments directly into fundamental standard textbooks (M. Laxmikanth, NCERTs).
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Aptitude & CSAT Safety Margin</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Thousands of high-scoring General Studies candidates are eliminated each year due to falling short of the qualifying threshold in CSAT (Paper 2) or SSC Quantitative Aptitude. Devote daily timed problem-solving blocks to basic numeracy and critical reading comprehension.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

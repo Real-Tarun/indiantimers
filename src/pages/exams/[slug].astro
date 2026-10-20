@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CountdownCard from '../../components/CountdownCard';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { EXAM_REGISTRY, toDirectoryExam } from '../../data/exams';
 import { siteConfig } from '../../config/site';
-import { downloadICS, getGoogleCalendarUrl } from '../../utils/calendar';
+import { getGoogleCalendarUrl } from '../../utils/calendar';
+import { getDetailedExamContent } from '../../utils/examContent';
 import type { ExamRecord } from '../../types/exam';
 
 export async function getStaticPaths() {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const { exam } = Astro.props;
+const detailedContent = getDetailedExamContent(exam);
 
 // Related exams lookup
 const relatedExams = EXAM_REGISTRY.filter((e) =>
@@ -71,11 +73,13 @@ const examJsonLd = {
   },
 };
 
-// FAQPage schema for Google Rich Snippets & LLM direct answers
-const faqJsonLd = exam.faqs && exam.faqs.length > 0 ? {
+// Combine all FAQs for Rich Snippets
+const allFaqs = [...(exam.faqs || []), ...detailedContent.additionalFaqs];
+
+const faqJsonLd = allFaqs.length > 0 ? {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: exam.faqs.map((faq) => ({
+  mainEntity: allFaqs.map((faq) => ({
     '@type': 'Question',
     name: faq.question,
     acceptedAnswer: {
@@ -139,12 +143,12 @@ const schemas = faqJsonLd ? [examJsonLd, faqJsonLd] : [examJsonLd];
     </p>
   </div>
 
-  {/* Main Grid: Live Countdown Hero + Key Facts */}
+  {/* Main Grid: Live Countdown Hero + Content Sections */}
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-    {/* Left 2 Cols: Countdown Card Island + Action Links */}
-    <div class="lg:col-span-2 space-y-6">
+    {/* Left 2 Cols: Main Content */}
+    <div class="lg:col-span-2 space-y-8">
       {/* Live Countdown Hero Card */}
-      <CountdownCard client:load exam={exam} />
+      <CountdownCard client:load exam={toDirectoryExam(exam)} />
 
       {/* Calendar Sync & Export Pill Row */}
       <div class="p-5 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -209,34 +213,193 @@ const schemas = faqJsonLd ? [examJsonLd, faqJsonLd] : [examJsonLd];
         </div>
       </div>
 
-      {/* Detailed Overview */}
+      {/* 1. In-Depth About & Overview */}
       <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3 font-display">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-3 font-display">
           About {exam.name}
         </h2>
-        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
           {exam.detailedOverview}
         </p>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Administered annually by {exam.conductingAuthority}, this examination serves as a critical national gateway for students seeking admission and career appointment across premier Indian institutions. Maintaining an accurate, drift-free second-by-second countdown is essential for candidates to budget revision phases, track registration windows, and build circadian rhythm synchronization for their scheduled test shift.
+        </p>
+      </div>
 
-        {/* Instructions */}
-        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">
-          Official Examination Day Guidelines
-        </h3>
-        <ul class="space-y-2 mb-6 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
-          {exam.instructions.map((inst) => (
-            <li>{inst}</li>
-          ))}
-        </ul>
+      {/* 2. Comprehensive Examination Pattern & Marking Scheme */}
+      <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
+          {exam.shortName} Examination Pattern & Marking Scheme
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          Understanding the examination architecture and scoring blueprint enables candidates to avoid negative marking penalties, calibrate section-by-section time budgets, and maximize composite percentile ranks.
+        </p>
 
-        {/* Preparation Tips */}
-        <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">
-          Recommended Pacing & Preparation Strategy
-        </h3>
-        <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
-          {exam.preparationTips.map((tip) => (
-            <li>{tip}</li>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs mb-6">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+            <span class="text-slate-500 dark:text-slate-400 block mb-1">Testing Mode:</span>
+            <strong class="text-slate-900 dark:text-white">{detailedContent.pattern.mode}</strong>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+            <span class="text-slate-500 dark:text-slate-400 block mb-1">Total Questions:</span>
+            <strong class="text-slate-900 dark:text-white">{detailedContent.pattern.totalQuestions}</strong>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+            <span class="text-slate-500 dark:text-slate-400 block mb-1">Total Marks:</span>
+            <strong class="text-slate-900 dark:text-white">{detailedContent.pattern.totalMarks}</strong>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+            <span class="text-slate-500 dark:text-slate-400 block mb-1">Official Test Duration:</span>
+            <strong class="text-slate-900 dark:text-white">{detailedContent.pattern.durationText}</strong>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs mb-6">
+          <h4 class="font-bold text-amber-900 dark:text-amber-300 mb-1">Scoring & Negative Marking Rules</h4>
+          <p class="text-amber-800 dark:text-amber-200 leading-relaxed">
+            {detailedContent.pattern.markingScheme}
+          </p>
+        </div>
+
+        <div class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+          <p>• <strong>Medium of Examination:</strong> {detailedContent.pattern.medium}</p>
+          <p>• <strong>Shift Timing Breakdown:</strong> {detailedContent.pattern.shifts}</p>
+        </div>
+      </div>
+
+      {/* 3. Subject Breakdown & High-Yield Topic Weightage */}
+      <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
+          Curriculum Breakdown & High-Yield Section Weightage
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          Analyze historical question distribution and topic weightage to prioritize syllabus coverage effectively:
+        </p>
+
+        <div class="space-y-6">
+          {detailedContent.sections.map((sec) => (
+            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">{sec.name}</h3>
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#18181B] dark:bg-white text-white dark:text-[#111406]">
+                  {sec.weightage}
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+                {sec.strategy}
+              </p>
+              <div class="text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1">High-Frequency Topics:</span>
+                <div class="flex flex-wrap gap-1.5">
+                  {sec.keyTopics.map((topic) => (
+                    <span class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[11px]">
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
+      </div>
+
+      {/* 4. Phase-by-Phase Preparation Timetable & Countdown Strategy */}
+      <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
+          Phase-by-Phase Countdown Strategy & Revision Timetable
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          Structure your daily study routine into progressive milestones mapped against the countdown deadline:
+        </p>
+
+        <div class="space-y-6">
+          {detailedContent.phases.map((phase, idx) => (
+            <div class="border-l-2 border-[#18181B] dark:border-[#D4FF4F] pl-4 sm:pl-6 space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-black uppercase tracking-wider text-slate-400">Stage 0{idx + 1}</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">{phase.timeframe}</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">{phase.title}</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{phase.focus}</p>
+              <ul class="space-y-1 text-xs text-slate-600 dark:text-slate-300 list-disc list-inside pt-1">
+                {phase.deliverables.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. Exam Day Center Guidelines & Code of Conduct */}
+      <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
+          Official Examination Day Code of Conduct & Guidelines
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          Adhere strictly to official conducting authority instructions to prevent disqualification or reporting delays:
+        </p>
+
+        <div class="space-y-5 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-2">Mandatory Documents to Carry</h3>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 list-disc list-inside">
+              {detailedContent.examDayGuidelines.mandatoryDocuments.map((doc) => (
+                <li>{doc}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-rose-600 dark:text-rose-400 mb-2">Strictly Prohibited Items</h3>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 list-disc list-inside">
+              {detailedContent.examDayGuidelines.prohibitedItems.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-2">Prescribed Dress Code Advisory</h3>
+            <ul class="space-y-1.5 text-slate-600 dark:text-slate-300 list-disc list-inside">
+              {detailedContent.examDayGuidelines.dressCode.map((rule) => (
+                <li>{rule}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+            <strong class="text-slate-900 dark:text-white block mb-1">Center Entry & Reporting Protocol:</strong>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+              {detailedContent.examDayGuidelines.reportingProtocol}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Eligibility & Admit Card Protocols */}
+      <div class="p-6 sm:p-8 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
+          Eligibility Standards & Admit Card Verification
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-3">Eligibility & Qualifying Criteria</h3>
+            <ul class="space-y-2 text-slate-600 dark:text-slate-300 list-disc list-inside">
+              {detailedContent.eligibilitySummary.map((elig) => (
+                <li>{elig}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white mb-3">Admit Card Protocol</h3>
+            <ul class="space-y-2 text-slate-600 dark:text-slate-300 list-disc list-inside">
+              {detailedContent.admitCardProtocol.map((rule) => (
+                <li>{rule}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -353,16 +516,16 @@ const schemas = faqJsonLd ? [examJsonLd, faqJsonLd] : [examJsonLd];
     </div>
   </div>
 
-  {/* Real Questions FAQ Section */}
-  {exam.faqs.length > 0 && (
-    <section class="max-w-3xl mb-12">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4 font-display">
+  {/* Real Questions & Answers FAQ Section */}
+  {allFaqs.length > 0 && (
+    <section class="max-w-4xl mb-12">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6 font-display">
         {exam.shortName} Frequently Asked Questions
       </h2>
-      <div class="space-y-3">
-        {exam.faqs.map((faq) => (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {allFaqs.map((faq) => (
           <div class="p-5 rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] shadow-xs">
-            <h3 class="text-xs font-bold text-slate-900 dark:text-white mb-1.5">
+            <h3 class="text-xs font-bold text-slate-900 dark:text-white mb-2 leading-snug">
               {faq.question}
             </h3>
             <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -373,6 +536,7 @@ const schemas = faqJsonLd ? [examJsonLd, faqJsonLd] : [examJsonLd];
       </div>
     </section>
   )}
+
   <script>
     document.getElementById('fullscreen-trigger-btn')?.addEventListener('click', () => {
       const trigger = document.querySelector<HTMLButtonElement>('[aria-label="Enter full screen countdown"]');

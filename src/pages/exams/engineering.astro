@@ -1,15 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const engineeringExams = EXAM_REGISTRY.filter((e) => e.category === 'engineering');
+const engineeringExams = DIRECTORY_EXAMS.filter((e) => e.category === 'engineering');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Engineering Entrance', url: '/exams/engineering/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Engineering Entrance Exam Countdowns & Schedules 2026-2027',
+  description: 'Audited schedules, countdowns, and official dates for JEE Main, JEE Advanced, GATE, BITSAT, and state CETs.',
+  url: `${siteConfig.url}/exams/engineering/`,
+};
 ---
 
 <BaseLayout
@@ -17,6 +25,7 @@ const breadcrumbs = [
   description="Live countdowns and audited dates for JEE Main 2027 (Session 1 & 2), JEE Advanced, GATE 2027, BITSAT, VITEEE, KCET, WBJEE, and MHT CET."
   canonicalUrl={`${siteConfig.url}/exams/engineering/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,57 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Engineering</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
       Engineering Entrance Examination Countdowns (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for IIT JEE Main, JEE Advanced, GATE, BITSAT, and major state engineering CETs. Live countdowns with shift timing details and syllabus revision links.
+      Schedules for IIT JEE Main, JEE Advanced, GATE, BITSAT, and major state engineering CETs. Live countdowns with shift timing details, question paper blueprints, and revision milestones.
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={engineeringExams} initialCategory="engineering" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={engineeringExams} initialCategory="engineering" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The Indian Engineering Entrance Hierarchy: National Gateways to State CETs
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Engineering admissions in India follow a multi-tiered competitive structure designed to allocate seats across 23 Indian Institutes of Technology (IITs), 32 National Institutes of Technology (NITs), 26 Indian Institutes of Information Technology (IIITs), and state government universities. Over 1.3 million students appear for JEE Main annually across two dedicated testing windows (January and April sessions). The top 250,000 qualifying candidates earn eligibility to contest JEE Advanced, which determines admission to the prestigious IIT system.
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Simultaneously, premier autonomous universities conduct highly competitive proprietary entrances such as the BITSAT (BITS Pilani, Goa, Hyderabad) and VITEEE (VIT Vellore). At the postgraduate level, the Graduate Aptitude Test in Engineering (GATE), jointly administered by the Indian Institute of Science (IISc) and seven zonal IITs, serves as the dual gateway for M.Tech admissions and direct executive engineer appointments across Public Sector Undertakings (ONGC, IOCL, NTPC, BHEL).
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Strategic Preparation Pillars for Engineering Entrances
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Mathematics Accuracy</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Mathematics has historically presented the highest difficulty variance in JEE Main and Advanced. Master multi-concept integration across Vectors, 3D Geometry, and Calculus to convert predictable step-marks reliably.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Physics Fundamentals</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Focus heavily on Mechanics, Electromagnetism, and Modern Physics. Modern Physics and Semiconductors provide high return-on-investment scoring opportunities with direct formula substitution.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Chemistry Time-Buffer</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            Complete the entire Chemistry section within 40 to 45 minutes to bank 75+ minutes each for Mathematics and Physics. Memorize NCERT Inorganic trends line-by-line.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

@@ -1,22 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const otherExams = EXAM_REGISTRY.filter((e) => e.category === 'other-entrance-exams');
+const otherExams = DIRECTORY_EXAMS.filter((e) => e.category === 'other-entrance-exams');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Other Entrances', url: '/exams/other-entrance-exams/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'National Creative, Design, Research & Other Entrance Countdowns 2026-2027',
+  description: 'Audited schedules and countdowns for CUET UG/PG, NID DAT, NIFT, UCEED, NATA, UGC NET, CSIR NET, and CA examinations.',
+  url: `${siteConfig.url}/exams/other-entrance-exams/`,
+};
 ---
 
 <BaseLayout
-  title="National Entrance & Creative Exam Countdowns 2026-2027 | CUET, NIFT, NID, CA | IndianTimers"
-  description="Live countdowns and verified dates for NTA CUET UG, NIFT B.Des, NID DAT, UCEED, NATA Architecture, and ICAI CA Foundation."
+  title="National Entrance & Creative Exam Countdowns 2026-2027 | CUET, NID, NIFT, UGC NET | IndianTimers"
+  description="Live countdowns and audited dates for Common University Entrance Test (CUET UG/PG), NID DAT, NIFT, UCEED, NATA, UGC NET, and ICAI CA examinations."
   canonicalUrl={`${siteConfig.url}/exams/other-entrance-exams/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,51 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Other Entrances</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
-      University, Design & Professional Exam Countdowns (2026-2027)
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
+      National Creative, Design & Research Entrances (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for Common University Entrance Test (CUET UG/PG), premier design colleges (NID, NIFT, UCEED), architecture (NATA), and Chartered Accountancy (ICAI CA).
+      Schedules for national university admissions (CUET UG & PG), premier design and fashion entrances (NID DAT, NIFT, UCEED), architecture tests (NATA), national research fellowships (UGC NET, CSIR NET), and professional certifications (ICAI CA Foundation & Inter).
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={otherExams} initialCategory="other-entrance-exams" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={otherExams} initialCategory="other-entrance-exams" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The Multidisciplinary Entrance Ecosystem: Central Universities to Creative Design
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Beyond engineering and medicine, the Indian higher education landscape offers expansive national gateways into central universities, premier design schools, professional finance bodies, and research councils. The Common University Entrance Test (CUET), introduced under the National Education Policy (NEP 2020), has consolidated undergraduate admissions across 250+ central, state, and private universities (including Delhi University, BHU, JNU, and Jamia Millia Islamia) into a standardized computer-based assessment.
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Similarly, creative design and visual communication aspirants contest specialized, multi-stage entrance formats: the National Institute of Design Design Aptitude Test (NID DAT), National Institute of Fashion Technology (NIFT Entrance), and Undergraduate Common Entrance Examination for Design (UCEED) administered by IIT Bombay. For aspiring researchers and university assistant professors, the National Testing Agency conducts the UGC NET and Joint CSIR-UGC NET bi-annually.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Strategic Preparation Across Specialized Testing Formats
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">CUET Domain Subject Precision</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            CUET questions are strictly bounded by Class 12 NCERT syllabi. Focus exclusively on line-by-line NCERT mastery rather than advanced Olympiad material. Pay close attention to negative marking (+5 for correct, -1 for wrong).
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">Design & Visual Thinking (CAT/GAT)</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+            For NID, NIFT, and UCEED, cultivate daily sketching habits focusing on perspective drawing, light-shadow interaction, and creative storyboarding alongside spatial and mechanical reasoning aptitude.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

@@ -1,15 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
-const medicalExams = EXAM_REGISTRY.filter((e) => e.category === 'medical');
+const medicalExams = DIRECTORY_EXAMS.filter((e) => e.category === 'medical');
 const breadcrumbs = [
   { name: 'Home', url: '/' },
   { name: 'Exams', url: '/exams/' },
   { name: 'Medical Entrance', url: '/exams/medical/' },
 ];
+
+const categorySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Medical Entrance Examination Countdowns & Schedules 2026-2027',
+  description: 'Audited schedules, countdowns, and official dates for NEET UG, NEET PG, INI-CET, and Indian medical entrances.',
+  url: `${siteConfig.url}/exams/medical/`,
+};
 ---
 
 <BaseLayout
@@ -17,6 +25,7 @@ const breadcrumbs = [
   description="Accurate countdowns and verified dates for NEET UG 2027, NEET PG 2027, INI-CET, AIIMS Nursing, and all medical admissions in India."
   canonicalUrl={`${siteConfig.url}/exams/medical/`}
   breadcrumbs={breadcrumbs}
+  schema={categorySchema}
 >
   <div class="mb-8">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
@@ -26,13 +35,79 @@ const breadcrumbs = [
       <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Medical</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 font-display">
       Medical Entrance Examination Countdowns (2026-2027)
     </h1>
     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-      Schedules for national undergraduate and postgraduate medical entrance examinations including NTA NEET UG, NBEMS NEET PG, and AIIMS INI-CET. Includes time presets for the official 200-minute mock test.
+      Schedules for national undergraduate and postgraduate medical entrance examinations including NTA NEET UG, NBEMS NEET PG, and AIIMS INI-CET. Track live second-by-second countdowns, official circular dates, and syllabus milestones.
     </p>
   </div>
 
-  <ExamDirectory client:load initialExams={medicalExams} initialCategory="medical" />
+  {/* Searchable and Filterable Directory Island */}
+  <div class="mb-12">
+    <ExamDirectory client:load initialExams={medicalExams} initialCategory="medical" />
+  </div>
+
+  {/* Comprehensive Editorial Guide & Field Overview */}
+  <section class="max-w-4xl mx-auto space-y-10 border-t border-black/[0.06] dark:border-white/[0.08] pt-12 text-slate-700 dark:text-slate-300">
+    <div class="space-y-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
+        The Indian Medical Admissions Ecosystem: Undergraduate to Super-Specialty
+      </h2>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Medical education in India operates under the regulatory governance of the National Medical Commission (NMC) and the Ministry of Health and Family Welfare. Admission to all undergraduate medical seats across government medical colleges, premier central institutes (AIIMS, JIPMER), state colleges, and deemed universities is governed strictly through a single national window: the National Eligibility cum Entrance Test (NEET UG). Over 2.4 million candidates compete annually for approximately 108,000 MBBS and 28,000 BDS seats, creating one of the most competitive candidate-to-seat ratios in global higher education.
+      </p>
+      <p class="text-xs sm:text-sm leading-relaxed">
+        Beyond undergraduate admissions, medical graduates navigate the postgraduate entrance pathway consisting of NBEMS NEET PG and the Institute of National Importance Combined Entrance Test (INI-CET) administered by AIIMS New Delhi for admission to MD, MS, MCh (6-year), and DM programs across AIIMS, PGIMER Chandigarh, JIPMER Puducherry, and NIMHANS Bengaluru.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Key Examination Profiles in Indian Medical Admissions
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">NEET UG (Undergraduate)</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400 mb-2">
+            The mandatory entrance exam for MBBS, BDS, BAMS, BHMS, and BUMS programs across India. Administered in pen-and-paper OMR format across 13 languages on the first Sunday of May. Features 200 questions (180 to attempt) across Physics, Chemistry, and Biology over 200 minutes (720 maximum marks).
+          </p>
+          <span class="font-semibold text-slate-800 dark:text-slate-200 block">Conducting Body: National Testing Agency (NTA)</span>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-2">INI-CET (Institute of National Importance)</h3>
+          <p class="leading-relaxed text-slate-600 dark:text-slate-400 mb-2">
+            Bi-annual computer-based examination (May and November sessions) for admission to premier institutes including AIIMS New Delhi, PGIMER, JIPMER, and SCTIMST. Features clinical case vignettes and multi-disciplinary medical scenarios.
+          </p>
+          <span class="font-semibold text-slate-800 dark:text-slate-200 block">Conducting Body: AIIMS New Delhi</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white font-display">
+        Proven Preparation Protocols for Medical Aspirants
+      </h2>
+      <div class="space-y-3 text-xs leading-relaxed">
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-1">1. NCERT Mastery as the Primary Anchor</h3>
+          <p class="text-slate-600 dark:text-slate-300">
+            For Biology and Inorganic Chemistry, NCERT textbooks from Classes 11 and 12 constitute the primary source from which direct assertion-reasoning, diagram-based, and matching-type questions are created. Every diagram label, supplementary appendix, and chapter summary must be committed to memory.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-1">2. Circadian Rhythm Conditioning (02:00 PM to 05:20 PM)</h3>
+          <p class="text-slate-600 dark:text-slate-300">
+            Because NEET UG is administered in the afternoon window, candidates frequently suffer from post-lunch cognitive fatigue. Simulating physical OMR mock tests strictly between 02:00 PM and 05:20 PM during the final 60 days conditions your brain to operate at peak analytical performance during official testing hours.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-1">3. Rigorous Negative Marking Calibration</h3>
+          <p class="text-slate-600 dark:text-slate-300">
+            With a -1 mark penalty per incorrect response, five reckless guesses cost 5 penalty marks in addition to 20 potential marks, causing candidate rank drops of 15,000+ positions. Maintain a strict threshold: attempt questions only when at least two incorrect options can be definitively eliminated.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

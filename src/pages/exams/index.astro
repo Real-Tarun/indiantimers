@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExamDirectory from '../../components/ExamDirectory';
-import { EXAM_REGISTRY } from '../../data/exams';
+import { EXAM_REGISTRY, DIRECTORY_EXAMS } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 
 const breadcrumbs = [
@@ -40,7 +40,172 @@ const collectionSchema = {
   </div>
 
   {/* Searchable and Filterable Directory Island */}
-  <ExamDirectory client:load initialExams={EXAM_REGISTRY} initialCategory="all" />
+  <ExamDirectory client:load initialExams={DIRECTORY_EXAMS} initialCategory="all" />
+
+  {/* Editorial Guide to National Examination Schedules & Timeline Architecture */}
+  <section class="mt-16 pt-12 border-t border-slate-200 dark:border-slate-800 space-y-12 text-slate-700 dark:text-slate-300">
+    <div class="max-w-4xl">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 mb-3">
+        <span>National Examination Timetable Handbook</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
+        Navigating India's Competitive Examination Ecosystem
+      </h2>
+      <p class="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-400">
+        Every year, over 30 million students and young professionals across India appear for competitive entrance exams, recruitment selections, and school board certifications. Because conducting bodies operate on precise multi-phase schedules spanning registration windows, city intimation slip releases, admit card downloads, and multiple testing shifts, maintaining an accurate chronological perspective is essential for focused preparation.
+      </p>
+    </div>
+
+    <!-- 3-Season Examination Cycle Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-lg mb-4 border border-amber-200 dark:border-amber-800/50">
+            01
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">Spring Entrance Window</h3>
+          <p class="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-3">January – May</p>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mb-4">
+            The national testing season opens with high-volume undergraduate entrance tests. NTA conducts JEE Main Session 1 in late January and Session 2 in April. May features NEET UG, bringing together more than 2.4 million medical aspirants nationwide, followed by CUET UG testing across hundreds of degree disciplines.
+          </p>
+        </div>
+        <ul class="text-xs space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3 text-slate-500 dark:text-slate-400">
+          <li>• JEE Main (Session 1 & Session 2)</li>
+          <li>• NEET UG (Undergraduate Medical)</li>
+          <li>• CUET UG (Central Universities)</li>
+          <li>• NDA & NA (Union Public Service)</li>
+        </ul>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg mb-4 border border-indigo-200 dark:border-indigo-800/50">
+            02
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">Monsoon & Autumn Window</h3>
+          <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-3">May – September</p>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mb-4">
+            A season dominated by elite advanced evaluations and primary civil service preliminary exams. IIT organizing institutes conduct JEE Advanced in late May for top 2.5 lakh qualifiers. UPSC schedules the Civil Services Preliminary examination, while state public service commissions conduct primary screening stages.
+          </p>
+        </div>
+        <ul class="text-xs space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3 text-slate-500 dark:text-slate-400">
+          <li>• JEE Advanced (IIT Admissions)</li>
+          <li>• UPSC Civil Services (Prelims & Mains)</li>
+          <li>• BITSAT, VITEEE, State CETs</li>
+          <li>• SSC CGL & CHSL Tier Assessments</li>
+        </ul>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg mb-4 border border-emerald-200 dark:border-emerald-800/50">
+            03
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">Winter & Postgraduate Window</h3>
+          <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-3">October – February</p>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mb-4">
+            Focused on premier postgraduate admissions, national law school tests, and board certifications. IIMs organize CAT in late November, followed by XAT, IIFT, and SNAP in December and January. IISc and IITs administer GATE in February, coinciding with CBSE and CISCE Class 10 and 12 theory papers.
+          </p>
+        </div>
+        <ul class="text-xs space-y-1.5 border-t border-slate-100 dark:border-slate-800 pt-3 text-slate-500 dark:text-slate-400">
+          <li>• CAT & XAT (IIMs & Top Business Schools)</li>
+          <li>• GATE (M.Tech Admissions & PSU Hiring)</li>
+          <li>• CLAT (National Law Universities)</li>
+          <li>• CBSE & ICSE Senior Secondary Boards</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Strategic Preparation Blueprint -->
+    <div class="p-8 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-slate-900/60 border border-slate-200 dark:border-slate-800">
+      <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        Strategic Preparation Architecture: Why Live Countdown Tracking Matters
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+        <div>
+          <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Spaced Repetition & Cognitive Milestones</h4>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            Psychological studies in learning retention demonstrate that passive cramming yields less than 20% recall after 14 days. Tracking specific countdown days allows aspirants to partition large multi-volume syllabi into structured 30-day revision loops, reinforcing high-weightage formulas, case laws, and reaction mechanisms before decay sets in.
+          </p>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Mock Test Simulation Conditioning</h4>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            High-stakes competitive assessments test cognitive endurance as much as factual mastery. Knowing exact days remaining enables candidates to calibrate strict 180-minute and 200-minute timed mock tests at the exact shift hours (e.g. 9:00 AM to 12:00 PM or 2:30 PM to 5:30 PM) designated by conducting authorities to stabilize biological focus rhythms.
+          </p>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Backward Scheduling & Tapering</h4>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            Peak performance requires a tapering phase during the final 10 to 14 days before an exam. Rather than attempting new untackled chapters, top rankers dedicate the final countdown window strictly to error notebooks, previous years' official answer keys, and speed drills. Real-time countdown tracking prevents last-minute schedule compression.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Provenance & Verification Protocol -->
+    <div class="space-y-4">
+      <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">
+        Data Provenance & Our 3-Point Source Verification Standard
+      </h3>
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+        With hundreds of educational forums and social media channels publishing speculative exam dates, misinformation causes unnecessary candidate anxiety. IndianTimers enforces strict editorial verification guidelines:
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <div class="font-bold text-slate-900 dark:text-slate-100 mb-1">1. Primary Authority Notifications</div>
+          <p class="text-slate-600 dark:text-slate-400">
+            Dates are entered only after official gazette circulars or public notices are released on authentic conducting bodies' portals (e.g., nta.ac.in, upsc.gov.in, ssc.gov.in, cbse.gov.in).
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <div class="font-bold text-slate-900 dark:text-slate-100 mb-1">2. Transparent Status Labeling</div>
+          <p class="text-slate-600 dark:text-slate-400">
+            Every listing clearly designates whether an exam date is Officially Confirmed, Tentative (based on conducting calendar releases), or Awaiting Announcement. We never show unverified countdowns.
+          </p>
+        </div>
+        <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <div class="font-bold text-slate-900 dark:text-slate-100 mb-1">3. Live Shift & City Tracking</div>
+          <p class="text-slate-600 dark:text-slate-400">
+            As exam dates approach, our registry incorporates official advance city intimation slips, shift-wise timing matrices, and admit card download links directly from verified servers.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive Examination FAQs -->
+    <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+      <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        Frequently Asked Questions: Schedules, Admit Cards, and Registration Cycles
+      </h3>
+      <div class="space-y-4">
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">When do conducting bodies release examination admit cards?</h4>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            Most national testing agencies (including NTA, UPSC, and State Examination Boards) follow a phased pre-examination release. Advance city intimation slips are typically issued 10 to 14 days before the test date to facilitate travel arrangements. Final admit cards containing exact test centre addresses, reporting times, and roll numbers are released 3 to 7 days prior to the first examination day to prevent security compromises.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">How should aspirants handle overlapping examination dates?</h4>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            While premier bodies like NTA, UPSC, and CBSE coordinate national calendars to avoid major clashes, state CETs and university private entrance examinations may occasionally coincide. If dates overlap, prioritize exams based on eligibility tier, counseling seat matrix, and primary career goals. When possible, opt for different session windows (e.g., Session 1 vs. Session 2 in JEE Main or alternate slots in BITSAT).
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">What happens if an official exam date is rescheduled or postponed?</h4>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            Whenever a conducting authority issues an official corrigendum or postponement notification due to administrative or regional requirements, our editorial desk updates the central exam registry within hours. Countdowns automatically synchronize to the revised official date, and notifications are highlighted on the specific exam countdown page.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">Can I export IndianTimers countdowns and schedules to my digital calendar?</h4>
+          <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            Yes. Every exam detail profile features one-click calendar integration. Aspirants can either download an RFC 5545 compliant `.ics` calendar file or click the Google Calendar sync button to automatically populate exam dates, reporting times, and official portal URLs directly into their personal schedule on Android, iOS, Windows, or macOS devices.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   {/* Crawlable Semantic Index for Web Crawlers */}
   <noscript>

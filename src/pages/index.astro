@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CountdownCard from '../components/CountdownCard';
-import { EXAM_REGISTRY } from '../data/exams';
+import { DIRECTORY_EXAMS } from '../data/exams';
 import { siteConfig } from '../config/site';
 
 // Featured upcoming exams for hero grid
-const featuredExams = EXAM_REGISTRY.filter((e) => e.isFeatured).slice(0, 6);
+const featuredExams = DIRECTORY_EXAMS.filter((e) => e.isFeatured).slice(0, 6);
 
 // Structured data
 const websiteSchema = {
@@ -300,6 +300,73 @@ const catMeta: Record<string, { emoji: string; color: string; bg: string }> = {
           </div>
         </article>
       ))}
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       COMPREHENSIVE EDITORIAL GUIDE TO INDIAN EXAM ECOSYSTEM
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="mb-16 pt-10 border-t border-black/[0.06] dark:border-white/[0.08] text-slate-700 dark:text-slate-300">
+    <div class="max-w-4xl mx-auto space-y-10">
+      <div class="text-center">
+        <div class="section-eyebrow justify-center">
+          <span class="w-2 h-2 rounded-full bg-[#D4FF4F]"></span>
+          <span>Aspirant Knowledge Base</span>
+        </div>
+        <h2 class="section-title">Comprehensive Guide to India's Competitive Examination Ecosystem</h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-2xl mx-auto leading-relaxed">
+          From national testing boards to state civil commissions, understanding testing cycles, admit card protocols, and syllabus timelines is crucial for high-stakes preparation.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+        <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-display font-bold text-base text-slate-900 dark:text-white mb-2">
+            Primary Conducting Authorities & Mandates
+          </h3>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+            National testing across India is coordinated by specialized statutory and autonomous authorities. The <strong>National Testing Agency (NTA)</strong> administers major national gateways including NEET (UG), JEE Main, CUET, and UGC NET. The <strong>Union Public Service Commission (UPSC)</strong> conducts prestigious constitutional recruitment examinations including the Civil Services Examination (CSE), NDA & NA, and CDS.
+          </p>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            Meanwhile, school education is anchored by the <strong>Central Board of Secondary Education (CBSE)</strong> and <strong>CISCE</strong>, whose Class 10 and 12 certificates establish eligibility thresholds for subsequent higher education degree entrances and technical credentials.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+          <h3 class="font-display font-bold text-base text-slate-900 dark:text-white mb-2">
+            Chronological Testing Phases & Annual Rhythms
+          </h3>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+            The national testing calendar follows distinct seasonal phases. The <em>Spring Window (January–May)</em> features JEE Main Session 1 & 2, CBSE Board exams, NEET UG, and CUET UG. The <em>Monsoon Window (May–August)</em> is headlined by JEE Advanced, UPSC Civil Services Prelims, and State CETs.
+          </p>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            The <em>Autumn & Winter Window (September–December)</em> encompasses UPSC CSE Mains descriptive assessments, CAT for IIMs, CLAT for National Law Universities, GATE for postgraduate engineering, and extensive banking recruitment cycles (IBPS & SBI).
+          </p>
+        </div>
+      </div>
+
+      <div class="p-6 sm:p-8 rounded-[24px] bg-slate-50 dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] space-y-4">
+        <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white">
+          Why Backward Scheduling & Countdown Tracking Increases Rank Potential
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          Cognitive research demonstrates that unstructured preparation leads to disproportionate time spent on introductory modules while complex high-yield topics are rushed during the final month. Backward scheduling resolves this asymmetry by anchoring all revision milestones to the verified exam date:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs pt-2">
+          <div class="p-4 rounded-xl bg-white dark:bg-[#171923] border border-black/[0.04] dark:border-white/[0.05]">
+            <div class="font-bold text-slate-900 dark:text-white mb-1">1. Spaced Repetition Cycles</div>
+            <p class="text-slate-500 dark:text-slate-400">Review foundational concepts at 7, 21, and 45-day intervals to convert short-term memory into long-term recall.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white dark:bg-[#171923] border border-black/[0.04] dark:border-white/[0.05]">
+            <div class="font-bold text-slate-900 dark:text-white mb-1">2. Timed Shift Simulation</div>
+            <p class="text-slate-500 dark:text-slate-400">Condition biological focus by writing 180-minute and 200-minute mock tests strictly during official exam hours (e.g. 9:00 AM or 2:00 PM).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-white dark:bg-[#171923] border border-black/[0.04] dark:border-white/[0.05]">
+            <div class="font-bold text-slate-900 dark:text-white mb-1">3. Two-Week Tapering</div>
+            <p class="text-slate-500 dark:text-slate-400">Cease attempting new chapters 14 days before the test date; dedicate remaining hours exclusively to error notebooks and official PYQs.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
