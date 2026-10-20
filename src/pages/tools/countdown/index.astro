@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CustomCountdownCreator from '../../../components/CustomCountdownCreator';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/countdown/' },
+  { name: 'Custom Countdown', url: '/tools/countdown/' },
+];
+
+const appSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'IndianTimers Custom Exam Countdown Creator',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Create shareable custom countdown timers for mock tests, assignment deadlines, and personal milestones with calendar export.',
+};
+---
+
+<BaseLayout
+  title="Create Custom Exam Countdown Timer | Shareable & Free | IndianTimers"
+  description="Generate personal countdown timers for your upcoming mock tests, school exams, assignment submission deadlines, and coaching tests. Share with study groups or export to calendar."
+  canonicalUrl={`${siteConfig.url}/tools/countdown/`}
+  breadcrumbs={breadcrumbs}
+  schema={appSchema}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Custom Countdown</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Custom Exam Countdown Creator
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Create a live, drift-free countdown for any test, assignment, or personal milestone. Easily shareable with peers or saveable to your private dashboard.
+    </p>
+  </div>
+
+  <CustomCountdownCreator client:load />
+</BaseLayout>

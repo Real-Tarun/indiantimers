@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PomodoroTimer from '../../../components/PomodoroTimer';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/pomodoro-timer/' },
+  { name: 'Pomodoro Focus Timer', url: '/tools/pomodoro-timer/' },
+];
+
+const appSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'IndianTimers Pomodoro Focus Timer for Students',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Online 25/5 and 50/10 Pomodoro focus timer with synthesized audio cues, screen wake lock, and study session tracking.',
+};
+---
+
+<BaseLayout
+  title="Online Pomodoro Study Timer: 25/5 & 50/10 Focus Intervals | IndianTimers"
+  description="Free distraction-free Pomodoro timer for NEET, JEE, and UPSC students. Features 25/5 and 50/10 presets, screen wake lock, audio chimes, and study tracking."
+  canonicalUrl={`${siteConfig.url}/tools/pomodoro-timer/`}
+  breadcrumbs={breadcrumbs}
+  schema={appSchema}
+>
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Pomodoro Focus Timer</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Online Pomodoro Focus Timer for Students
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Scientifically proven focus loops designed to sustain intense cognitive concentration without burnout. Includes custom intervals, ambient alerts, and automatic local session tracking.
+    </p>
+  </div>
+
+  {/* Pomodoro Interactive Island */}
+  <div class="max-w-3xl mx-auto mb-12">
+    <PomodoroTimer client:load />
+  </div>
+
+  {/* Informational Guidance Section */}
+  <div class="max-w-3xl mx-auto space-y-6 text-xs text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-200 dark:border-slate-800 pt-8">
+    <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">
+      How to Apply the Pomodoro Technique to Indian Competitive Exams
+    </h2>
+    <p>
+      Standard 25-minute Pomodoro sessions work well for quick memorization (e.g. Inorganic Chemistry formulas or Biology terminology). However, for engineering and civil services preparation requiring deep problem solving, we recommend our <strong>50/10 Deep Focus Preset</strong>.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+      <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1">1. Choose One Subject</h3>
+        <p>Avoid multitasking. Dedicate the entire interval exclusively to one chapter or test series paper.</p>
+      </div>
+      <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1">2. Keep Screen Awake</h3>
+        <p>Our timer requests a browser Screen Wake Lock so your device stays on without touching the screen.</p>
+      </div>
+      <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1">3. Step Away on Breaks</h3>
+        <p>During the 5 or 10-minute break, stand up, stretch, and hydrate rather than browsing social media.</p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'About IndianTimers', url: '/about/' },
+];
+---
+
+<BaseLayout
+  title="About IndianTimers: Our Mission & Verification Standards | IndianTimers"
+  description="Learn about IndianTimers, our mission to provide Indian students with verified examination countdowns, zero speculation, and high-performance study tools."
+  canonicalUrl={`${siteConfig.url}/about/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-3xl mx-auto space-y-8 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-6">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+        About IndianTimers
+      </h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Engineered for clarity, accuracy, and student productivity across India.
+      </p>
+    </div>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Our Core Mission</h2>
+      <p>
+        Every year, tens of millions of Indian students prepare for life-defining examinations—such as NEET UG, JEE Main, UPSC Civil Services, GATE, and Class 10 & 12 Board examinations. Unfortunately, search results and social media channels are frequently flooded with speculative clickbait headlines, unverified dates, and intrusive advertising.
+      </p>
+      <p>
+        <strong>IndianTimers</strong> was founded on a simple, non-negotiable premise: <em>students deserve transparent, honest schedule information backed by verifiable primary source circulars, combined with distraction-free focus tools.</em>
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">The Three Pillars of IndianTimers</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1">1. Zero False Countdowns</h3>
+          <p class="text-xs text-slate-500">If a conducting authority has not announced a schedule, we mark it clearly as "Date Not Announced". We never invent speculative countdowns.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1">2. Built-in Pacing Tools</h3>
+          <p class="text-xs text-slate-500">We integrate verified mock timers (e.g. NEET 200m, JEE 180m), Pomodoro cycles, and stopwatch tools directly with the countdowns.</p>
+        </div>
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <h3 class="font-bold text-slate-900 dark:text-slate-100 mb-1">3. Privacy-First Utility</h3>
+          <p class="text-xs text-slate-500">No mandatory registration, phone number collection, or invasive tracking. Your study preferences stay securely in your browser.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">Non-Affiliation Notice</h2>
+      <p>
+        IndianTimers is an independent student information platform. We are not affiliated with, sponsored by, or associated with the National Testing Agency (NTA), Union Public Service Commission (UPSC), Central Board of Secondary Education (CBSE), or any state examination board. All official trademarks, acronyms, and names belong to their respective authorities.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

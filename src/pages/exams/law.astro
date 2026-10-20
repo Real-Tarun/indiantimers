@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const lawExams = EXAM_REGISTRY.filter((e) => e.category === 'law');
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: 'Law Entrance', url: '/exams/law/' },
+];
+---
+
+<BaseLayout
+  title="Law Entrance Exam Countdowns 2026-2027 | CLAT, AILET, SLAT | IndianTimers"
+  description="Verified countdowns for CLAT UG & PG 2027, AILET 2027, SLAT, and top law school entrance examinations in India."
+  canonicalUrl={`${siteConfig.url}/exams/law/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/exams/" class="hover:underline">Exams</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Law</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Law Entrance Examination Countdowns (2026-2027)
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Schedules for the Consortium of National Law Universities CLAT, NLU Delhi AILET, and Symbiosis SLAT. Official session timings and passage-reading pacing tools.
+    </p>
+  </div>
+
+  <ExamDirectory client:load initialExams={lawExams} initialCategory="law" />
+</BaseLayout>

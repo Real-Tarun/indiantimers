@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Terms of Service', url: '/terms/' },
+];
+---
+
+<BaseLayout
+  title="Terms of Service & Disclaimer | IndianTimers"
+  description="Terms of use for IndianTimers. Understand our informational disclaimer, non-affiliation notice, and conditions for utilizing our countdown and timer tools."
+  canonicalUrl={`${siteConfig.url}/terms/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-3xl mx-auto space-y-8 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-6">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+        Terms of Service & Disclaimer
+      </h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Effective Date: October 2026 • Please read carefully before using IndianTimers.
+      </p>
+    </div>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">1. Nature of the Service</h2>
+      <p>
+        IndianTimers is an informational study-productivity suite providing countdowns, calendars, and digital study timers (Pomodoro, Mock Test, Stopwatch) for students in India. The platform is provided free of charge for personal educational use.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">2. Examination Schedule Disclaimer</h2>
+      <p>
+        While IndianTimers employs rigorous verification procedures to cross-check schedules against official notifications released by conducting authorities (such as NTA, UPSC, CBSE, and State Commissions), examination schedules are subject to administrative changes, postponements, and court orders outside our control.
+      </p>
+      <div class="p-4 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 text-slate-700 dark:text-slate-300">
+        <strong>Mandatory Candidate Responsibility:</strong> All candidates must cross-check their admit card dates, reporting times, and roll numbers on the respective conducting body's official website prior to the examination day. IndianTimers cannot be held liable for any missed deadlines or scheduling changes made by examination authorities.
+      </div>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">3. Non-Affiliation with Government Bodies</h2>
+      <p>
+        IndianTimers is an independent educational tool. We are not an official agency, affiliated entity, or representative of the Government of India, the National Testing Agency, the Union Public Service Commission, or any central or state board of secondary education.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">4. Intellectual Property</h2>
+      <p>
+        The software code, countdown engines, design aesthetics, and original editorial articles are the property of IndianTimers. Official examination names, acronyms, and organizational logos are referenced purely for nominative and identification purposes under fair use.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

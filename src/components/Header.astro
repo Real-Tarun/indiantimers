@@ -1,0 +1,94 @@
+---
+import { siteConfig } from '../config/site';
+import ThemeToggle from './ThemeToggle';
+---
+
+<header class="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    {/* Brand Logo & Name */}
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
+        IT
+      </div>
+      <div class="flex flex-col">
+        <span class="font-extrabold text-base tracking-tight text-slate-900 dark:text-slate-100 leading-none">
+          {siteConfig.name}
+        </span>
+        <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 tracking-wider uppercase mt-0.5">
+          Exam Timers & Focus
+        </span>
+      </div>
+    </a>
+
+    {/* Desktop Navigation Links */}
+    <nav class="hidden md:flex items-center gap-1 text-xs font-semibold" aria-label="Main Navigation">
+      {siteConfig.navigation.map((item) => (
+        <a
+          href={item.href}
+          class="px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1.5"
+        >
+          <span>{item.name}</span>
+          {item.badge && (
+            <span class="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+              {item.badge}
+            </span>
+          )}
+        </a>
+      ))}
+    </nav>
+
+    {/* Right Controls: Theme + Quick Custom Countdown + Mobile Hamburger */}
+    <div class="flex items-center gap-2">
+      <a
+        href="/tools/countdown/"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-xs"
+      >
+        <span>+ Custom Timer</span>
+      </a>
+
+      <ThemeToggle client:load />
+
+      {/* Mobile Menu Dropdown Toggle Button */}
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        class="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+        aria-label="Toggle Navigation Menu"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {/* Mobile Menu Drawer */}
+  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 space-y-1">
+    {siteConfig.navigation.map((item) => (
+      <a
+        href={item.href}
+        class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      >
+        {item.name}
+      </a>
+    ))}
+    <div class="pt-2">
+      <a
+        href="/tools/countdown/"
+        class="block text-center px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white"
+      >
+        + Create Custom Countdown
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  if (btn && menu) {
+    btn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  }
+</script>

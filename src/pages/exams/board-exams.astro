@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const boardExams = EXAM_REGISTRY.filter((e) => e.category === 'board-exams');
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: 'Board Exams', url: '/exams/board-exams/' },
+];
+---
+
+<BaseLayout
+  title="Board Exam Countdowns 2026-2027 | CBSE Class 10 & 12, ICSE, ISC, State Boards | IndianTimers"
+  description="Live countdowns and confirmed schedules for CBSE Class 10 & 12 Board Exams 2027, ICSE, ISC, UP Board, Maharashtra SSC/HSC, and Bihar Board."
+  canonicalUrl={`${siteConfig.url}/exams/board-exams/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/exams/" class="hover:underline">Exams</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Board Exams</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Class 10 & 12 Board Examination Countdowns (2026-2027)
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Schedules for CBSE secondary and senior secondary board examinations, CISCE ICSE/ISC, UPMSP, MSBSHSE, BSEB, and Rajasthan Board.
+    </p>
+  </div>
+
+  <ExamDirectory client:load initialExams={boardExams} initialCategory="board-exams" />
+</BaseLayout>

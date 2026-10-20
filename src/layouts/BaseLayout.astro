@@ -1,0 +1,129 @@
+---
+import { siteConfig } from '../config/site';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalUrl?: string;
+  robots?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+}
+
+const {
+  title = `${siteConfig.name} - ${siteConfig.tagline}`,
+  description = siteConfig.description,
+  canonicalUrl = Astro.url.href,
+  robots = 'index, follow',
+  ogType = 'website',
+  ogImage = `${siteConfig.url}/favicon.svg`,
+  schema,
+  breadcrumbs,
+} = Astro.props;
+
+// Ensure clean canonical URL
+const formattedCanonical = canonicalUrl.endsWith('/') ? canonicalUrl : `${canonicalUrl}/`;
+
+// Organization Schema
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: siteConfig.name,
+  url: siteConfig.url,
+  logo: `${siteConfig.url}/favicon.svg`,
+  description: siteConfig.description,
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbs.map((b, idx) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    name: b.name,
+    item: b.url.startsWith('http') ? b.url : `${siteConfig.url}${b.url}`,
+  })),
+} : null;
+---
+
+<!DOCTYPE html>
+<html lang="en-IN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#2563eb" />
+
+    {/* Primary SEO Meta Tags */}
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={formattedCanonical} />
+    <meta name="robots" content={robots} />
+
+    {/* Open Graph / Facebook */}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={formattedCanonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:locale" content="en_IN" />
+
+    {/* Twitter */}
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:url" content={formattedCanonical} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
+
+    {/* Inline Theme Detection (Prevents FOUC) */}
+    <script is:inline>
+      const storedTheme = localStorage.getItem('indiantimers_theme');
+      if (
+        storedTheme === 'dark' ||
+        (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+
+    {/* Structured Data (JSON-LD) */}
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    {breadcrumbSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    )}
+    {schema && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(Array.isArray(schema) ? schema : [schema])}
+      />
+    )}
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col min-h-screen">
+    {/* Accessible skip link */}
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md text-xs font-semibold"
+    >
+      Skip to main content
+    </a>
+
+    <Header />
+
+    <main id="main-content" class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

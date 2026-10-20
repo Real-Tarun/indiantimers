@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams Directory', url: '/exams/' },
+];
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Directory of Indian Examinations 2026-2027',
+  description: 'Searchable directory of verified exam countdowns, dates, and conducting authority circulars.',
+  url: `${siteConfig.url}/exams/`,
+};
+---
+
+<BaseLayout
+  title="All Indian Examination Countdowns & Schedules 2026-2027 | IndianTimers"
+  description="Explore verified countdowns and official exam dates for 50+ national and state examinations across medical, engineering, board, government, law, and management fields."
+  canonicalUrl={`${siteConfig.url}/exams/`}
+  breadcrumbs={breadcrumbs}
+  schema={collectionSchema}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Exams</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Indian Examination Directory & Countdowns
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Search and filter across 50+ high-priority Indian competitive exams, entrance tests, and board examinations. Every record is cross-referenced against official circulars from NTA, UPSC, IITs, CBSE, and State Commissions.
+    </p>
+  </div>
+
+  {/* Searchable and Filterable Directory Island */}
+  <ExamDirectory client:load initialExams={EXAM_REGISTRY} initialCategory="all" />
+
+  {/* Crawlable Semantic Index for Web Crawlers */}
+  <noscript>
+    <div class="mt-12 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <h2 class="text-lg font-bold mb-4">Complete Examination Index</h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+        {EXAM_REGISTRY.map((e) => (
+          <li>
+            <a href={`/exams/${e.slug}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
+              {e.shortName} ({e.dates.examDate})
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </noscript>
+</BaseLayout>

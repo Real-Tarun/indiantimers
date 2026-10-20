@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const engineeringExams = EXAM_REGISTRY.filter((e) => e.category === 'engineering');
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: 'Engineering Entrance', url: '/exams/engineering/' },
+];
+---
+
+<BaseLayout
+  title="Engineering Entrance Exam Countdowns 2026-2027 | JEE Main, Advanced, GATE, BITSAT | IndianTimers"
+  description="Live countdowns and audited dates for JEE Main 2027 (Session 1 & 2), JEE Advanced, GATE 2027, BITSAT, VITEEE, KCET, WBJEE, and MHT CET."
+  canonicalUrl={`${siteConfig.url}/exams/engineering/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/exams/" class="hover:underline">Exams</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Engineering</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Engineering Entrance Examination Countdowns (2026-2027)
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Schedules for IIT JEE Main, JEE Advanced, GATE, BITSAT, and major state engineering CETs. Live countdowns with shift timing details and syllabus revision links.
+    </p>
+  </div>
+
+  <ExamDirectory client:load initialExams={engineeringExams} initialCategory="engineering" />
+</BaseLayout>

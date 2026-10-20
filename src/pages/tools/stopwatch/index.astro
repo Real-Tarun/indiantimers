@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Stopwatch from '../../../components/Stopwatch';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/stopwatch/' },
+  { name: 'Precision Stopwatch', url: '/tools/stopwatch/' },
+];
+
+const appSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'IndianTimers Online Lap Stopwatch for Students',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Online millisecond-precision stopwatch with lap split recording and keyboard controls for students.',
+};
+---
+
+<BaseLayout
+  title="Online Stopwatch with Laps for Exam Practice | IndianTimers"
+  description="High-precision online stopwatch with millisecond display and lap recording. Ideal for solving physics numericals, speed math, and question timing."
+  canonicalUrl={`${siteConfig.url}/tools/stopwatch/`}
+  breadcrumbs={breadcrumbs}
+  schema={appSchema}
+>
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Precision Stopwatch</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Online Precision Lap Stopwatch
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Measure question-by-question solve speeds, track reading passage times for CLAT/CAT, and test numerical calculation velocity.
+    </p>
+  </div>
+
+  <div class="max-w-3xl mx-auto mb-12">
+    <Stopwatch client:load />
+  </div>
+
+  <div class="max-w-3xl mx-auto border-t border-slate-200 dark:border-slate-800 pt-8 text-xs text-slate-600 dark:text-slate-400 leading-relaxed space-y-3">
+    <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">
+      Using Laps to Analyze Speed Weaknesses
+    </h2>
+    <p>
+      Use the <kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-bold">L</kbd> key to record a lap each time you submit a question or complete a question paragraph. Inspecting your split times reveals whether certain topics (e.g., Rotation Mechanics or Permutations & Combinations) consume disproportionate time compared to standard exam pacing.
+    </p>
+  </div>
+</BaseLayout>

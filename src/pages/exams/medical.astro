@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const medicalExams = EXAM_REGISTRY.filter((e) => e.category === 'medical');
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: 'Medical Entrance', url: '/exams/medical/' },
+];
+---
+
+<BaseLayout
+  title="Medical Entrance Exam Countdowns 2026-2027 | NEET UG, PG, INI-CET | IndianTimers"
+  description="Accurate countdowns and verified dates for NEET UG 2027, NEET PG 2027, INI-CET, AIIMS Nursing, and all medical admissions in India."
+  canonicalUrl={`${siteConfig.url}/exams/medical/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/exams/" class="hover:underline">Exams</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Medical</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Medical Entrance Examination Countdowns (2026-2027)
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Schedules for national undergraduate and postgraduate medical entrance examinations including NTA NEET UG, NBEMS NEET PG, and AIIMS INI-CET. Includes time presets for the official 200-minute mock test.
+    </p>
+  </div>
+
+  <ExamDirectory client:load initialExams={medicalExams} initialCategory="medical" />
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const managementExams = EXAM_REGISTRY.filter((e) => e.category === 'management');
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: 'Management Entrance', url: '/exams/management/' },
+];
+---
+
+<BaseLayout
+  title="MBA & Management Exam Countdowns 2026-2027 | CAT, XAT, SNAP, NMAT, CMAT | IndianTimers"
+  description="Live countdowns and official testing dates for IIM CAT 2026, XLRI XAT 2027, SNAP, NMAT by GMAC, and CMAT."
+  canonicalUrl={`${siteConfig.url}/exams/management/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/exams/" class="hover:underline">Exams</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Management</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      MBA & Management Entrance Countdowns (2026-2027)
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Schedules for IIM CAT, XLRI XAT, SNAP, NMAT, and AICTE CMAT. Includes section-by-section time management and mock simulation tools.
+    </p>
+  </div>
+
+  <ExamDirectory client:load initialExams={managementExams} initialCategory="management" />
+</BaseLayout>

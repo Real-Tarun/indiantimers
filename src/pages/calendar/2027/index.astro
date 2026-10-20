@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { EXAM_REGISTRY } from '../../../data/exams';
+import { siteConfig } from '../../../config/site';
+
+// Sort chronologically by exam date
+const sortedCalendarExams = [...EXAM_REGISTRY].sort(
+  (a, b) => new Date(a.dates.examDate).getTime() - new Date(b.dates.examDate).getTime()
+);
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exam Calendar 2027', url: '/calendar/2027/' },
+];
+---
+
+<BaseLayout
+  title="Indian Exam Calendar 2027: Complete Schedule & Official Dates | IndianTimers"
+  description="Comprehensive 2027 Indian examination calendar. Verified exam dates, tentative schedules, conducting bodies, and session timings for NEET, JEE, UPSC, GATE, CBSE, and State Boards."
+  canonicalUrl={`${siteConfig.url}/calendar/2027/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Calendar 2027</span>
+    </div>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+          Indian Examination Master Calendar 2027
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+          Chronological index of national competitive exams, university entrances, and school boards. Every date links directly to its audited source notification.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onclick="window.print()"
+        class="no-print self-start md:self-auto px-4 py-2 rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5"
+      >
+        <span>Print Calendar</span>
+      </button>
+    </div>
+  </div>
+
+  {/* Compact Master Calendar Table */}
+  <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-800">
+          <tr>
+            <th class="py-3.5 px-4 whitespace-nowrap">Exam Date</th>
+            <th class="py-3.5 px-4 whitespace-nowrap">Examination Name</th>
+            <th class="py-3.5 px-4 whitespace-nowrap">Conducting Body</th>
+            <th class="py-3.5 px-4 whitespace-nowrap">Status</th>
+            <th class="py-3.5 px-4 whitespace-nowrap">Session Timings</th>
+            <th class="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          {sortedCalendarExams.map((exam) => (
+            <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                {exam.dates.examDate}
+                {exam.dates.examEndDate && (
+                  <span class="block text-[10px] font-normal text-slate-400">
+                    to {exam.dates.examEndDate}
+                  </span>
+                )}
+              </td>
+              <td class="py-3 px-4">
+                <a
+                  href={`/exams/${exam.slug}/`}
+                  class="font-semibold text-blue-600 dark:text-blue-400 hover:underline block"
+                >
+                  {exam.shortName}
+                </a>
+                <span class="text-[11px] text-slate-400 truncate max-w-xs block">
+                  {exam.name}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                {exam.conductingAuthority}
+              </td>
+              <td class="py-3 px-4 whitespace-nowrap">
+                {exam.dateStatus === 'official' ? (
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                    Official
+                  </span>
+                ) : exam.dateStatus === 'tentative' ? (
+                  <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                    Tentative
+                  </span>
+                ) : (
+                  <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                    TBA
+                  </span>
+                )}
+              </td>
+              <td class="py-3 px-4 text-slate-500 whitespace-nowrap">
+                {exam.startTime ? `${exam.startTime} IST` : 'Shift details TBA'}
+              </td>
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <a
+                  href={`/exams/${exam.slug}/`}
+                  class="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                >
+                  View Details →
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</BaseLayout>

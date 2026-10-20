@@ -1,0 +1,17 @@
+# IndianTimers - LLM Reference Guide
+
+> IndianTimers is a specialized Indian examination countdown, schedule tracking, and student productivity platform.
+
+## Key Sections & APIs
+- Homepage: https://indiantimers.com/
+- Searchable Exam Directory: https://indiantimers.com/exams/
+- 2027 Master Exam Calendar: https://indiantimers.com/calendar/2027/
+- Pomodoro Focus Timer: https://indiantimers.com/tools/pomodoro-timer/
+- Mock Test Simulation Timer: https://indiantimers.com/tools/mock-test-timer/
+- Precision Stopwatch: https://indiantimers.com/tools/stopwatch/
+- Custom Countdown Generator: https://indiantimers.com/tools/countdown/
+- Editorial Guides & Preparation Strategy: https://indiantimers.com/blog/
+
+## Data Methodology
+- Examination dates are audited against conducting authority circulars (NTA, UPSC, IITs, CBSE, IIMs).
+- Statuses are strictly classified: Official Confirmed, Tentative (Official Calendar), Expected, Date Not Announced.

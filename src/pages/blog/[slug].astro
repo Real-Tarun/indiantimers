@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { BLOG_POSTS, type BlogPost } from '../../data/blog';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+export async function getStaticPaths() {
+  return BLOG_POSTS.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+
+const relatedExams = EXAM_REGISTRY.filter((e) =>
+  post.relatedExamIds.includes(e.id)
+);
+
+const relatedArticles = BLOG_POSTS.filter((p) =>
+  post.relatedArticleSlugs.includes(p.slug)
+);
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Guides', url: '/blog/' },
+  { name: post.title, url: `/blog/${post.slug}/` },
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.summary,
+  datePublished: `${post.publishDate}T09:00:00+05:30`,
+  dateModified: `${post.updatedDate}T12:00:00+05:30`,
+  author: {
+    '@type': 'Person',
+    name: post.author.name,
+    jobTitle: post.author.role,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: siteConfig.name,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/favicon.svg`,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `${siteConfig.url}/blog/${post.slug}/`,
+  },
+};
+---
+
+<BaseLayout
+  title={`${post.title} | IndianTimers Guide`}
+  description={post.summary}
+  canonicalUrl={`${siteConfig.url}/blog/${post.slug}/`}
+  breadcrumbs={breadcrumbs}
+  ogType="article"
+  schema={articleSchema}
+>
+  <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+    <a href="/" class="hover:underline">Home</a>
+    <span>/</span>
+    <a href="/blog/" class="hover:underline">Guides</a>
+    <span>/</span>
+    <span class="text-slate-800 dark:text-slate-200 font-semibold truncate max-w-xs">{post.title}</span>
+  </nav>
+
+  <article class="max-w-3xl mx-auto">
+    {/* Article Header */}
+    <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-800">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
+          {post.category}
+        </span>
+        <span class="text-xs text-slate-400">•</span>
+        <span class="text-xs text-slate-400">{post.readTime}</span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 leading-tight mb-3">
+        {post.title}
+      </h1>
+
+      <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+        {post.subtitle}
+      </p>
+
+      {/* Author & Verification Meta */}
+      <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+        <div>
+          By <strong class="text-slate-800 dark:text-slate-200">{post.author.name}</strong> ({post.author.role})
+        </div>
+        <div>
+          Published: {post.publishDate} • Updated: <strong class="text-slate-700 dark:text-slate-300">{post.updatedDate}</strong>
+        </div>
+      </div>
+    </header>
+
+    {/* Article Body */}
+    <div class="prose dark:prose-invert prose-slate max-w-none text-xs sm:text-sm leading-relaxed mb-12 space-y-4">
+      <div set:html={post.content.replace(/\n\n/g, '<br/><br/>').replace(/## (.*)/g, '<h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 mt-6 mb-2">$1</h2>').replace(/### (.*)/g, '<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mt-4 mb-1.5">$1</h3>')} />
+    </div>
+
+    {/* Related Examination Countdowns Box */}
+    {relatedExams.length > 0 && (
+      <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 mb-8">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+          Track Mentioned Examination Schedules
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          {relatedExams.map((e) => (
+            <a
+              href={`/exams/${e.slug}/`}
+              class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 hover:border-blue-500 transition-colors flex items-center justify-between"
+            >
+              <div>
+                <span class="font-bold text-slate-900 dark:text-slate-100 block">{e.shortName}</span>
+                <span class="text-slate-400 text-[11px]">{e.dates.examDate}</span>
+              </div>
+              <span class="text-blue-600 font-bold">View →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Related Guides Cross-linking */}
+    {relatedArticles.length > 0 && (
+      <div class="border-t border-slate-200 dark:border-slate-800 pt-6">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+          Related Editorial Guides
+        </h3>
+        <div class="space-y-2 text-xs">
+          {relatedArticles.map((ra) => (
+            <a
+              href={`/blog/${ra.slug}/`}
+              class="block p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-semibold text-blue-600 dark:text-blue-400 transition-colors"
+            >
+              {ra.title} →
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </article>
+</BaseLayout>

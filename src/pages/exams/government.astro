@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExamDirectory from '../../components/ExamDirectory';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+
+const govtExams = EXAM_REGISTRY.filter((e) => e.category === 'government');
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: 'Government & Civil Services', url: '/exams/government/' },
+];
+---
+
+<BaseLayout
+  title="Government & Civil Services Exam Countdowns 2026-2027 | UPSC, SSC, Banking, Defense | IndianTimers"
+  description="Accurate countdowns for UPSC Civil Services 2027, SSC CGL/CHSL, NDA, CDS, IBPS PO, SBI PO, RBI Grade B, and State PSCs."
+  canonicalUrl={`${siteConfig.url}/exams/government/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/exams/" class="hover:underline">Exams</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Government</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Government & Civil Services Examination Countdowns (2026-2027)
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Schedules for UPSC Civil Services Prelims & Mains, Staff Selection Commission (SSC), Banking exams (IBPS & SBI), Defence forces (NDA, CDS, AFCAT), and State Public Service Commissions.
+    </p>
+  </div>
+
+  <ExamDirectory client:load initialExams={govtExams} initialCategory="government" />
+</BaseLayout>

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MockTestTimer from '../../../components/MockTestTimer';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/mock-test-timer/' },
+  { name: 'Mock Test Simulator', url: '/tools/mock-test-timer/' },
+];
+
+const appSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'IndianTimers Mock Test Simulator & Exam Room Timer',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Online 3-hour exam timer (180 mins) and NEET 200-min simulation timer with question pacing and warning bells.',
+};
+---
+
+<BaseLayout
+  title="Mock Test Timer: 3 Hour & 180 Minute Exam Simulator | IndianTimers"
+  description="Free full-length mock test timer for NEET (200m), JEE Main (180m), UPSC (120m), and CAT. Includes 30m and 5m warning audio bells and time-per-question calculator."
+  canonicalUrl={`${siteConfig.url}/tools/mock-test-timer/`}
+  breadcrumbs={breadcrumbs}
+  schema={appSchema}
+>
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Mock Test Timer</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Official Mock Test Simulation Timer
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Simulate real exam hall conditions with official paper durations. Calculated to prevent timer drift when switching browser tabs, with pacing recommendations per question.
+    </p>
+  </div>
+
+  {/* Mock Test Timer Interactive Island */}
+  <div class="max-w-3xl mx-auto mb-12">
+    <MockTestTimer client:load />
+  </div>
+
+  {/* Presets Reference Table */}
+  <div class="max-w-3xl mx-auto border-t border-slate-200 dark:border-slate-800 pt-8">
+    <h2 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">
+      Official Examination Duration Reference
+    </h2>
+    <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 text-xs">
+      <table class="w-full text-left">
+        <thead class="bg-slate-50 dark:bg-slate-800 font-bold border-b border-slate-200 dark:border-slate-800">
+          <tr>
+            <th class="py-2.5 px-4">Examination</th>
+            <th class="py-2.5 px-4">Official Duration</th>
+            <th class="py-2.5 px-4">Questions</th>
+            <th class="py-2.5 px-4">Time / Question</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          <tr>
+            <td class="py-2.5 px-4 font-semibold">NEET UG</td>
+            <td class="py-2.5 px-4">200 Minutes (3h 20m)</td>
+            <td class="py-2.5 px-4">200 (attempt 180)</td>
+            <td class="py-2.5 px-4 font-bold text-blue-600">60.0 Seconds</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-4 font-semibold">JEE Main (B.Tech)</td>
+            <td class="py-2.5 px-4">180 Minutes (3h)</td>
+            <td class="py-2.5 px-4">75 Questions</td>
+            <td class="py-2.5 px-4 font-bold text-blue-600">144.0 Seconds (2.4 min)</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-4 font-semibold">UPSC CSE Prelims</td>
+            <td class="py-2.5 px-4">120 Minutes (2h)</td>
+            <td class="py-2.5 px-4">100 (GS) / 80 (CSAT)</td>
+            <td class="py-2.5 px-4 font-bold text-blue-600">72.0 Seconds (GS)</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-4 font-semibold">IIM CAT</td>
+            <td class="py-2.5 px-4">120 Minutes (3x40m)</td>
+            <td class="py-2.5 px-4">66 Questions</td>
+            <td class="py-2.5 px-4 font-bold text-blue-600">109.0 Seconds</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</BaseLayout>

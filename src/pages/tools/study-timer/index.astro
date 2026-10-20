@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PomodoroTimer from '../../../components/PomodoroTimer';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/study-timer/' },
+  { name: 'Study Timer', url: '/tools/study-timer/' },
+];
+---
+
+<BaseLayout
+  title="Online Study Timer for Students: Daily Revision & Focus | IndianTimers"
+  description="Flexible online study timer for competitive exam aspirants. Track focused revision hours, set subject targets, and review weekly productivity."
+  canonicalUrl={`${siteConfig.url}/tools/study-timer/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Study Timer</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Online Study & Revision Timer
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Configure your target focus block, label your chapter or test series, and track study intervals directly in your personal student dashboard.
+    </p>
+  </div>
+
+  <div class="max-w-3xl mx-auto mb-12">
+    <PomodoroTimer client:load />
+  </div>
+</BaseLayout>

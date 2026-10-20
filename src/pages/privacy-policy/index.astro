@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Privacy Policy', url: '/privacy-policy/' },
+];
+---
+
+<BaseLayout
+  title="Privacy Policy: No-Tracking & Local Storage Standards | IndianTimers"
+  description="IndianTimers privacy policy. We require no registration, collect no personal student phone numbers, and store your timer data 100% on your local device."
+  canonicalUrl={`${siteConfig.url}/privacy-policy/`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-3xl mx-auto space-y-8 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-6">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+        Privacy Policy
+      </h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Effective Date: October 2026 • Dedicated to student privacy and zero data exploitation.
+      </p>
+    </div>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">1. Zero Mandatory Registration</h2>
+      <p>
+        IndianTimers does not require you to create an account, enter an email address, or provide a mobile phone number to access countdowns, study timers, or mock test tools. We believe essential student productivity tools should be immediately accessible without friction.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">2. Local Browser Storage Only</h2>
+      <p>
+        When you bookmark a favorite exam, configure a custom deadline, or log a Pomodoro focus interval, this data is saved exclusively inside your browser's local storage (<code>localStorage</code>) on your own device.
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-slate-500 pl-2">
+        <li>Your saved exams are never sent to external servers.</li>
+        <li>Your study durations and daily focus hours remain solely on your device.</li>
+        <li>You can export all your data in JSON format or wipe it with one click on the <a href="/dashboard/" class="text-blue-600 underline">Personal Dashboard</a>.</li>
+      </ul>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">3. Cookies & Analytics</h2>
+      <p>
+        We do not use invasive third-party cross-site tracking cookies. If privacy-friendly aggregate analytics are deployed in the future, they will track solely non-personally identifiable page visits to measure site performance and Core Web Vitals.
+      </p>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">4. Browser Audio & Wake Lock Permissions</h2>
+      <p>
+        - <strong>Audio Alerts:</strong> Synthesized purely via the Web Audio API on your machine; no external audio files are tracked or downloaded.<br/>
+        - <strong>Screen Wake Lock:</strong> Used only while a focus timer is running to prevent your phone screen from sleeping during study sessions. Released immediately upon pausing or completing the session.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

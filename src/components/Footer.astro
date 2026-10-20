@@ -1,0 +1,129 @@
+---
+import { siteConfig } from '../config/site';
+---
+
+<footer class="mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      {/* Col 1: Brand & Editorial Transparency */}
+      <div class="md:col-span-1 space-y-3">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-white font-extrabold text-xs">
+            IT
+          </div>
+          <span class="font-bold text-slate-900 dark:text-slate-100">{siteConfig.name}</span>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          {siteConfig.tagline}. Dedicated to verified schedule provenance, zero false countdowns, and student focus tools.
+        </p>
+        <p class="text-[11px] text-slate-400">
+          Last verified against official circulars: October 2026.
+        </p>
+      </div>
+
+      {/* Col 2: Exam Categories */}
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3">
+          Exam Hubs
+        </h4>
+        <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+          {siteConfig.categories.slice(0, 5).map((cat) => (
+            <li>
+              <a href={`/exams/${cat.slug}/`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                {cat.name}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/calendar/2027/" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
+              Annual 2027 Master Calendar →
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {/* Col 3: Focus & Timer Utilities */}
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3">
+          Student Utilities
+        </h4>
+        <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+          <li>
+            <a href="/tools/pomodoro-timer/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Pomodoro Focus Timer
+            </a>
+          </li>
+          <li>
+            <a href="/tools/mock-test-timer/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Mock Test Pacing Simulator
+            </a>
+          </li>
+          <li>
+            <a href="/tools/stopwatch/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Precision Lap Stopwatch
+            </a>
+          </li>
+          <li>
+            <a href="/tools/countdown/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Custom Countdown Creator
+            </a>
+          </li>
+          <li>
+            <a href="/dashboard/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Personal Student Dashboard
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {/* Col 4: Trust & Policies */}
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3">
+          Trust & Standards
+        </h4>
+        <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+          <li>
+            <a href="/editorial-policy/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Editorial & Date Verification Policy
+            </a>
+          </li>
+          <li>
+            <a href="/about/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              About IndianTimers
+            </a>
+          </li>
+          <li>
+            <a href="/contact/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Contact & Report Schedule Change
+            </a>
+          </li>
+          <li>
+            <a href="/privacy-policy/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Privacy Policy (No-Tracking Promise)
+            </a>
+          </li>
+          <li>
+            <a href="/terms/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Terms of Service & Disclaimer
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Disclaimer Banner */}
+    <div class="pt-6 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-500 leading-relaxed space-y-2">
+      <p>
+        <strong>Official Disclaimer:</strong> IndianTimers is an independent student utility and information portal. We are not affiliated with, endorsed by, or representing any government body, including the National Testing Agency (NTA), Union Public Service Commission (UPSC), CBSE, or any conducting authority. While schedules are strictly verified against official notices, candidates are advised to verify all critical deadlines with the respective official portals.
+      </p>
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+        <span>© {new Date().getFullYear()} {siteConfig.name}. Designed for Indian students.</span>
+        <div class="flex gap-4">
+          <a href="/sitemap-index.xml" class="hover:underline">Sitemap</a>
+          <a href="/llms.txt" class="hover:underline">llms.txt</a>
+          <a href="/editorial-policy/" class="hover:underline">Verification Methodology</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

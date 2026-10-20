@@ -1,0 +1,354 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CountdownCard from '../../components/CountdownCard';
+import { EXAM_REGISTRY } from '../../data/exams';
+import { siteConfig } from '../../config/site';
+import { downloadICS, getGoogleCalendarUrl } from '../../utils/calendar';
+import type { ExamRecord } from '../../types/exam';
+
+export async function getStaticPaths() {
+  return EXAM_REGISTRY.map((exam) => ({
+    params: { slug: exam.slug },
+    props: { exam },
+  }));
+}
+
+interface Props {
+  exam: ExamRecord;
+}
+
+const { exam } = Astro.props;
+
+// Related exams lookup
+const relatedExams = EXAM_REGISTRY.filter((e) =>
+  exam.relatedExamIds.includes(e.id)
+);
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Exams', url: '/exams/' },
+  { name: exam.shortName, url: `/exams/${exam.slug}/` },
+];
+
+const googleCalUrl = getGoogleCalendarUrl(exam, siteConfig.url);
+
+// JSON-LD structured data for Exam Page
+const examJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `${exam.name} Countdown & Schedule`,
+  description: exam.shortDescription,
+  url: `${siteConfig.url}/exams/${exam.slug}/`,
+  publisher: {
+    '@type': 'Organization',
+    name: siteConfig.name,
+    url: siteConfig.url,
+  },
+  mainEntity: {
+    '@type': 'Event',
+    name: exam.name,
+    startDate: exam.dates.examDate,
+    endDate: exam.dates.examEndDate || exam.dates.examDate,
+    eventStatus:
+      exam.dateStatus === 'official'
+        ? 'https://schema.org/EventScheduled'
+        : exam.dateStatus === 'postponed'
+        ? 'https://schema.org/EventPostponed'
+        : 'https://schema.org/EventScheduled',
+    organizer: {
+      '@type': 'Organization',
+      name: exam.conductingAuthority,
+      url: exam.officialWebsite,
+    },
+    location: {
+      '@type': 'Place',
+      name: 'Designated Examination Centres across India',
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'IN',
+      },
+    },
+  },
+};
+---
+
+<BaseLayout
+  title={`${exam.shortName} Countdown: Exam Date, Schedule & Timing | IndianTimers`}
+  description={`Accurate live countdown to ${exam.shortName} (${exam.dates.examDate}). Verified status: ${exam.dateStatus}. Official NTA/Conducting Body notification, session timings, and mock timers.`}
+  canonicalUrl={`${siteConfig.url}/exams/${exam.slug}/`}
+  breadcrumbs={breadcrumbs}
+  schema={examJsonLd}
+>
+  {/* Breadcrumb Bar */}
+  <nav class="flex items-center gap-2 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+    <a href="/" class="hover:underline">Home</a>
+    <span>/</span>
+    <a href="/exams/" class="hover:underline">Exams</a>
+    <span>/</span>
+    <a href={`/exams/${exam.category}/`} class="hover:underline capitalize">{exam.category.replace('-', ' ')}</a>
+    <span>/</span>
+    <span class="text-slate-800 dark:text-slate-200 font-semibold">{exam.shortName}</span>
+  </nav>
+
+  {/* Header Section */}
+  <div class="mb-8">
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      {exam.dateStatus === 'official' ? (
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Official Confirmed Schedule
+        </span>
+      ) : exam.dateStatus === 'tentative' ? (
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+          <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+          Tentative Official Calendar Schedule
+        </span>
+      ) : (
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          Awaiting Official Notification
+        </span>
+      )}
+
+      <span class="text-xs text-slate-500 dark:text-slate-400">
+        Conducting Authority: <strong class="text-slate-700 dark:text-slate-300">{exam.conductingAuthority}</strong>
+      </span>
+    </div>
+
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 leading-tight mb-3">
+      {exam.name}
+    </h1>
+
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+      {exam.shortDescription}
+    </p>
+  </div>
+
+  {/* Main Grid: Live Countdown Hero + Key Facts */}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    {/* Left 2 Cols: Countdown Card Island + Action Links */}
+    <div class="lg:col-span-2 space-y-6">
+      <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Live Exam Countdown
+          </span>
+          <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+            Timezone: Asia/Kolkata (IST)
+          </span>
+        </div>
+
+        {/* Client-side Live Countdown Island */}
+        <CountdownCard client:load exam={exam} />
+
+        {/* Calendar Sync & Export Buttons */}
+        <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-3">
+            <a
+              href={googleCalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-3.5 py-2 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors inline-flex items-center gap-1.5"
+            >
+              Add to Google Calendar
+            </a>
+          </div>
+
+          <div class="flex items-center gap-2 text-slate-500">
+            <span>Verified on: <strong class="text-slate-700 dark:text-slate-300">{exam.lastVerified}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      {/* Official Notification & Audit Provenance Box */}
+      <div class="p-6 rounded-2xl bg-blue-50/60 dark:bg-slate-900/90 border border-blue-200/60 dark:border-slate-800 text-xs">
+        <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">
+          Official Schedule Provenance & Circular Citation
+        </h3>
+        <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+          This examination schedule is published pursuant to: <strong class="text-slate-800 dark:text-slate-200">"{exam.sourceNotificationTitle}"</strong> issued by {exam.conductingAuthority}.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-2 border-t border-blue-100 dark:border-slate-800">
+          <a
+            href={exam.officialSourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 dark:text-blue-400 font-semibold hover:underline inline-flex items-center gap-1"
+          >
+            Open Conducting Body Circular Portal ↗
+          </a>
+          <a
+            href={exam.officialWebsite}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 inline-flex items-center gap-1"
+          >
+            Official Exam Website ↗
+          </a>
+        </div>
+      </div>
+
+      {/* Detailed Overview */}
+      <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3">
+          About {exam.name}
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+          {exam.detailedOverview}
+        </p>
+
+        {/* Instructions */}
+        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+          Official Examination Day Guidelines
+        </h3>
+        <ul class="space-y-2 mb-6 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
+          {exam.instructions.map((inst) => (
+            <li>{inst}</li>
+          ))}
+        </ul>
+
+        {/* Preparation Tips */}
+        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+          Recommended Pacing & Preparation Strategy
+        </h3>
+        <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
+          {exam.preparationTips.map((tip) => (
+            <li>{tip}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    {/* Right Sidebar: Timeline Milestones + Study Tools Shortcuts */}
+    <div class="space-y-6">
+      {/* Important Dates Table */}
+      <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+          Critical Schedule Milestones
+        </h3>
+
+        <div class="space-y-3 text-xs">
+          <div class="flex items-center justify-between py-1">
+            <span class="text-slate-500">Exam Date:</span>
+            <span class="font-bold text-slate-900 dark:text-slate-100">{exam.dates.examDate}</span>
+          </div>
+          {exam.dates.examEndDate && (
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">Concluding Date:</span>
+              <span class="font-bold text-slate-900 dark:text-slate-100">{exam.dates.examEndDate}</span>
+            </div>
+          )}
+          {exam.startTime && (
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">Session Timing:</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200">
+                {exam.startTime} - {exam.endTime || 'Closing'} IST
+              </span>
+            </div>
+          )}
+          {exam.dates.registrationStart && (
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">Registration Opens:</span>
+              <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.registrationStart}</span>
+            </div>
+          )}
+          {exam.dates.registrationEnd && (
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">Registration Closes:</span>
+              <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.registrationEnd}</span>
+            </div>
+          )}
+          {exam.dates.admitCardRelease && (
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">Admit Card:</span>
+              <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.admitCardRelease}</span>
+            </div>
+          )}
+          {exam.dates.resultDate && (
+            <div class="flex items-center justify-between py-1">
+              <span class="text-slate-500">Expected Result:</span>
+              <span class="font-medium text-slate-700 dark:text-slate-300">{exam.dates.resultDate}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Relevant Focus Tools */}
+      <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+          Practice & Timing Tools
+        </h3>
+        <p class="text-xs text-slate-500 mb-4">
+          Prepare under simulated examination conditions.
+        </p>
+
+        <div class="space-y-2.5">
+          <a
+            href="/tools/mock-test-timer/"
+            class="block p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/80 dark:border-slate-700 transition-colors"
+          >
+            <span class="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+              Mock Test Pacing Simulator →
+            </span>
+            <span class="text-[11px] text-slate-500">
+              Run official {exam.durationMinutes || 180} minute test simulation with time-per-question timer.
+            </span>
+          </a>
+
+          <a
+            href="/tools/pomodoro-timer/"
+            class="block p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/80 dark:border-slate-700 transition-colors"
+          >
+            <span class="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+              50/10 Pomodoro Study Interval →
+            </span>
+            <span class="text-[11px] text-slate-500">
+              Structured daily focus cycles with wake lock.
+            </span>
+          </a>
+        </div>
+      </div>
+
+      {/* Related Examinations */}
+      {relatedExams.length > 0 && (
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-3">
+            Related Examinations
+          </h3>
+          <ul class="space-y-2 text-xs">
+            {relatedExams.map((re) => (
+              <li>
+                <a
+                  href={`/exams/${re.slug}/`}
+                  class="text-blue-600 dark:text-blue-400 hover:underline font-medium block"
+                >
+                  {re.shortName} ({re.dates.examDate})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+
+  {/* Real Questions FAQ Section */}
+  {exam.faqs.length > 0 && (
+    <section class="max-w-3xl mb-12">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+        {exam.shortName} Frequently Asked Questions
+      </h2>
+      <div class="space-y-3">
+        {exam.faqs.map((faq) => (
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100 mb-1">
+              {faq.question}
+            </h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              {faq.answer}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

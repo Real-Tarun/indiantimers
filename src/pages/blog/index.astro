@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { BLOG_POSTS } from '../../data/blog';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Editorial Guides', url: '/blog/' },
+];
+
+const blogIndexSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'IndianTimers Editorial Guides & Strategy',
+  description: 'Fact-checked preparation guides, official notification timelines, and countdown strategies for Indian examinations.',
+  url: `${siteConfig.url}/blog/`,
+};
+---
+
+<BaseLayout
+  title="Editorial Exam Preparation & Schedule Guides | IndianTimers"
+  description="In-depth examination timeline analyses, official circular breakdowns, and evidence-based study timer strategies for NEET, JEE, UPSC, and Board aspirants."
+  canonicalUrl={`${siteConfig.url}/blog/`}
+  breadcrumbs={breadcrumbs}
+  schema={blogIndexSchema}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Guides</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Editorial Guides & Preparation Strategies
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Researched, author-attributed articles designed to help Indian students navigate testing calendars, pacing techniques, and revision timetables.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {BLOG_POSTS.map((post) => (
+      <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+        <div>
+          <div class="flex items-center justify-between text-xs mb-3">
+            <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
+              {post.category}
+            </span>
+            <span class="text-slate-400 text-[11px]">{post.readTime}</span>
+          </div>
+
+          <h2 class="text-base font-bold text-slate-900 dark:text-slate-100 leading-snug mb-2">
+            <a href={`/blog/${post.slug}/`} class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              {post.title}
+            </a>
+          </h2>
+
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
+            {post.summary}
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          <span>{post.publishDate}</span>
+          <a
+            href={`/blog/${post.slug}/`}
+            class="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Read Guide →
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+</BaseLayout>
