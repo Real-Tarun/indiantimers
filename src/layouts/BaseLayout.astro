@@ -63,6 +63,16 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {/* Google tag (gtag.js) */}
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-NMK73HSYL7"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NMK73HSYL7');
+    </script>
     
     {/* Favicon Suite — Standard, Retina, Google Search Snippet (48px) & iOS */}
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
