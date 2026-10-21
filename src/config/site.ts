@@ -15,6 +15,7 @@ export interface SiteConfig {
     contact: string;
     about: string;
   };
+  contactEmail: string;
   navigation: Array<{
     name: string;
     href: string;
@@ -50,6 +51,7 @@ export const siteConfig: SiteConfig = {
     contact: '/contact/',
     about: '/about/',
   },
+  contactEmail: 'you.pncml123@gmail.com',
   navigation: [
     { name: 'All Exams', href: '/exams/' },
     { name: '2027 Calendar', href: '/calendar/2027/', badge: 'Official' },

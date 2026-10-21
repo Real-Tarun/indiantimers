@@ -98,6 +98,13 @@ import { siteConfig } from '../config/site';
               </a>
             </li>
           ))}
+          <li class="pt-1">
+            <a href={`mailto:${siteConfig.contactEmail}`}
+               class="text-[11px] font-medium transition-all hover:underline inline-flex items-center gap-1"
+               style="color: var(--accent-text);">
+              <span>✉</span> {siteConfig.contactEmail}
+            </a>
+          </li>
         </ul>
       </div>
     </div>
