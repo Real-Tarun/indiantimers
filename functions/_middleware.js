@@ -43,6 +43,83 @@ export async function onRequest(context) {
     return Response.redirect(targetUrl.toString(), 301);
   }
 
+  // 2.5 Serve production robots.txt directly with all AI crawlers, search engines, and citations allowed
+  if (url.pathname === '/robots.txt') {
+    const robotsTxt = `# ==================================================
+# IndianTimers - Robots Exclusion Policy
+# Canonical domain: https://indiantimers.com/
+# Designed for Maximum AI Citations, Search Engine Ranking, and AI Training
+# ==================================================
+
+# 1. Global Policy for All Web Crawlers & Bots
+User-agent: *
+Content-Signal: search=yes,ai-input=yes,ai-train=yes,use=full
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /embed/
+
+# 2. Traditional Search Engine Crawlers (Google, Microsoft Bing, Apple, DuckDuckGo, Yandex, Baidu)
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-News
+User-agent: Googlebot-Video
+User-agent: Bingbot
+User-agent: Applebot
+User-agent: DuckDuckBot
+User-agent: YandexBot
+User-agent: Baiduspider
+User-agent: NaverBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /embed/
+
+# 3. AI Search, Grounding, Citations & Generative AI Systems (OpenAI, Anthropic, Perplexity, Google, Meta, Cohere, Mistral)
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
+User-agent: meta-externalfetcher
+User-agent: Cohere-ai
+User-agent: MistralAI-User
+User-agent: Amazonbot
+User-agent: Amzn-User
+User-agent: Bytespider
+User-agent: Diffbot
+User-agent: FirecrawlAgent
+User-agent: FireCrawl
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /embed/
+
+# 4. XML Sitemap & LLM Knowledge Document Endpoints
+Sitemap: https://indiantimers.com/sitemap.xml
+# LLM Context: https://indiantimers.com/llms.txt
+# LLM Full Context: https://indiantimers.com/llms-full.txt
+`;
+    return new Response(robotsTxt, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600, must-revalidate',
+      },
+    });
+  }
+
   // 3. Admin Security & Cloaking Shield (.com/admin is 100% blocked and 404 to unauthorized public)
   if (url.pathname.startsWith('/admin') || url.pathname.startsWith('/api/admin')) {
     const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
