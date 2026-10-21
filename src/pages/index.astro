@@ -24,10 +24,10 @@ const catMeta: Record<string, { emoji: string; iconSrc?: string; color: string; 
   medical:     { emoji: '💉', iconSrc: '/icons/categories/medical.png', color: '#E11D48', bg: '#FFF1F2' },
   engineering: { emoji: '⚙️', iconSrc: '/icons/categories/engineering.png', color: '#4338CA', bg: '#EEF2FF' },
   'board-exams':{ emoji: '📚', iconSrc: '/icons/categories/board-exams.png', color: '#047857', bg: '#ECFDF5' },
-  government:  { emoji: '🏛️', color: '#C2410C', bg: '#FFF7ED' },
+  government:  { emoji: '🏛️', iconSrc: '/icons/categories/government.png', color: '#C2410C', bg: '#FFF7ED' },
   law:         { emoji: '⚖️', iconSrc: '/icons/categories/law.png', color: '#6D28D9', bg: '#F5F3FF' },
-  management:  { emoji: '💼', color: '#B45309', bg: '#FFFBEB' },
-  'other-entrance-exams': { emoji: '✨', color: '#0E7490', bg: '#ECFEFF' },
+  management:  { emoji: '💼', iconSrc: '/icons/categories/management.png', color: '#B45309', bg: '#FFFBEB' },
+  'other-entrance-exams': { emoji: '✨', iconSrc: '/icons/categories/other-entrance-exams.png', color: '#0E7490', bg: '#ECFEFF' },
 };
 ---
 
@@ -159,7 +159,7 @@ const catMeta: Record<string, { emoji: string; iconSrc?: string; color: string; 
         href="/exams/government/"
         class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
       >
-        <span>🏛️</span>
+        <img src="/icons/categories/government.png" alt="Govt & UPSC" class="w-4 h-4 object-contain inline-block" />
         <span>Govt & UPSC</span>
       </a>
       <a
@@ -180,8 +180,15 @@ const catMeta: Record<string, { emoji: string; iconSrc?: string; color: string; 
         href="/exams/management/"
         class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
       >
-        <span>💼</span>
+        <img src="/icons/categories/management.png" alt="Management" class="w-4 h-4 object-contain inline-block" />
         <span>Management</span>
+      </a>
+      <a
+        href="/exams/other-entrance-exams/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <img src="/icons/categories/other-entrance-exams.png" alt="Other Exams" class="w-4 h-4 object-contain inline-block" />
+        <span>Other Exams</span>
       </a>
     </div>
 

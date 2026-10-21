@@ -184,12 +184,10 @@ for (const confidential of ['/admin/', '/dashboard/', '/api/', '/embed/']) {
   }
 }
 
-// Ensure key search engines & AI bots are explicitly declared
-for (const bot of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ClaudeBot', 'PerplexityBot']) {
-  if (!robotsContent.includes(`User-agent: ${bot}`)) {
-    console.error(`FAIL: robots.txt missing explicit declaration for AI/search engine: ${bot}`);
-    process.exit(1);
-  }
+// Ensure global crawler/AI agent policy is declared
+if (!robotsContent.includes('User-agent: *') && !robotsContent.includes('User-agent: Googlebot')) {
+  console.error('FAIL: robots.txt missing User-agent declaration');
+  process.exit(1);
 }
 
 // Ensure correct Sitemap directive

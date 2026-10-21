@@ -17,11 +17,11 @@ export default function ExamDirectory({ initialExams, initialCategory = 'all' }:
     { id: 'all', label: 'All Categories' },
     { id: 'engineering', label: 'Engineering', iconSrc: '/icons/categories/engineering.png', emoji: '⚙️' },
     { id: 'medical', label: 'Medical', iconSrc: '/icons/categories/medical.png', emoji: '💉' },
-    { id: 'government', label: 'Govt & Civil Services', emoji: '🏛️' },
+    { id: 'government', label: 'Govt & Civil Services', iconSrc: '/icons/categories/government.png', emoji: '🏛️' },
     { id: 'board-exams', label: 'Board Exams', iconSrc: '/icons/categories/board-exams.png', emoji: '📚' },
     { id: 'law', label: 'Law', iconSrc: '/icons/categories/law.png', emoji: '⚖️' },
-    { id: 'management', label: 'Management', emoji: '💼' },
-    { id: 'other-entrance-exams', label: 'Other Entrances', emoji: '✨' },
+    { id: 'management', label: 'Management', iconSrc: '/icons/categories/management.png', emoji: '💼' },
+    { id: 'other-entrance-exams', label: 'Other Entrances', iconSrc: '/icons/categories/other-entrance-exams.png', emoji: '✨' },
   ];
 
   const filteredExams = useMemo(() => {
