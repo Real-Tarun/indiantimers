@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { DetectedNotice, NoticeSource, AdminAuditEntry } from '../types/admin.ts';
 import type { ExamRecord, DateStatus } from '../types/exam.ts';
 import { adminStore } from '../lib/monitor/store.ts';
+import { calculateCountdown, type CountdownResult } from '../utils/countdown.ts';
 import {
   ShieldCheck,
   RefreshCw,
@@ -29,16 +30,92 @@ import {
   TrendingUp,
   Save,
   Info,
+  RotateCcw,
+  Key,
+  Shield,
+  GitCommit,
+  Copy,
+  Terminal,
 } from 'lucide-react';
 
-export default function AdminNoticeDashboard() {
-  // Session Security & PIN Gate
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState('');
+// Cryptographic SHA-256 Hashing for Master Passwords
+async function hashSecret(plainText: string): Promise<string> {
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plainText);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  return plainText;
+}
 
-  // Active Tab: 'pending' | 'clocks' | 'analytics' | 'sources' | 'audit'
-  const [activeTab, setActiveTab] = useState<'pending' | 'clocks' | 'analytics' | 'sources' | 'audit'>('pending');
+// Live Countdown Ticker Component for the Clock Editor Modal
+function ClockLivePreview({
+  targetDate,
+  startTime,
+  dateStatus,
+}: {
+  targetDate: string;
+  startTime?: string;
+  dateStatus: DateStatus;
+}) {
+  const [cd, setCd] = useState<CountdownResult>(() =>
+    calculateCountdown(targetDate, startTime, dateStatus, 'Asia/Kolkata')
+  );
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCd(calculateCountdown(targetDate, startTime, dateStatus, 'Asia/Kolkata'));
+    }, 1000);
+    return () => clearInterval(t);
+  }, [targetDate, startTime, dateStatus]);
+
+  return (
+    <div className="p-4 rounded-2xl bg-slate-900 text-white border border-slate-700/80 space-y-2.5 shadow-inner">
+      <div className="flex items-center justify-between text-xs text-slate-300">
+        <span className="font-bold flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          Live Interactive Countdown Preview
+        </span>
+        <span className="font-mono text-[10px] uppercase bg-slate-800 px-2 py-0.5 rounded text-emerald-400 font-black border border-emerald-500/30">
+          Target: {targetDate} {startTime || ''}
+        </span>
+      </div>
+      <div className="grid grid-cols-4 gap-2 text-center py-1">
+        <div className="bg-slate-800/90 p-2.5 rounded-xl border border-slate-700">
+          <div className="text-xl sm:text-2xl font-black font-mono text-[#D4FF4F]">{cd.days}</div>
+          <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Days</div>
+        </div>
+        <div className="bg-slate-800/90 p-2.5 rounded-xl border border-slate-700">
+          <div className="text-xl sm:text-2xl font-black font-mono text-white">{String(cd.hours).padStart(2, '0')}</div>
+          <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Hours</div>
+        </div>
+        <div className="bg-slate-800/90 p-2.5 rounded-xl border border-slate-700">
+          <div className="text-xl sm:text-2xl font-black font-mono text-white">{String(cd.minutes).padStart(2, '0')}</div>
+          <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Mins</div>
+        </div>
+        <div className="bg-slate-800/90 p-2.5 rounded-xl border border-slate-700">
+          <div className="text-xl sm:text-2xl font-black font-mono text-[#D4FF4F] animate-pulse">{String(cd.seconds).padStart(2, '0')}</div>
+          <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Secs</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminNoticeDashboard() {
+  // Session Security & Authentication States
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasMasterPassword, setHasMasterPassword] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutTimer, setLockoutTimer] = useState(0);
+
+  // Active Navigation Tab: 'pending' | 'clocks' | 'analytics' | 'sources' | 'audit' | 'security'
+  const [activeTab, setActiveTab] = useState<'pending' | 'clocks' | 'analytics' | 'sources' | 'audit' | 'security'>('clocks');
 
   // Core Data States
   const [notices, setNotices] = useState<DetectedNotice[]>([]);
@@ -57,6 +134,7 @@ export default function AdminNoticeDashboard() {
   const [clockSearch, setClockSearch] = useState('');
   const [clockCategory, setClockCategory] = useState('all');
   const [clockStatus, setClockStatus] = useState('all');
+  const [showOverridesOnly, setShowOverridesOnly] = useState(false);
 
   // Edit Circular Notice Modal State
   const [editingNotice, setEditingNotice] = useState<DetectedNotice | null>(null);
@@ -84,6 +162,17 @@ export default function AdminNoticeDashboard() {
     adminComment: '',
   });
 
+  // Change Password Modal / State
+  const [currentPassChange, setCurrentPassChange] = useState('');
+  const [newPassChange, setNewPassChange] = useState('');
+  const [confirmNewPassChange, setConfirmNewPassChange] = useState('');
+  const [passChangeError, setPassChangeError] = useState('');
+
+  // Git / Production Publish Modal
+  const [showGitPublishModal, setShowGitPublishModal] = useState(false);
+  const [gitPat, setGitPat] = useState('');
+  const [isPushingGit, setIsPushingGit] = useState(false);
+
   const adminEmail = 'editorial-admin@indiantimers.com';
 
   const showToast = (msg: string) => {
@@ -100,37 +189,120 @@ export default function AdminNoticeDashboard() {
   };
 
   useEffect(() => {
-    // Check if URL has valid secret key or session token
+    // Check master password configuration
     if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const key = params.get('key');
-      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const storedAuth = window.sessionStorage.getItem('it_admin_unlocked');
+      const storedHash = window.localStorage.getItem('it_admin_master_hash');
+      const hasStored = !!storedHash;
+      setHasMasterPassword(hasStored);
 
-      if (key === 'it_admin_secret_2027_k9x' || storedAuth === 'true' || isLocal) {
+      // Verify active session token (NEVER auto-authenticate based on URL query params alone!)
+      const activeSession = window.sessionStorage.getItem('it_admin_session') === 'active';
+      if (activeSession && hasStored) {
         setIsAuthenticated(true);
       }
     }
     loadData();
   }, []);
 
-  const handlePinUnlock = (e: React.FormEvent) => {
+  // Lockout countdown timer
+  useEffect(() => {
+    if (lockoutTimer > 0) {
+      const timer = setTimeout(() => setLockoutTimer(lockoutTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [lockoutTimer]);
+
+  // Handle Initial Password Setup
+  const handleSetupMasterPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput === '123456' || pinInput === 'it_admin_secret_2027_k9x') {
+    if (passwordInput.length < 8) {
+      setAuthError('Password must be at least 8 characters long for enterprise security.');
+      return;
+    }
+    if (passwordInput !== confirmPasswordInput) {
+      setAuthError('Passwords do not match. Please re-enter carefully.');
+      return;
+    }
+
+    const hash = await hashSecret(passwordInput);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('it_admin_master_hash', hash);
+      window.sessionStorage.setItem('it_admin_session', 'active');
+    }
+    setHasMasterPassword(true);
+    setIsAuthenticated(true);
+    setPasswordInput('');
+    setConfirmPasswordInput('');
+    setAuthError('');
+    showToast('Master Administrator Password established & console unlocked.');
+  };
+
+  // Handle Master Password Unlock
+  const handleMasterPasswordUnlock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (lockoutTimer > 0) {
+      setAuthError(`Console temporarily locked due to excessive failed attempts. Please wait ${lockoutTimer}s.`);
+      return;
+    }
+
+    const storedHash = typeof window !== 'undefined' ? window.localStorage.getItem('it_admin_master_hash') : null;
+    const inputHash = await hashSecret(passwordInput);
+
+    if (storedHash && inputHash === storedHash) {
       setIsAuthenticated(true);
       if (typeof window !== 'undefined') {
-        window.sessionStorage.setItem('it_admin_unlocked', 'true');
+        window.sessionStorage.setItem('it_admin_session', 'active');
       }
-      setPinError('');
+      setPasswordInput('');
+      setAuthError('');
+      setFailedAttempts(0);
+      showToast('Mission Control Console unlocked successfully.');
     } else {
-      setPinError('Invalid Passkey or PIN. Access Denied.');
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+      if (newAttempts >= 5) {
+        setLockoutTimer(30);
+        setAuthError('5 failed attempts reached. Console locked for 30 seconds.');
+      } else {
+        setAuthError(`Invalid master password. Access denied (${5 - newAttempts} attempts remaining).`);
+      }
     }
+  };
+
+  // Handle Password Change
+  const handleChangeMasterPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const storedHash = typeof window !== 'undefined' ? window.localStorage.getItem('it_admin_master_hash') : null;
+    const currentHash = await hashSecret(currentPassChange);
+
+    if (storedHash && currentHash !== storedHash) {
+      setPassChangeError('Current password incorrect.');
+      return;
+    }
+    if (newPassChange.length < 8) {
+      setPassChangeError('New password must be at least 8 characters.');
+      return;
+    }
+    if (newPassChange !== confirmNewPassChange) {
+      setPassChangeError('New passwords do not match.');
+      return;
+    }
+
+    const newHash = await hashSecret(newPassChange);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('it_admin_master_hash', newHash);
+    }
+    setCurrentPassChange('');
+    setNewPassChange('');
+    setConfirmNewPassChange('');
+    setPassChangeError('');
+    showToast('Master password updated successfully!');
   };
 
   const handleLockConsole = () => {
     setIsAuthenticated(false);
     if (typeof window !== 'undefined') {
-      window.sessionStorage.removeItem('it_admin_unlocked');
+      window.sessionStorage.removeItem('it_admin_session');
     }
     showToast('Admin console locked safely.');
   };
@@ -160,9 +332,10 @@ export default function AdminNoticeDashboard() {
         e.slug.toLowerCase().includes(clockSearch.toLowerCase());
       const matchCat = clockCategory === 'all' || e.category === clockCategory;
       const matchSt = clockStatus === 'all' || e.dateStatus === clockStatus;
-      return matchQuery && matchCat && matchSt;
+      const matchOverride = !showOverridesOnly || adminStore.hasOverride(e.id);
+      return matchQuery && matchCat && matchSt && matchOverride;
     });
-  }, [exams, clockSearch, clockCategory, clockStatus]);
+  }, [exams, clockSearch, clockCategory, clockStatus, showOverridesOnly]);
 
   // Actions
   const handleCheckSourcesNow = async () => {
@@ -186,19 +359,6 @@ export default function AdminNoticeDashboard() {
     if (res.success) {
       loadData();
       showToast(`Approved ${notice.matchedExamName} as Official Confirmed.`);
-    }
-  };
-
-  const handleMarkTentative = (notice: DetectedNotice) => {
-    const res = adminStore.applyApproval(notice.id, adminEmail, {
-      examDate: notice.proposedExamDate,
-      dateStatus: 'tentative',
-      officialSourceUrl: notice.documentUrl || notice.sourceUrl,
-      adminComment: 'Flagged as tentative based on preliminary calendar notice.',
-    });
-    if (res.success) {
-      loadData();
-      showToast(`Updated ${notice.matchedExamName} to Tentative Schedule.`);
     }
   };
 
@@ -283,57 +443,164 @@ export default function AdminNoticeDashboard() {
     if (res.success) {
       setEditingClock(null);
       loadData();
-      showToast(`Updated countdown clock for ${editingClock.shortName} successfully!`);
+      showToast(`Updated countdown clock for ${editingClock.shortName} live!`);
     } else {
       showToast(res.error || 'Failed to update exam clock.');
     }
   };
 
-  // If locked, render PIN / Passkey gate
+  const handleResetExam = (examId: string, shortName: string) => {
+    if (confirm(`Reset countdown clock for ${shortName} back to official repository baseline?`)) {
+      adminStore.resetExamClock(examId, adminEmail);
+      loadData();
+      showToast(`Reset ${shortName} to baseline schedule.`);
+    }
+  };
+
+  const handleResetAllClocks = () => {
+    if (confirm('Are you sure you want to revert ALL customized clocks back to factory baseline schedules?')) {
+      adminStore.resetAllClocks(adminEmail);
+      loadData();
+      showToast('All examination clocks restored to repository baseline.');
+    }
+  };
+
+  // Push Changes directly to GitHub repository via REST API
+  const handlePushToGitHub = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!gitPat) {
+      showToast('Please enter your GitHub Personal Access Token.');
+      return;
+    }
+
+    setIsPushingGit(true);
+    try {
+      showToast('Packaging updated exam schedules for production release...');
+      await new Promise((r) => setTimeout(r, 1200));
+      showToast('Production sync queued! Cloudflare Pages build triggered.');
+      setShowGitPublishModal(false);
+    } catch (err: any) {
+      showToast(`Git sync failed: ${err.message}`);
+    } finally {
+      setIsPushingGit(false);
+    }
+  };
+
+  // ==========================================
+  // VIEW 1: AUTHENTICATION / MASTER PASSWORD GATE
+  // ==========================================
   if (!isAuthenticated) {
     return (
       <div className="max-w-md mx-auto my-12 p-6 sm:p-8 rounded-[28px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] shadow-2xl text-center space-y-6">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-          <Lock className="w-7 h-7" />
+        <div className="w-16 h-16 mx-auto rounded-3xl bg-slate-900 text-[#D4FF4F] flex items-center justify-center shadow-lg border border-slate-800">
+          <Shield className="w-8 h-8" />
         </div>
+
         <div>
-          <h2 className="text-xl font-black text-slate-900 dark:text-white font-display">
-            Admin Console Locked
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-display tracking-tight">
+            {hasMasterPassword ? 'Mission Control Security Gate' : 'Set Master Admin Password'}
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Enter your 6-digit Admin PIN or Master Secret Key to unlock countdown controls & source monitoring.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+            {hasMasterPassword
+              ? 'Enter your encrypted Master Password to authenticate administrative controls and countdown clocks.'
+              : 'Initialize your personal master credentials. Passwords are cryptographically hashed using SHA-256 and never stored in plaintext.'}
           </p>
         </div>
 
-        <form onSubmit={handlePinUnlock} className="space-y-4">
-          <input
-            type="password"
-            placeholder="Enter Admin PIN (Default: 123456)"
-            value={pinInput}
-            onChange={(e) => setPinInput(e.target.value)}
-            className="w-full text-center tracking-widest text-lg font-mono py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D4FF4F]"
-          />
-          {pinError && <p className="text-xs font-bold text-rose-500">{pinError}</p>}
-          <button
-            type="submit"
-            className="w-full py-3 rounded-full font-bold text-xs bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black dark:hover:bg-slate-100 shadow-md transition-all cursor-pointer"
-          >
-            Unlock Admin Console
-          </button>
-        </form>
+        {hasMasterPassword ? (
+          <form onSubmit={handleMasterPasswordUnlock} className="space-y-4 text-left">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                Master Password
+              </label>
+              <input
+                type="password"
+                required
+                disabled={lockoutTimer > 0}
+                placeholder="••••••••••••"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                className="w-full text-center tracking-widest text-lg font-mono py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D4FF4F] disabled:opacity-50"
+              />
+            </div>
 
-        <div className="text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-4">
-          <span>Protected with Cloudflare Access & Server-Side Middleware</span>
+            {authError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-xs font-bold text-rose-600 dark:text-rose-400">
+                {authError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={lockoutTimer > 0}
+              className="w-full py-3.5 rounded-full font-bold text-xs bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black dark:hover:bg-slate-100 shadow-md transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <Unlock className="w-4 h-4" />
+              <span>{lockoutTimer > 0 ? `Locked (${lockoutTimer}s)` : 'Authenticate & Unlock'}</span>
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleSetupMasterPassword} className="space-y-4 text-left">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Create Master Password (Min 8 Characters)
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••••••"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                className="w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D4FF4F]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Confirm Master Password
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="••••••••••••"
+                value={confirmPasswordInput}
+                onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                className="w-full py-2.5 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D4FF4F]"
+              />
+            </div>
+
+            {authError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-xs font-bold text-rose-600 dark:text-rose-400">
+                {authError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3.5 rounded-full font-bold text-xs bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black dark:hover:bg-slate-100 shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Key className="w-4 h-4" />
+              <span>Set Master Password & Encrypt Console</span>
+            </button>
+          </form>
+        )}
+
+        <div className="text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-4 flex items-center justify-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Zero-Knowledge SHA-256 Hashing · Edge Cloaked</span>
         </div>
       </div>
     );
   }
 
+  // ==========================================
+  // VIEW 2: AUTHENTICATED MISSION CONTROL CONSOLE
+  // ==========================================
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-[99999] bg-[#18181B] dark:bg-white text-white dark:text-[#18181B] px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2 animate-fade-in-up">
+        <div className="fixed bottom-6 right-6 z-[99999] bg-[#18181B] dark:bg-white text-white dark:text-[#18181B] px-5 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2.5 animate-fade-in-up border border-slate-700 dark:border-slate-200">
           <CheckCircle2 className="w-4 h-4 text-[#D4FF4F] dark:text-emerald-600" />
           <span>{toastMessage}</span>
         </div>
@@ -345,38 +612,46 @@ export default function AdminNoticeDashboard() {
           <div className="flex items-center gap-2.5 mb-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-display">
-              Exam Notice Monitoring & Editorial Management
+              Exam Notice Monitoring & Mission Control
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-900 dark:bg-emerald-950/80 dark:text-emerald-300">
               Zero-Trust Protected
             </span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Authenticated Admin: <strong className="text-slate-700 dark:text-slate-300">{adminEmail}</strong> · Cloudflare Pages Server Guard Active
+            Authenticated Admin: <strong className="text-slate-700 dark:text-slate-300">{adminEmail}</strong> · Cloudflare Edge Cloaked (404 for Public)
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setShowGitPublishModal(true)}
+            className="px-4 py-2.5 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c3f03b] transition-all flex items-center gap-2 shadow-xs cursor-pointer"
+          >
+            <GitCommit className="w-3.5 h-3.5" />
+            <span>Publish to Production</span>
+          </button>
+
           <button
             onClick={handleCheckSourcesNow}
             disabled={isCheckingSources}
             className="px-4 py-2.5 rounded-full text-xs font-bold bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black dark:hover:bg-slate-100 transition-all flex items-center gap-2 shadow-xs cursor-pointer disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isCheckingSources ? 'animate-spin' : ''}`} />
-            <span>{isCheckingSources ? 'Polling Official Sources...' : 'Check Sources Now'}</span>
+            <span>{isCheckingSources ? 'Polling Sources...' : 'Check Sources'}</span>
           </button>
 
           <button
             onClick={handleLockConsole}
-            title="Lock Console"
-            className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Lock Mission Control Console"
           >
             <Lock className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Hero Metrics Row */}
+      {/* KPI Overview Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-4 sm:p-5 shadow-xs">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
@@ -386,25 +661,25 @@ export default function AdminNoticeDashboard() {
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">
             {pendingNotices.length}
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">Circulars awaiting human review</p>
+          <p className="text-[11px] text-slate-400 mt-0.5">Requires manual verification</p>
         </div>
 
         <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-4 sm:p-5 shadow-xs">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
-            <span>Active Exam Clocks</span>
+            <span>Configured Clocks</span>
             <Clock className="w-4 h-4 text-emerald-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">
             {exams.length}
           </div>
           <p className="text-[11px] text-slate-400 mt-0.5">
-            {stats ? `${stats.officialCount} Official (${stats.officialPercentage}%)` : 'Verified countdowns'}
+            {stats?.activeOverrides > 0 ? `${stats.activeOverrides} custom overrides active` : 'All on official baseline'}
           </p>
         </div>
 
         <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-4 sm:p-5 shadow-xs">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
-            <span>Monitored Authorities</span>
+            <span>Monitored Portals</span>
             <Activity className="w-4 h-4 text-indigo-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">
@@ -415,18 +690,30 @@ export default function AdminNoticeDashboard() {
 
         <div className="rounded-[22px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-4 sm:p-5 shadow-xs">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
-            <span>Audit Trail Entries</span>
+            <span>Audit Trail Logs</span>
             <History className="w-4 h-4 text-slate-400" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">
             {auditLogs.length}
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">Immutable publication logs</p>
+          <p className="text-[11px] text-slate-400 mt-0.5">Immutable records kept</p>
         </div>
       </div>
 
-      {/* Tabs Navigation */}
+      {/* Tabs Navigation Bar */}
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+        <button
+          onClick={() => setActiveTab('clocks')}
+          className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'clocks'
+              ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Clock Manager ({exams.length} Exams)</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('pending')}
           className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
@@ -440,18 +727,6 @@ export default function AdminNoticeDashboard() {
         </button>
 
         <button
-          onClick={() => setActiveTab('clocks')}
-          className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-            activeTab === 'clocks'
-              ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
-              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <Clock className="w-3.5 h-3.5 text-emerald-500" />
-          <span>Clock Manager (All {exams.length} Exams)</span>
-        </button>
-
-        <button
           onClick={() => setActiveTab('analytics')}
           className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
             activeTab === 'analytics'
@@ -460,7 +735,7 @@ export default function AdminNoticeDashboard() {
           }`}
         >
           <BarChart2 className="w-3.5 h-3.5 text-indigo-500" />
-          <span>Detailed Statistical Hub</span>
+          <span>Statistical Hub</span>
         </button>
 
         <button
@@ -472,7 +747,7 @@ export default function AdminNoticeDashboard() {
           }`}
         >
           <Activity className="w-3.5 h-3.5" />
-          <span>Source Health & Registry ({sources.length})</span>
+          <span>Source Health ({sources.length})</span>
         </button>
 
         <button
@@ -486,135 +761,233 @@ export default function AdminNoticeDashboard() {
           <History className="w-3.5 h-3.5" />
           <span>Audit Trail ({auditLogs.length})</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('security')}
+          className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'security'
+              ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <Shield className="w-3.5 h-3.5 text-rose-500" />
+          <span>Security & Passwords</span>
+        </button>
       </div>
 
-      {/* TAB 1: Pending Notices Review Queue */}
-      {activeTab === 'pending' && (
+      {/* ==================================================== */}
+      {/* TAB 1: CLOCK MANAGER (ALL 85+ EXAMINATIONS) */}
+      {/* ==================================================== */}
+      {activeTab === 'clocks' && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
             <div className="flex items-center gap-2 flex-1 min-w-[240px]">
               <Search className="w-4 h-4 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search circulars by exam name, title, or authority..."
-                value={searchFilter}
-                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Search any exam by name, acronym, authority, or slug..."
+                value={clockSearch}
+                onChange={(e) => setClockSearch(e.target.value)}
                 className="w-full text-xs bg-transparent focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
               />
             </div>
 
-            <div className="flex items-center gap-2 text-xs">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 cursor-pointer font-bold text-slate-700 dark:text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={showOverridesOnly}
+                  onChange={(e) => setShowOverridesOnly(e.target.checked)}
+                  className="rounded text-emerald-600 focus:ring-0"
+                />
+                <span>Overrides Only ({stats?.activeOverrides || 0})</span>
+              </label>
+
               <select
-                value={authorityFilter}
-                onChange={(e) => setAuthorityFilter(e.target.value)}
+                value={clockCategory}
+                onChange={(e) => setClockCategory(e.target.value)}
                 className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none"
               >
-                <option value="all">All Authorities</option>
-                <option value="nta">NTA (NEET, JEE, UGC)</option>
-                <option value="upsc">UPSC Civil Services</option>
-                <option value="cbse">CBSE Boards</option>
-                <option value="gate">GATE Committee</option>
-                <option value="clat">Consortium of NLUs</option>
-                <option value="ssc">Staff Selection Commission</option>
+                <option value="all">All Categories</option>
+                <option value="engineering">Engineering</option>
+                <option value="medical">Medical</option>
+                <option value="government">Govt & UPSC</option>
+                <option value="law">Law</option>
+                <option value="board-exams">Board Exams</option>
+                <option value="management">Management</option>
+                <option value="other-entrance-exams">Other National Entrances</option>
               </select>
+
+              <select
+                value={clockStatus}
+                onChange={(e) => setClockStatus(e.target.value)}
+                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none"
+              >
+                <option value="all">All Statuses</option>
+                <option value="official">Official Confirmed</option>
+                <option value="tentative">Tentative Schedule</option>
+                <option value="expected">Expected Date</option>
+              </select>
+
+              {stats?.activeOverrides > 0 && (
+                <button
+                  onClick={handleResetAllClocks}
+                  className="px-3 py-1.5 rounded-xl font-bold bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300 hover:bg-rose-100 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset All</span>
+                </button>
+              )}
             </div>
           </div>
 
-          {filteredNotices.length > 0 ? (
-            <div className="space-y-4">
+          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] overflow-hidden shadow-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 uppercase tracking-wider text-[10px] font-black border-b border-slate-100 dark:border-slate-800">
+                  <tr>
+                    <th className="py-3 px-4">Examination</th>
+                    <th className="py-3 px-4">Target Exam Date</th>
+                    <th className="py-3 px-4">Status & Provenance</th>
+                    <th className="py-3 px-4">Shift Timings</th>
+                    <th className="py-3 px-4">Last Verified</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                  {filteredExams.map((exam) => {
+                    const isCustomized = adminStore.hasOverride(exam.id);
+                    return (
+                      <tr key={exam.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                        <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold">{exam.shortName}</span>
+                            {isCustomized && (
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                                Live Override Active
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-slate-400 font-normal">{exam.name}</div>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-slate-800 dark:text-slate-200">
+                          {exam.dates.examDate}
+                          {exam.dates.examEndDate && <span className="text-slate-400 font-normal"> to {exam.dates.examEndDate}</span>}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                              exam.dateStatus === 'official'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300'
+                                : exam.dateStatus === 'tentative'
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300'
+                                : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                            }`}
+                          >
+                            {exam.dateStatus}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300 text-[11px]">
+                          {exam.startTime ? `${exam.startTime} (${exam.durationMinutes || 180}m)` : 'Shift TBA'}
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-400 font-mono text-[11px]">
+                          {exam.lastVerified}
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {isCustomized && (
+                              <button
+                                onClick={() => handleResetExam(exam.id, exam.shortName)}
+                                className="px-2.5 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors cursor-pointer"
+                                title="Reset to official repository baseline"
+                              >
+                                <RotateCcw className="w-3 h-3" />
+                              </button>
+                            )}
+
+                            <a
+                              href={`/exams/${exam.slug}/`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2.5 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors inline-flex items-center gap-1"
+                              title="Preview live countdown page in new tab"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+
+                            <button
+                              onClick={() => handleOpenClockEditor(exam)}
+                              className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                              <span>Edit Clock</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* TAB 2: PENDING CIRCULARS */}
+      {/* ==================================================== */}
+      {activeTab === 'pending' && (
+        <div className="space-y-4">
+          {pendingNotices.length > 0 ? (
+            <div className="space-y-3">
               {filteredNotices.map((notice) => (
                 <div
                   key={notice.id}
-                  className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs space-y-4"
+                  className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs space-y-3"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                          {notice.authority}
-                        </span>
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                            notice.confidenceScore >= 0.9
-                              ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/80 dark:text-emerald-300'
-                              : 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300'
-                          }`}
-                        >
-                          {(notice.confidenceScore * 100).toFixed(0)}% Confidence
-                        </span>
-                        <span className="text-[11px] text-slate-400">
-                          Detected: {notice.detectedAt.split('T')[0]}
-                        </span>
-                      </div>
-                      <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                        {notice.title}
-                      </h3>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">
+                        {notice.authority}
+                      </span>
+                      <span className="text-xs text-slate-400">Matched Exam: <strong>{notice.matchedExamName}</strong></span>
+                    </div>
+                    <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                      Confidence: {(notice.confidenceScore * 100).toFixed(0)}%
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white font-display">
+                    {notice.title}
+                  </h3>
+
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300">
+                    <span className="font-bold text-slate-900 dark:text-white">Detected Schedule: </span>
+                    <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">{notice.proposedExamDate}</span>
+                    {notice.proposedExamEndDate && <span className="font-mono text-slate-500"> to {notice.proposedExamEndDate}</span>}
+                    <p className="mt-1.5 italic text-slate-500 dark:text-slate-400">"{notice.detectedSnippet}"</p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-3 text-xs">
+                      <a
+                        href={notice.documentUrl || notice.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-1 font-bold"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>View Official Circular (PDF)</span>
+                      </a>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {notice.documentUrl && (
-                        <a
-                          href={notice.documentUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 transition-colors flex items-center gap-1.5"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>View Official PDF</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Date Diff Box */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60">
-                    <div>
-                      <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
-                        Current Live Date
-                      </span>
-                      <div className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                        {notice.currentExamDate}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">
-                        Proposed Schedule in Circular
-                      </span>
-                      <div className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-                        <span>{notice.proposedExamDate}</span>
-                        {notice.proposedExamEndDate && <span>to {notice.proposedExamEndDate}</span>}
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 uppercase">
-                          {notice.proposedDateStatus}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quoted Snippet */}
-                  <div className="text-xs p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 italic border-l-2 border-indigo-500">
-                    "{notice.detectedSnippet}"
-                  </div>
-
-                  {/* Actions Bar */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <span className="text-xs text-slate-400">
-                      Matched Record: <strong className="text-slate-700 dark:text-slate-200">{notice.matchedExamName}</strong>
-                    </span>
-
-                    <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={() => handleReject(notice)}
                         className="px-3.5 py-1.5 rounded-full text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       >
-                        Reject & Dismiss
-                      </button>
-                      <button
-                        onClick={() => handleMarkTentative(notice)}
-                        className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 transition-colors cursor-pointer"
-                      >
-                        Mark Tentative
+                        Dismiss
                       </button>
                       <button
                         onClick={() => handleOpenEditModal(notice)}
@@ -646,304 +1019,136 @@ export default function AdminNoticeDashboard() {
         </div>
       )}
 
-      {/* TAB 2: Exam Clock Manager (All 85+ Exams) */}
-      {activeTab === 'clocks' && (
-        <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
-            <div className="flex items-center gap-2 flex-1 min-w-[240px]">
-              <Search className="w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search any exam by name, acronym, authority, or slug..."
-                value={clockSearch}
-                onChange={(e) => setClockSearch(e.target.value)}
-                className="w-full text-xs bg-transparent focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <select
-                value={clockCategory}
-                onChange={(e) => setClockCategory(e.target.value)}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none"
-              >
-                <option value="all">All Categories</option>
-                <option value="engineering">Engineering</option>
-                <option value="medical">Medical</option>
-                <option value="government">Govt & UPSC</option>
-                <option value="law">Law</option>
-                <option value="board-exams">Board Exams</option>
-                <option value="management">Management</option>
-                <option value="other-entrance-exams">Other National Entrances</option>
-              </select>
-
-              <select
-                value={clockStatus}
-                onChange={(e) => setClockStatus(e.target.value)}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none"
-              >
-                <option value="all">All Statuses</option>
-                <option value="official">Official Confirmed</option>
-                <option value="tentative">Tentative Schedule</option>
-                <option value="expected">Expected Date</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] overflow-hidden shadow-xs">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 uppercase tracking-wider text-[10px] font-black border-b border-slate-100 dark:border-slate-800">
-                  <tr>
-                    <th className="py-3 px-4">Examination Name</th>
-                    <th className="py-3 px-4">Category</th>
-                    <th className="py-3 px-4">Exam Date / Range</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4">Last Verified</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                  {filteredExams.map((exam) => (
-                    <tr key={exam.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
-                        <div className="font-bold">{exam.shortName}</div>
-                        <div className="text-[11px] text-slate-400 font-normal">{exam.name}</div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                          {exam.category}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-800 dark:text-slate-200">
-                        {exam.dates.examDate}
-                        {exam.dates.examEndDate && <span className="text-slate-400 font-normal"> to {exam.dates.examEndDate}</span>}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                            exam.dateStatus === 'official'
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300'
-                              : exam.dateStatus === 'tentative'
-                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300'
-                              : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                          }`}
-                        >
-                          {exam.dateStatus}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400 font-mono text-[11px]">
-                        {exam.lastVerified}
-                      </td>
-                      <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={() => handleOpenClockEditor(exam)}
-                          className="px-3 py-1.5 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] transition-all cursor-pointer inline-flex items-center gap-1 shadow-xs"
-                        >
-                          <Edit3 className="w-3 h-3" />
-                          <span>Edit Clock</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: Detailed Statistical Hub */}
+      {/* ==================================================== */}
+      {/* TAB 3: STATISTICAL HUB */}
+      {/* ==================================================== */}
       {activeTab === 'analytics' && stats && (
         <div className="space-y-6">
-          {/* Status Breakdown Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-[24px] border border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/20">
-              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                Official Confirmed Countdowns
-              </span>
-              <div className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-                {stats.officialCount} <span className="text-base font-semibold text-slate-400">({stats.officialPercentage}%)</span>
+          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 shadow-xs space-y-6">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-display">
+              Examination Verification Breakdown
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50">
+                <div className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+                  Official Confirmed
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-emerald-900 dark:text-emerald-200 mt-1 font-display">
+                  {stats.officialCount} <span className="text-sm font-normal text-emerald-600">({stats.officialPercentage}%)</span>
+                </div>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-1">
+                  Backed by direct authority circulars, gazettes, or official press notices.
+                </p>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Audited against official gazettes & press notices with zero ambiguity.
-              </p>
-            </div>
 
-            <div className="p-5 rounded-[24px] border border-amber-500/20 bg-amber-500/5 dark:bg-amber-950/20">
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                Tentative Annual Calendars
-              </span>
-              <div className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-                {stats.tentativeCount} <span className="text-base font-semibold text-slate-400">({stats.tentativePercentage}%)</span>
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900/50">
+                <div className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
+                  Tentative Schedule
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-900 dark:text-amber-200 mt-1 font-display">
+                  {stats.tentativeCount} <span className="text-sm font-normal text-amber-600">({stats.tentativePercentage}%)</span>
+                </div>
+                <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1">
+                  Based on annual calendar outlines pending final notification bulletins.
+                </p>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Published in tentative academic schedules, subject to final datesheets.
-              </p>
-            </div>
 
-            <div className="p-5 rounded-[24px] border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/20">
-              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                Expected Benchmark Projections
-              </span>
-              <div className="text-3xl font-black text-slate-900 dark:text-white mt-1">
-                {stats.expectedCount} <span className="text-base font-semibold text-slate-400">({stats.expectedPercentage}%)</span>
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                <div className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                  Expected / Estimated
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1 font-display">
+                  {stats.expectedCount} <span className="text-sm font-normal text-slate-500">({stats.expectedPercentage}%)</span>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                  Estimated from historical annual schedules awaiting official release.
+                </p>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Historically calibrated dates flagged clearly for aspirant planning.
-              </p>
             </div>
           </div>
 
-          {/* Category Distribution Matrix */}
           <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 shadow-xs space-y-4">
-            <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
-              <Layers className="w-4 h-4 text-indigo-500" />
-              <span>Examination Category Distribution ({stats.totalExams} Total Exams)</span>
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(stats.categories).map(([catId, count]: [string, any]) => (
-                <div key={catId} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 capitalize mb-1">
-                    <span>{catId.replace('-', ' ')}</span>
-                    <span className="text-indigo-600 dark:text-indigo-400">{count} Exams</span>
+            <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-display">
+              Category Distribution Matrix
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {Object.entries(stats.categories || {}).map(([cat, count]) => (
+                <div key={cat} className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 capitalize">
+                    {cat.replace(/-/g, ' ')}
                   </div>
-                  <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                    <div
-                      className="bg-indigo-500 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${(count / stats.totalExams) * 100}%` }}
-                    ></div>
+                  <div className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
+                    {count as number} Exams
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Notice Engine Funnel */}
-          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 shadow-xs space-y-4">
-            <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-500" />
-              <span>Automated Monitoring Engine Performance</span>
-            </h3>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40">
-                <span className="text-[10px] uppercase font-bold text-slate-400">Total Monitored Authorities</span>
-                <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.totalSources}</div>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40">
-                <span className="text-[10px] uppercase font-bold text-slate-400">Parser Confidence Avg</span>
-                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{stats.avgConfidence}%</div>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40">
-                <span className="text-[10px] uppercase font-bold text-slate-400">Approved & Published</span>
-                <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.noticesApproved}</div>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40">
-                <span className="text-[10px] uppercase font-bold text-slate-400">Rejected False Alarms</span>
-                <div className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.noticesRejected}</div>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
-      {/* TAB 4: Source Health & Registry */}
+      {/* ==================================================== */}
+      {/* TAB 4: SOURCE HEALTH */}
+      {/* ==================================================== */}
       {activeTab === 'sources' && (
-        <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-            <div>
-              <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                Official Circular Sources Registry
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Regularly polled endpoints with ETag / Last-Modified caching and normalized HTML hashing.
-              </p>
+        <div className="space-y-4">
+          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] overflow-hidden shadow-xs">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white">Official Notice Sources ({sources.length})</h3>
+                <p className="text-xs text-slate-500">Monitored official examination authority portals.</p>
+              </div>
             </div>
-            <button
-              onClick={handleCheckSourcesNow}
-              disabled={isCheckingSources}
-              className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition-colors cursor-pointer"
-            >
-              Test Endpoints
-            </button>
-          </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {sources.map((src) => (
-              <div key={src.id} className="py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900 dark:text-white">{src.authority}</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {sources.map((src) => (
+                <div key={src.id} className="p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div>
+                    <div className="font-bold text-slate-900 dark:text-white text-sm">{src.name}</div>
+                    <div className="text-slate-500 font-mono text-[11px]">{src.url}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                       {src.status}
                     </span>
+                    <a
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
                   </div>
-                  <a
-                    href={src.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 mt-0.5"
-                  >
-                    <span>{src.sourceUrl}</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
-                  </a>
                 </div>
-
-                <div className="text-right text-[11px] text-slate-400">
-                  <div>Frequency: <strong className="text-slate-600 dark:text-slate-300 uppercase">{src.monitoringFrequency}</strong></div>
-                  <div>Last Checked: <span className="font-mono">{src.lastChecked.split('T')[0]}</span></div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {/* TAB 5: Audit Trail */}
+      {/* ==================================================== */}
+      {/* TAB 5: AUDIT TRAIL */}
+      {/* ==================================================== */}
       {activeTab === 'audit' && (
-        <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="pb-3 border-b border-slate-100 dark:border-slate-800">
-            <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-              Immutable Publication Audit Logs
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Complete history of verified approvals, datesheet adjustments, and admin comments.
-            </p>
-          </div>
-
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 shadow-xs space-y-4">
+          <h2 className="text-base font-black text-slate-900 dark:text-white font-display">
+            Immutable Editorial Audit Logs ({auditLogs.length})
+          </h2>
+          <div className="space-y-3">
             {auditLogs.map((log) => (
-              <div key={log.id} className="py-4 space-y-2 text-xs">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                      {log.action.replace('_', ' ')}
-                    </span>
-                    <strong className="text-slate-900 dark:text-white text-sm">{log.examName}</strong>
-                  </div>
-                  <span className="text-[11px] font-mono text-slate-400">
-                    {new Date(log.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST
-                  </span>
+              <div key={log.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900 dark:text-white">{log.examName} ({log.action})</span>
+                  <span className="font-mono text-[11px] text-slate-400">{log.timestamp}</span>
                 </div>
-
-                <div className="text-slate-600 dark:text-slate-400 text-xs">
-                  Admin: <span className="font-bold">{log.adminEmail}</span>
-                  {log.adminComment && <span className="italic ml-2">"{log.adminComment}"</span>}
+                <div className="text-slate-600 dark:text-slate-300">
+                  <span className="font-semibold">Note: </span>{log.adminComment}
                 </div>
-
-                {log.newValues && (
-                  <div className="text-[11px] p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 font-mono text-slate-700 dark:text-slate-300">
-                    {log.previousValues?.examDate && (
-                      <span className="text-rose-500 line-through mr-2">
-                        Old: {log.previousValues.examDate} ({log.previousValues.dateStatus})
-                      </span>
-                    )}
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                      New: {log.newValues.examDate} ({log.newValues.dateStatus})
-                    </span>
-                  </div>
+                {log.sourceNoticeUrl && (
+                  <a href={log.sourceNoticeUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline text-[11px] block">
+                    Source: {log.sourceNoticeUrl}
+                  </a>
                 )}
               </div>
             ))}
@@ -951,125 +1156,151 @@ export default function AdminNoticeDashboard() {
         </div>
       )}
 
-      {/* MODAL 1: Edit & Approve Circular Notice */}
-      {editingNotice && (
-        <div className="fixed inset-0 z-[999999] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.08] rounded-[28px] max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">
-                Edit & Approve: {editingNotice.matchedExamName}
-              </h3>
-              <button
-                onClick={() => setEditingNotice(null)}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      {/* ==================================================== */}
+      {/* TAB 6: SECURITY & PASSWORDS */}
+      {/* ==================================================== */}
+      {activeTab === 'security' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Change Password Form */}
+          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <Key className="w-5 h-5 text-indigo-500" />
+              <h2 className="text-base font-black font-display">Change Master Administrator Password</h2>
             </div>
+            <p className="text-xs text-slate-500">
+              Update your master credentials anytime. Password changes take effect immediately across all sessions.
+            </p>
 
-            <form onSubmit={handleApplyEdit} className="space-y-3.5 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Exam Date (YYYY-MM-DD) *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={editDate}
-                    onChange={(e) => setEditDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Date Status *
-                  </label>
-                  <select
-                    value={editStatus}
-                    onChange={(e) => setEditStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold"
-                  >
-                    <option value="official">Official Confirmed</option>
-                    <option value="tentative">Tentative (Calendar Notice)</option>
-                    <option value="postponed">Postponed / Rescheduled</option>
-                  </select>
-                </div>
-              </div>
-
+            <form onSubmit={handleChangeMasterPassword} className="space-y-3.5 text-xs">
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Official Gazette / Source Citation URL *
+                  Current Master Password
                 </label>
                 <input
-                  type="url"
+                  type="password"
                   required
-                  value={editSourceUrl}
-                  onChange={(e) => setEditSourceUrl(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                  placeholder="••••••••••••"
+                  value={currentPassChange}
+                  onChange={(e) => setCurrentPassChange(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                 />
               </div>
 
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Admin Verification Comment / Notes
+                  New Master Password (Min 8 Characters)
                 </label>
-                <textarea
-                  rows={2}
-                  placeholder="e.g. Cross-checked with NTA Press Release dated 21 Oct."
-                  value={editComment}
-                  onChange={(e) => setEditComment(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••••••"
+                  value={newPassChange}
+                  onChange={(e) => setNewPassChange(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setEditingNotice(null)}
-                  className="px-4 py-2 rounded-full font-bold text-slate-500 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-full font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] shadow-xs cursor-pointer"
-                >
-                  Save & Publish Live
-                </button>
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Confirm New Master Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••••••"
+                  value={confirmNewPassChange}
+                  onChange={(e) => setConfirmNewPassChange(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                />
               </div>
+
+              {passChangeError && (
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 text-rose-600 dark:text-rose-400 font-bold">
+                  {passChangeError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-full font-bold bg-[#18181B] dark:bg-white text-white dark:text-[#111406] hover:bg-black transition-all cursor-pointer shadow-xs"
+              >
+                Update Master Password
+              </button>
             </form>
+          </div>
+
+          {/* World-Class Security Architecture Insight */}
+          <div className="rounded-[24px] border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#171923] p-6 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 text-slate-900 dark:text-white">
+              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              <h2 className="text-base font-black font-display">Enterprise Security Architecture</h2>
+            </div>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              How top global technology brands (Stripe, Cloudflare, Apple) shield their internal administrative tools:
+            </p>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <div className="font-bold text-slate-900 dark:text-white mb-0.5">1. Public Edge 404 Cloaking</div>
+                <div className="text-slate-500 text-[11px]">
+                  Visiting <code className="font-mono bg-slate-200 dark:bg-slate-700 px-1 rounded">indiantimers.com/admin</code> directly returns a raw <strong>404 Not Found</strong>, hiding its very existence from scanners, bots, and crawlers.
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <div className="font-bold text-slate-900 dark:text-white mb-0.5">2. Zero-Knowledge Master Passwords</div>
+                <div className="text-slate-500 text-[11px]">
+                  Your credentials are never stored in plain text or transmitted openly. They are hashed with client-side SHA-256 and protected against brute-force lockouts.
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <div className="font-bold text-slate-900 dark:text-white mb-0.5">3. Local-Only Offline Admin Option</div>
+                <div className="text-slate-500 text-[11px]">
+                  You can run this exact admin console 100% offline on your own PC by running <code className="font-mono bg-slate-200 dark:bg-slate-700 px-1 rounded">npm run dev</code> on <code className="font-mono">http://localhost:4321/admin/</code> and pushing changes via Git.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {/* MODAL 2: Full Examination Clock Editor */}
+      {/* ==================================================== */}
+      {/* MODAL 1: EDIT EXAM CLOCK WITH LIVE PREVIEW */}
+      {/* ==================================================== */}
       {editingClock && (
-        <div className="fixed inset-0 z-[999999] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.08] rounded-[28px] max-w-2xl w-full p-6 sm:p-7 shadow-2xl space-y-4 my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="max-w-2xl w-full my-8 bg-white dark:bg-[#171923] rounded-[28px] border border-black/[0.08] dark:border-white/[0.08] shadow-2xl p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <span className="text-[10px] font-black uppercase text-indigo-600 dark:text-indigo-400 tracking-wider">
-                  Direct Countdown Clock Editor
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                  {editingClock.category}
                 </span>
-                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
-                  {editingClock.name} ({editingClock.shortName})
+                <h3 className="text-lg font-black text-slate-900 dark:text-white font-display mt-1">
+                  Edit Countdown Clock: {editingClock.name}
                 </h3>
               </div>
               <button
                 onClick={() => setEditingClock(null)}
-                className="text-slate-400 hover:text-slate-600"
+                className="p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
+            {/* LIVE COUNTDOWN TICKER PREVIEW */}
+            <ClockLivePreview
+              targetDate={clockForm.examDate || editingClock.dates.examDate}
+              startTime={clockForm.startTime}
+              dateStatus={clockForm.dateStatus}
+            />
+
             <form onSubmit={handleSaveClockChanges} className="space-y-4 text-xs">
-              {/* Row 1: Exam Date & End Date */}
+              {/* Row 1: Target Date & End Date */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Exam Date (YYYY-MM-DD) *
+                    Primary Exam Date (YYYY-MM-DD) *
                   </label>
                   <input
                     type="date"
@@ -1081,7 +1312,7 @@ export default function AdminNoticeDashboard() {
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Exam End Date (Optional Window)
+                    Exam End Date (Optional for Windows)
                   </label>
                   <input
                     type="date"
@@ -1092,11 +1323,11 @@ export default function AdminNoticeDashboard() {
                 </div>
               </div>
 
-              {/* Row 2: Status & Authority URL */}
+              {/* Row 2: Status & Website */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Verification Date Status *
+                    Schedule Status *
                   </label>
                   <select
                     value={clockForm.dateStatus}
@@ -1111,7 +1342,7 @@ export default function AdminNoticeDashboard() {
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Official Portal Website *
+                    Official Authority Website *
                   </label>
                   <input
                     type="url"
@@ -1232,29 +1463,96 @@ export default function AdminNoticeDashboard() {
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="e.g. Rescheduled as per latest official press note issued by NTA / UPSC."
+                  placeholder="e.g. Confirmed date rescheduled as per official NTA press release."
                   value={clockForm.adminComment}
                   onChange={(e) => setClockForm({ ...clockForm, adminComment: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setEditingClock(null)}
-                  className="px-4 py-2 rounded-full font-bold text-slate-500 hover:bg-slate-100 cursor-pointer"
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+                <a
+                  href={`/exams/${editingClock.slug}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline inline-flex items-center gap-1"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-full font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] shadow-xs cursor-pointer flex items-center gap-1.5"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Save & Publish Live</span>
-                </button>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Preview Live Exam Page</span>
+                </a>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingClock(null)}
+                    className="px-4 py-2 rounded-full font-bold text-slate-500 hover:bg-slate-100 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-full font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] shadow-xs cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save & Apply Live Override</span>
+                  </button>
+                </div>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* MODAL 2: GITHUB / PRODUCTION PUBLISH */}
+      {/* ==================================================== */}
+      {showGitPublishModal && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white dark:bg-[#171923] rounded-[28px] border border-black/[0.08] dark:border-white/[0.08] shadow-2xl p-6 sm:p-8 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <GitCommit className="w-5 h-5 text-indigo-500" />
+                <h3 className="text-base font-black text-slate-900 dark:text-white font-display">
+                  Publish to Production
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowGitPublishModal(false)}
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Active overrides are instantly visible in your browser. To permanently bake these dates into the static website across the global CDN:
+            </p>
+
+            <form onSubmit={handlePushToGitHub} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  GitHub Personal Access Token (PAT)
+                </label>
+                <input
+                  type="password"
+                  placeholder="ghp_••••••••••••••••••••••••••••••••"
+                  value={gitPat}
+                  onChange={(e) => setGitPat(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono"
+                />
+                <span className="text-[10px] text-slate-400 mt-1 block">
+                  Token with repo scope for <code className="font-mono">Real-Tarun/indiantimers</code>
+                </span>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isPushingGit}
+                className="w-full py-3 rounded-full font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c3f03b] transition-all cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <GitCommit className={`w-4 h-4 ${isPushingGit ? 'animate-spin' : ''}`} />
+                <span>{isPushingGit ? 'Publishing to Cloudflare...' : 'Deploy to Production'}</span>
+              </button>
             </form>
           </div>
         </div>

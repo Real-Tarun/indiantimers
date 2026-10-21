@@ -105,6 +105,41 @@ class AdminMonitorStore {
   private sources: NoticeSource[] = [...OFFICIAL_NOTICE_SOURCES];
   private notices: DetectedNotice[] = [...INITIAL_SEED_NOTICES];
   private auditLogs: AdminAuditEntry[] = [...INITIAL_AUDIT_LOGS];
+  private baselines = new Map<string, ExamRecord>();
+
+  constructor() {
+    for (const exam of EXAM_REGISTRY) {
+      this.baselines.set(exam.id, JSON.parse(JSON.stringify(exam)));
+    }
+    this.loadOverridesFromStorage();
+  }
+
+  loadOverridesFromStorage(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      const raw = window.localStorage.getItem('it_clock_overrides') || window.localStorage.getItem('it_admin_clock_overrides');
+      if (!raw) return;
+      const stored = JSON.parse(raw);
+      for (const [examId, override] of Object.entries(stored)) {
+        const exam = EXAM_REGISTRY.find((e) => e.id === examId);
+        if (exam && override && typeof override === 'object') {
+          const ov = override as any;
+          if (ov.dates) exam.dates = { ...exam.dates, ...ov.dates };
+          if (ov.dateStatus) exam.dateStatus = ov.dateStatus;
+          if (ov.officialSourceUrl) exam.officialSourceUrl = ov.officialSourceUrl;
+          if (ov.sourceNotificationTitle) exam.sourceNotificationTitle = ov.sourceNotificationTitle;
+          if (ov.officialWebsite) exam.officialWebsite = ov.officialWebsite;
+          if (ov.startTime) exam.startTime = ov.startTime;
+          if (ov.endTime) exam.endTime = ov.endTime;
+          if (ov.durationMinutes) exam.durationMinutes = ov.durationMinutes;
+          if (ov.shortDescription) exam.shortDescription = ov.shortDescription;
+          if (ov.lastVerified) exam.lastVerified = ov.lastVerified;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to restore clock overrides from storage:', err);
+    }
+  }
 
   getSources(): NoticeSource[] {
     return this.sources;
@@ -248,6 +283,35 @@ class AdminMonitorStore {
     return EXAM_REGISTRY.find((e) => e.id === examId);
   }
 
+  private saveOverridesToStorage(exam: ExamRecord): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      const stored = JSON.parse(window.localStorage.getItem('it_clock_overrides') || '{}');
+      stored[exam.id] = {
+        dates: exam.dates,
+        dateStatus: exam.dateStatus,
+        officialSourceUrl: exam.officialSourceUrl,
+        sourceNotificationTitle: exam.sourceNotificationTitle,
+        officialWebsite: exam.officialWebsite,
+        startTime: exam.startTime,
+        endTime: exam.endTime,
+        durationMinutes: exam.durationMinutes,
+        shortDescription: exam.shortDescription,
+        lastVerified: exam.lastVerified,
+      };
+      window.localStorage.setItem('it_clock_overrides', JSON.stringify(stored));
+      window.localStorage.setItem('it_admin_clock_overrides', JSON.stringify(stored));
+      // Broadcast live event for every countdown card & cockpit on screen
+      window.dispatchEvent(
+        new CustomEvent('indiantimers:clock-updated', {
+          detail: { examId: exam.id, exam },
+        })
+      );
+    } catch (err) {
+      console.warn('Failed to persist clock overrides to localStorage', err);
+    }
+  }
+
   updateExamClock(
     examId: string,
     updates: {
@@ -278,7 +342,7 @@ class AdminMonitorStore {
       sourceNotificationTitle: exam.sourceNotificationTitle,
     };
 
-    // Apply updates
+    // Apply updates directly to in-memory registry
     if (updates.examDate) exam.dates.examDate = updates.examDate;
     if (updates.examEndDate !== undefined) exam.dates.examEndDate = updates.examEndDate || undefined;
     if (updates.registrationStart !== undefined) exam.dates.registrationStart = updates.registrationStart || undefined;
@@ -295,22 +359,8 @@ class AdminMonitorStore {
 
     exam.lastVerified = new Date().toISOString().split('T')[0];
 
-    // Save browser persistence if running in browser
-    if (typeof window !== 'undefined' && window.localStorage) {
-      try {
-        const stored = JSON.parse(window.localStorage.getItem('it_admin_clock_overrides') || '{}');
-        stored[exam.id] = {
-          dates: exam.dates,
-          dateStatus: exam.dateStatus,
-          officialSourceUrl: exam.officialSourceUrl,
-          sourceNotificationTitle: exam.sourceNotificationTitle,
-          lastVerified: exam.lastVerified,
-        };
-        window.localStorage.setItem('it_admin_clock_overrides', JSON.stringify(stored));
-      } catch (err) {
-        console.warn('Failed to persist clock overrides to localStorage', err);
-      }
-    }
+    // Persist & Broadcast to all countdown components
+    this.saveOverridesToStorage(exam);
 
     const auditEntry: AdminAuditEntry = {
       id: `audit_clock_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -333,6 +383,102 @@ class AdminMonitorStore {
 
     this.auditLogs.unshift(auditEntry);
     return { success: true, auditEntry };
+  }
+
+  hasOverride(examId: string): boolean {
+    if (typeof window === 'undefined' || !window.localStorage) return false;
+    try {
+      const stored = JSON.parse(window.localStorage.getItem('it_clock_overrides') || '{}');
+      return !!stored[examId];
+    } catch {
+      return false;
+    }
+  }
+
+  getActiveOverridesCount(): number {
+    if (typeof window === 'undefined' || !window.localStorage) return 0;
+    try {
+      const stored = JSON.parse(window.localStorage.getItem('it_clock_overrides') || '{}');
+      return Object.keys(stored).length;
+    } catch {
+      return 0;
+    }
+  }
+
+  resetExamClock(examId: string, adminEmail: string): boolean {
+    const exam = EXAM_REGISTRY.find((e) => e.id === examId);
+    const baseline = this.baselines.get(examId);
+    if (!exam || !baseline) return false;
+
+    const previousValues = {
+      examDate: exam.dates.examDate,
+      dateStatus: exam.dateStatus,
+      officialSourceUrl: exam.officialSourceUrl,
+      sourceNotificationTitle: exam.sourceNotificationTitle,
+    };
+
+    // Restore pristine values
+    Object.assign(exam, JSON.parse(JSON.stringify(baseline)));
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem('it_clock_overrides') || '{}');
+        delete stored[examId];
+        window.localStorage.setItem('it_clock_overrides', JSON.stringify(stored));
+        window.localStorage.setItem('it_admin_clock_overrides', JSON.stringify(stored));
+        window.dispatchEvent(
+          new CustomEvent('indiantimers:clock-updated', {
+            detail: { examId, exam },
+          })
+        );
+      } catch (e) {}
+    }
+
+    this.auditLogs.unshift({
+      id: `audit_reset_${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      adminEmail,
+      action: 'reschedule',
+      examId: exam.id,
+      examName: exam.name,
+      previousValues,
+      newValues: {
+        examDate: exam.dates.examDate,
+        dateStatus: exam.dateStatus,
+        officialSourceUrl: exam.officialSourceUrl,
+        sourceNotificationTitle: exam.sourceNotificationTitle,
+      },
+      sourceNoticeTitle: exam.sourceNotificationTitle,
+      sourceNoticeUrl: exam.officialSourceUrl,
+      adminComment: 'Reset countdown clock to official repository baseline.',
+    });
+
+    return true;
+  }
+
+  resetAllClocks(adminEmail: string): void {
+    for (const [id, baseline] of this.baselines.entries()) {
+      const exam = EXAM_REGISTRY.find((e) => e.id === id);
+      if (exam) {
+        Object.assign(exam, JSON.parse(JSON.stringify(baseline)));
+      }
+    }
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem('it_clock_overrides');
+      window.localStorage.removeItem('it_admin_clock_overrides');
+      window.dispatchEvent(new CustomEvent('indiantimers:clock-updated', { detail: { examId: 'all' } }));
+    }
+    this.auditLogs.unshift({
+      id: `audit_reset_all_${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      adminEmail,
+      action: 'reschedule',
+      examId: 'all',
+      examName: 'All Examination Clocks',
+      previousValues: {},
+      newValues: {},
+      adminComment: 'All customized countdown clocks reset to factory baseline.',
+    });
   }
 
   getSystemStatistics() {
@@ -385,6 +531,7 @@ class AdminMonitorStore {
       noticesRejected,
       avgConfidence: avgConfidence.toFixed(1),
       totalAuditLogs: this.auditLogs.length,
+      activeOverrides: this.getActiveOverridesCount(),
     };
   }
 }

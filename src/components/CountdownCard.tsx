@@ -11,7 +11,28 @@ interface Props {
   compact?: boolean;
 }
 
-export default function CountdownCard({ exam, compact = false }: Props) {
+export default function CountdownCard({ exam: initialExam, compact = false }: Props) {
+  const [exam, setExam] = useState<ExamRecord>(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem('it_clock_overrides') || '{}');
+        if (stored[initialExam.id]) {
+          const ov = stored[initialExam.id];
+          return {
+            ...initialExam,
+            dates: { ...initialExam.dates, ...(ov.dates || {}) },
+            dateStatus: ov.dateStatus || initialExam.dateStatus,
+            startTime: ov.startTime || initialExam.startTime,
+            endTime: ov.endTime || initialExam.endTime,
+            officialSourceUrl: ov.officialSourceUrl || initialExam.officialSourceUrl,
+            sourceNotificationTitle: ov.sourceNotificationTitle || initialExam.sourceNotificationTitle,
+          };
+        }
+      } catch (e) {}
+    }
+    return initialExam;
+  });
+
   const [countdown, setCountdown] = useState<CountdownResult>(() =>
     calculateCountdown(exam.dates.examDate, exam.startTime, exam.dateStatus, exam.timezone)
   );
@@ -25,6 +46,26 @@ export default function CountdownCard({ exam, compact = false }: Props) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    const handleClockUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ examId: string; exam?: Partial<ExamRecord> }>;
+      if (customEvent.detail) {
+        if (customEvent.detail.examId === exam.id && customEvent.detail.exam) {
+          setExam((prev) => {
+            const next = { ...prev, ...customEvent.detail.exam } as ExamRecord;
+            setCountdown(calculateCountdown(next.dates.examDate, next.startTime, next.dateStatus, next.timezone));
+            return next;
+          });
+        } else if (customEvent.detail.examId === 'all') {
+          setExam(initialExam);
+          setCountdown(calculateCountdown(initialExam.dates.examDate, initialExam.startTime, initialExam.dateStatus, initialExam.timezone));
+        }
+      }
+    };
+    window.addEventListener('indiantimers:clock-updated', handleClockUpdate);
+    return () => window.removeEventListener('indiantimers:clock-updated', handleClockUpdate);
+  }, [exam.id, initialExam]);
 
   useEffect(() => {
     setIsFav(storageService.isFavorite(exam.id));

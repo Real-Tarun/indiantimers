@@ -169,32 +169,27 @@ for (const url of urls) {
 }
 console.log(`✓ All ${urls.length} URLs map to physical HTML files returning 200 with matching canonical tags`);
 
-// 8. Verify Robots.txt Compliance (Single User-agent: * group, no conflicting bots, no unsupported directives)
+// 8. Verify Robots.txt Compliance (AI Bots Allowed, Confidential Disallowed, Valid Sitemap)
 const robotsContent = fs.readFileSync('dist/robots.txt', 'utf-8');
 
-// Ensure single User-agent: * group
-const userAgentMatches = robotsContent.match(/User-agent:\s*([^\r\n]+)/gi) || [];
-if (userAgentMatches.length !== 1 || !/User-agent:\s*\*/i.test(userAgentMatches[0])) {
-  console.error('FAIL: robots.txt must use exactly one consistent "User-agent: *" group. Found:', userAgentMatches);
-  process.exit(1);
-}
-
-// Ensure no conflicting specific bot blocks
-for (const bot of ['Googlebot', 'Bingbot', 'GPTBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot']) {
-  if (robotsContent.includes(`User-agent: ${bot}`)) {
-    console.error(`FAIL: robots.txt contains conflicting duplicate bot rule for: ${bot}`);
-    process.exit(1);
-  }
-}
-
-// Ensure Allow: / and Disallow: /dashboard/
+// Ensure root Allow: / and confidential disallows
 if (!robotsContent.includes('Allow: /')) {
   console.error('FAIL: robots.txt missing "Allow: /"');
   process.exit(1);
 }
-if (!robotsContent.includes('Disallow: /dashboard/')) {
-  console.error('FAIL: robots.txt missing "Disallow: /dashboard/"');
-  process.exit(1);
+for (const confidential of ['/admin/', '/dashboard/', '/api/', '/embed/']) {
+  if (!robotsContent.includes(`Disallow: ${confidential}`)) {
+    console.error(`FAIL: robots.txt missing "Disallow: ${confidential}"`);
+    process.exit(1);
+  }
+}
+
+// Ensure key search engines & AI bots are explicitly declared
+for (const bot of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'GPTBot', 'ClaudeBot', 'PerplexityBot']) {
+  if (!robotsContent.includes(`User-agent: ${bot}`)) {
+    console.error(`FAIL: robots.txt missing explicit declaration for AI/search engine: ${bot}`);
+    process.exit(1);
+  }
 }
 
 // Ensure correct Sitemap directive
@@ -214,7 +209,7 @@ if (robotsContent.includes('sitemap-index.xml') || robotsContent.includes('sitem
   console.error('FAIL: robots.txt should only reference single main sitemap.xml');
   process.exit(1);
 }
-console.log('✓ robots.txt verified: single User-agent: * group, correct Sitemap, no unsupported directives, no duplicate bot conflicts');
+console.log('✓ robots.txt verified: AI and search engines welcomed, confidential routes protected, correct sitemap reference');
 
 // 9. Verify Cloudflare Pages Canonical Defense Configuration
 const middlewareContent = fs.readFileSync('functions/_middleware.js', 'utf-8');
