@@ -75,4 +75,30 @@ describe('Cloudflare Pages Middleware Domain & Crawler Defense', () => {
     const body = await response.text();
     assert.strictEqual(body, 'ORIGINAL_CONTENT');
   });
+
+  test('cloaks /admin on public indiantimers.com with 404 when unauthenticated', async () => {
+    let nextCalled = false;
+    const context = {
+      request: new Request('https://indiantimers.com/admin/'),
+      next: async () => { nextCalled = true; return new Response('ADMIN_PANEL'); }
+    };
+
+    const response = await onRequest(context);
+    assert.strictEqual(nextCalled, false, 'Unauthenticated visitor should never reach admin panel');
+    assert.strictEqual(response.status, 404);
+  });
+
+  test('unlocks /admin when valid secret key is provided and sets session cookie', async () => {
+    let nextCalled = false;
+    const context = {
+      request: new Request('https://indiantimers.com/admin/?key=it_admin_secret_2027_k9x'),
+      next: async () => { nextCalled = true; return new Response('ADMIN_PANEL', { status: 200 }); }
+    };
+
+    const response = await onRequest(context);
+    assert.strictEqual(nextCalled, true);
+    assert.strictEqual(response.status, 200);
+    assert.match(response.headers.get('Set-Cookie'), /admin_session=active/);
+  });
 });
+

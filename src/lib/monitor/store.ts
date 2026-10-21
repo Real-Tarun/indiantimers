@@ -237,7 +237,158 @@ class AdminMonitorStore {
     });
     return true;
   }
+
+  // --- Clock Management & Detailed Statistics ---
+
+  getAllExams(): ExamRecord[] {
+    return EXAM_REGISTRY;
+  }
+
+  getExamById(examId: string): ExamRecord | undefined {
+    return EXAM_REGISTRY.find((e) => e.id === examId);
+  }
+
+  updateExamClock(
+    examId: string,
+    updates: {
+      examDate?: string;
+      examEndDate?: string;
+      registrationStart?: string;
+      registrationEnd?: string;
+      admitCardRelease?: string;
+      dateStatus?: DateStatus;
+      officialSourceUrl?: string;
+      sourceNotificationTitle?: string;
+      officialWebsite?: string;
+      startTime?: string;
+      endTime?: string;
+      durationMinutes?: number;
+      shortDescription?: string;
+      adminComment?: string;
+    },
+    adminEmail: string
+  ): { success: boolean; error?: string; auditEntry?: AdminAuditEntry } {
+    const exam = EXAM_REGISTRY.find((e) => e.id === examId);
+    if (!exam) return { success: false, error: `Exam with ID '${examId}' not found in registry.` };
+
+    const previousValues = {
+      examDate: exam.dates.examDate,
+      dateStatus: exam.dateStatus,
+      officialSourceUrl: exam.officialSourceUrl,
+      sourceNotificationTitle: exam.sourceNotificationTitle,
+    };
+
+    // Apply updates
+    if (updates.examDate) exam.dates.examDate = updates.examDate;
+    if (updates.examEndDate !== undefined) exam.dates.examEndDate = updates.examEndDate || undefined;
+    if (updates.registrationStart !== undefined) exam.dates.registrationStart = updates.registrationStart || undefined;
+    if (updates.registrationEnd !== undefined) exam.dates.registrationEnd = updates.registrationEnd || undefined;
+    if (updates.admitCardRelease !== undefined) exam.dates.admitCardRelease = updates.admitCardRelease || undefined;
+    if (updates.dateStatus) exam.dateStatus = updates.dateStatus;
+    if (updates.officialSourceUrl) exam.officialSourceUrl = updates.officialSourceUrl;
+    if (updates.sourceNotificationTitle) exam.sourceNotificationTitle = updates.sourceNotificationTitle;
+    if (updates.officialWebsite) exam.officialWebsite = updates.officialWebsite;
+    if (updates.startTime) exam.startTime = updates.startTime;
+    if (updates.endTime) exam.endTime = updates.endTime;
+    if (updates.durationMinutes) exam.durationMinutes = Number(updates.durationMinutes);
+    if (updates.shortDescription) exam.shortDescription = updates.shortDescription;
+
+    exam.lastVerified = new Date().toISOString().split('T')[0];
+
+    // Save browser persistence if running in browser
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem('it_admin_clock_overrides') || '{}');
+        stored[exam.id] = {
+          dates: exam.dates,
+          dateStatus: exam.dateStatus,
+          officialSourceUrl: exam.officialSourceUrl,
+          sourceNotificationTitle: exam.sourceNotificationTitle,
+          lastVerified: exam.lastVerified,
+        };
+        window.localStorage.setItem('it_admin_clock_overrides', JSON.stringify(stored));
+      } catch (err) {
+        console.warn('Failed to persist clock overrides to localStorage', err);
+      }
+    }
+
+    const auditEntry: AdminAuditEntry = {
+      id: `audit_clock_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      timestamp: new Date().toISOString(),
+      adminEmail,
+      action: 'reschedule',
+      examId: exam.id,
+      examName: exam.name,
+      previousValues,
+      newValues: {
+        examDate: exam.dates.examDate,
+        dateStatus: exam.dateStatus,
+        officialSourceUrl: exam.officialSourceUrl,
+        sourceNotificationTitle: exam.sourceNotificationTitle,
+      },
+      sourceNoticeTitle: updates.sourceNotificationTitle || exam.sourceNotificationTitle,
+      sourceNoticeUrl: updates.officialSourceUrl || exam.officialSourceUrl,
+      adminComment: updates.adminComment || 'Direct exam clock update published via Admin Management Console.',
+    };
+
+    this.auditLogs.unshift(auditEntry);
+    return { success: true, auditEntry };
+  }
+
+  getSystemStatistics() {
+    const totalExams = EXAM_REGISTRY.length;
+    const officialCount = EXAM_REGISTRY.filter((e) => e.dateStatus === 'official').length;
+    const tentativeCount = EXAM_REGISTRY.filter((e) => e.dateStatus === 'tentative').length;
+    const expectedCount = EXAM_REGISTRY.filter((e) => e.dateStatus === 'expected').length;
+
+    const categories: Record<string, number> = {
+      engineering: 0,
+      medical: 0,
+      government: 0,
+      law: 0,
+      'board-exams': 0,
+      management: 0,
+      'other-entrance-exams': 0,
+    };
+
+    for (const e of EXAM_REGISTRY) {
+      if (categories[e.category] !== undefined) {
+        categories[e.category]++;
+      }
+    }
+
+    const sourcesActive = this.sources.filter((s) => s.status === 'active').length;
+    const sourcesFailing = this.sources.filter((s) => s.status === 'failing').length;
+
+    const noticesPending = this.notices.filter((n) => n.status === 'pending_review').length;
+    const noticesApproved = this.notices.filter((n) => n.status === 'approved').length;
+    const noticesRejected = this.notices.filter((n) => n.status === 'rejected').length;
+
+    const totalConfidence = this.notices.reduce((acc, n) => acc + (n.confidenceScore || 0), 0);
+    const avgConfidence = this.notices.length > 0 ? (totalConfidence / this.notices.length) * 100 : 95.0;
+
+    return {
+      totalExams,
+      officialCount,
+      officialPercentage: totalExams > 0 ? ((officialCount / totalExams) * 100).toFixed(1) : '0',
+      tentativeCount,
+      tentativePercentage: totalExams > 0 ? ((tentativeCount / totalExams) * 100).toFixed(1) : '0',
+      expectedCount,
+      expectedPercentage: totalExams > 0 ? ((expectedCount / totalExams) * 100).toFixed(1) : '0',
+      categories,
+      totalSources: this.sources.length,
+      sourcesActive,
+      sourcesFailing,
+      totalNotices: this.notices.length,
+      noticesPending,
+      noticesApproved,
+      noticesRejected,
+      avgConfidence: avgConfidence.toFixed(1),
+      totalAuditLogs: this.auditLogs.length,
+    };
+  }
 }
 
 // Global Singleton Store
 export const adminStore = new AdminMonitorStore();
+
