@@ -20,12 +20,12 @@ const websiteSchema = {
   },
 };
 
-const catMeta: Record<string, { emoji: string; color: string; bg: string }> = {
-  medical:     { emoji: '🩺', color: '#E11D48', bg: '#FFF1F2' },
-  engineering: { emoji: '⚙️', color: '#4338CA', bg: '#EEF2FF' },
-  'board-exams':{ emoji: '📚', color: '#047857', bg: '#ECFDF5' },
+const catMeta: Record<string, { emoji: string; iconSrc?: string; color: string; bg: string }> = {
+  medical:     { emoji: '💉', iconSrc: '/icons/categories/medical.png', color: '#E11D48', bg: '#FFF1F2' },
+  engineering: { emoji: '⚙️', iconSrc: '/icons/categories/engineering.png', color: '#4338CA', bg: '#EEF2FF' },
+  'board-exams':{ emoji: '📚', iconSrc: '/icons/categories/board-exams.png', color: '#047857', bg: '#ECFDF5' },
   government:  { emoji: '🏛️', color: '#C2410C', bg: '#FFF7ED' },
-  law:         { emoji: '⚖️', color: '#6D28D9', bg: '#F5F3FF' },
+  law:         { emoji: '⚖️', iconSrc: '/icons/categories/law.png', color: '#6D28D9', bg: '#F5F3FF' },
   management:  { emoji: '💼', color: '#B45309', bg: '#FFFBEB' },
   'other-entrance-exams': { emoji: '✨', color: '#0E7490', bg: '#ECFEFF' },
 };
@@ -132,6 +132,59 @@ const catMeta: Record<string, { emoji: string; color: string; bg: string }> = {
       </a>
     </div>
 
+    <!-- Category Stream Tabs -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-5 no-scrollbar" aria-label="Exam Streams">
+      <a
+        href="/exams/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs flex items-center gap-1.5 transition-transform hover:scale-105"
+      >
+        <span>🎯</span>
+        <span>All Exams</span>
+      </a>
+      <a
+        href="/exams/engineering/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <img src="/icons/categories/engineering.png" alt="Engineering" class="w-4 h-4 object-contain inline-block" />
+        <span>Engineering</span>
+      </a>
+      <a
+        href="/exams/medical/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <img src="/icons/categories/medical.png" alt="Medical" class="w-4 h-4 object-contain inline-block" />
+        <span>Medical</span>
+      </a>
+      <a
+        href="/exams/government/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <span>🏛️</span>
+        <span>Govt & UPSC</span>
+      </a>
+      <a
+        href="/exams/board-exams/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <img src="/icons/categories/board-exams.png" alt="Board Exams" class="w-4 h-4 object-contain inline-block" />
+        <span>Board Exams</span>
+      </a>
+      <a
+        href="/exams/law/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <img src="/icons/categories/law.png" alt="Law" class="w-4 h-4 object-contain inline-block" />
+        <span>Law (CLAT)</span>
+      </a>
+      <a
+        href="/exams/management/"
+        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.1] text-slate-700 dark:text-slate-200 hover:border-black/20 dark:hover:border-white/30 shadow-xs flex items-center gap-2 transition-transform hover:scale-105"
+      >
+        <span>💼</span>
+        <span>Management</span>
+      </a>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
       {featuredExams.map((exam, i) => (
         <div class={`animate-fade-in-up anim-delay-${Math.min(i + 1, 6)}`}>
@@ -164,8 +217,12 @@ const catMeta: Record<string, { emoji: string; color: string; bg: string }> = {
             href={`/exams/${cat.slug}/`}
             class={`card group p-5 bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-[22px] hover:-translate-y-1 transition-all duration-200 animate-fade-in-up anim-delay-${Math.min(i + 1, 6)}`}
           >
-            <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-3 shadow-xs bg-[#F6F7FB] dark:bg-slate-800 border border-black/[0.04] dark:border-white/[0.05]">
-              {meta.emoji}
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-3 shadow-xs bg-[#F6F7FB] dark:bg-slate-800 border border-black/[0.04] dark:border-white/[0.05]">
+              {meta.iconSrc ? (
+                <img src={meta.iconSrc} alt={cat.name} class="w-6 h-6 object-contain" />
+              ) : (
+                <span>{meta.emoji}</span>
+              )}
             </div>
 
             <h3 class="font-display font-bold text-[15px] text-slate-900 dark:text-white mb-1">

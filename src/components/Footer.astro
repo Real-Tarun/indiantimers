@@ -107,18 +107,19 @@ import { siteConfig } from '../config/site';
       <p class="text-[11px] leading-relaxed mb-4" style="color: var(--text-ghost);">
         <strong style="color: var(--text-muted);">Official Disclaimer:</strong> IndianTimers is an independent student utility and information portal. We are not affiliated with, endorsed by, or representing any government body, including NTA, UPSC, CBSE, or any conducting authority. While schedules are verified against official notices, candidates must verify all critical deadlines with official portals.
       </p>
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <span class="text-[11px]" style="color: var(--text-ghost);">
-          © {new Date().getFullYear()} {siteConfig.name}. Designed for Indian students.
-        </span>
-        <div class="flex gap-4">
-          {[
-            { href: '/sitemap.xml', label: 'Sitemap' },
-            { href: '/llms.txt', label: 'llms.txt' },
-            { href: '/editorial-policy/', label: 'Verification' },
-          ].map((link) => (
-            <a href={link.href} class="text-[11px] hover:underline" style="color: var(--text-ghost);">{link.label}</a>
-          ))}
+      <div class="flex flex-wrap items-center justify-between gap-3 text-[11px]" style="color: var(--text-ghost);">
+        <div>
+          <span>© {new Date().getFullYear()} {siteConfig.name}. Designed for Indian students.</span>
+          <span class="mx-2">·</span>
+          <a
+            href="https://icons8.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:underline transition-colors"
+            style="color: var(--text-muted);"
+          >
+            Test Icon By Icons8
+          </a>
         </div>
       </div>
     </div>

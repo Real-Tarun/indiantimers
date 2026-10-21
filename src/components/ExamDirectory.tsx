@@ -13,15 +13,15 @@ export default function ExamDirectory({ initialExams, initialCategory = 'all' }:
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'name'>('date');
 
-  const categories: Array<{ id: ExamCategory | 'all'; label: string }> = [
+  const categories: Array<{ id: ExamCategory | 'all'; label: string; iconSrc?: string; emoji?: string }> = [
     { id: 'all', label: 'All Categories' },
-    { id: 'medical', label: 'Medical' },
-    { id: 'engineering', label: 'Engineering' },
-    { id: 'board-exams', label: 'Board Exams' },
-    { id: 'government', label: 'Govt & Civil Services' },
-    { id: 'law', label: 'Law' },
-    { id: 'management', label: 'Management' },
-    { id: 'other-entrance-exams', label: 'Other Entrances' },
+    { id: 'engineering', label: 'Engineering', iconSrc: '/icons/categories/engineering.png', emoji: '⚙️' },
+    { id: 'medical', label: 'Medical', iconSrc: '/icons/categories/medical.png', emoji: '💉' },
+    { id: 'government', label: 'Govt & Civil Services', emoji: '🏛️' },
+    { id: 'board-exams', label: 'Board Exams', iconSrc: '/icons/categories/board-exams.png', emoji: '📚' },
+    { id: 'law', label: 'Law', iconSrc: '/icons/categories/law.png', emoji: '⚖️' },
+    { id: 'management', label: 'Management', emoji: '💼' },
+    { id: 'other-entrance-exams', label: 'Other Entrances', emoji: '✨' },
   ];
 
   const filteredExams = useMemo(() => {
@@ -135,18 +135,23 @@ export default function ExamDirectory({ initialExams, initialCategory = 'all' }:
         </div>
 
         {/* Category Pills (Flux style pills) */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-4 border-t border-black/[0.04] dark:border-white/[0.06] mt-4">
+        <div className="flex items-center gap-2 overflow-x-auto pt-4 border-t border-black/[0.04] dark:border-white/[0.06] mt-4 no-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
                 selectedCategory === cat.id
                   ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
-              {cat.label}
+              {cat.iconSrc ? (
+                <img src={cat.iconSrc} alt={cat.label} className="w-3.5 h-3.5 object-contain inline-block" />
+              ) : cat.emoji ? (
+                <span>{cat.emoji}</span>
+              ) : null}
+              <span>{cat.label}</span>
             </button>
           ))}
         </div>
