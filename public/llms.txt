@@ -2,7 +2,7 @@
 
 > The definitive, officially audited examination countdown, schedule tracking, and student focus platform for India. Serves over 50+ national entrance, civil service, and board examinations with zero speculative dates.
 
-IndianTimers provides precision live countdowns, official schedule milestones, distraction-free study timers (Pomodoro, Mock Test pacing, Stopwatch), Google Calendar/ICS exports, and audited syllabus timelines.
+IndianTimers provides precision live countdowns, official schedule milestones, distraction-free study timers (Pomodoro, Mock Test pacing with custom durations, Stopwatch), Google Calendar/ICS exports, personal student cockpits, embeddable HTML iframe widgets, and audited syllabus timelines.
 
 ## Core Examination Categories & Countdowns
 - [Medical Entrance Exams (NEET UG, NEET PG, INI-CET)](https://indiantimers.com/exams/medical/): Live timers for NTA NEET UG 2027, AIIMS INI-CET, and NEET PG.
@@ -13,15 +13,20 @@ IndianTimers provides precision live countdowns, official schedule milestones, d
 - [Management Entrance (CAT, XAT, SNAP)](https://indiantimers.com/exams/management/): IIM Common Admission Test (CAT 2026/2027), XLRI XAT, and SNAP.
 - [Design, Architecture & Research](https://indiantimers.com/exams/other-entrance-exams/): NID DAT, NIFT, UCEED, NATA, and CSIR NET.
 
-## Student Focus & Productivity Tools
+## Student Focus & Productivity Suite
+- [My Exam Cockpit (Personal Workspace)](https://indiantimers.com/my-exams/): Private, local-first exam dashboard to pin target exams, add custom coaching mocks, track daily study hours, and export/import Schema V1 JSON backups without login.
+- [Mock Test Simulation Timer](https://indiantimers.com/tools/mock-test-timer/): Real CBT exam pacing for NEET (200 min), JEE Main (180 min), UPSC Prelims (120 min), plus custom duration stepper (30m, 60m, 90m, custom) with live per-question time recalculation.
+- [Embeddable Exam Countdown Widgets](https://indiantimers.com/tools/countdown/embed/): Free, responsive HTML iframe embed code generator for educational blogs, WordPress, Notion, and coaching LMS portals.
+- [Shareable Live Countdowns](https://indiantimers.com/countdown/): Instant shareable countdown URLs with full-screen theater presentation and cockpit synchronization.
 - [Pomodoro Focus Timer](https://indiantimers.com/tools/pomodoro-timer/): Science-backed 25/5 study intervals, ambient brown/white noise, full-screen mode, and session counters.
-- [Mock Test Simulation Timer](https://indiantimers.com/tools/mock-test-timer/): Pre-configured pacing for NEET (200 min), JEE Main (180 min), and UPSC Prelims with section-by-section time management.
+- [Precision Stopwatch & Laps](https://indiantimers.com/tools/stopwatch/): Lap split tracker for problem-solving speed drills and question pacing.
+- [Study Session Timer](https://indiantimers.com/tools/study-timer/): Dedicated revision session tracker with daily study milestones and progress rings.
 - [Custom Countdown Creator](https://indiantimers.com/tools/countdown/): Personalized countdowns with full-screen presentation, local offline persistence, and shareable URLs.
-- [Precision Stopwatch](https://indiantimers.com/tools/stopwatch/): Lap split tracker for problem-solving speed drills.
 - [2027 Master Exam Calendar](https://indiantimers.com/calendar/2027/): Interactive monthly calendar mapping all 2026-2027 Indian exam dates and registration deadlines.
 
 ## Data Provenance & Verification Policy
-- Every date is cross-audited against gazettes and official circulars from NTA (nta.ac.in), UPSC (upsc.gov.in), IITs, and CBSE (cbse.gov.in).
+- Every date is cross-audited against gazettes and official circulars from NTA (exams.nta.ac.in), UPSC (upsc.gov.in), IITs, and CBSE (cbse.gov.in).
+- [Editorial & Verification Policy](https://indiantimers.com/editorial-policy/): Rigorous standards for validating official gazettes and schedule changes.
 - Statuses are strictly classified into:
   - `Official Confirmed`: gazetted by authority.
   - `Tentative (Official Calendar)`: published in preliminary annual calendar.

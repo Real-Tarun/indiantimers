@@ -81,3 +81,43 @@ export interface StudySessionLog {
   subject?: string;
   timestamp: number;
 }
+
+export interface CockpitTimerSettings {
+  pomodoroWorkMinutes: number;
+  pomodoroBreakMinutes: number;
+  soundEnabled: boolean;
+  autoStartBreaks: boolean;
+}
+
+export interface CockpitPreferences {
+  theme: 'light' | 'dark' | 'system';
+  countdownDisplay: 'compact' | 'expanded';
+  dashboardSort: 'date_asc' | 'date_desc' | 'name' | 'custom';
+  timerSettings: CockpitTimerSettings;
+}
+
+export interface UserDataBackup {
+  app: 'IndianTimers';
+  schemaVersion: number;
+  exportedAt: string;
+  data: {
+    savedExamIds: string[];
+    favouriteExamIds: string[];
+    customCountdowns: PersonalCountdownItem[];
+    preferences: CockpitPreferences;
+    studySessions: StudySessionLog[];
+  };
+}
+
+export interface ImportValidationResult {
+  valid: boolean;
+  error?: string;
+  schemaVersion?: number;
+  counts: {
+    savedExams: number;
+    favourites: number;
+    customCountdowns: number;
+    studySessions: number;
+  };
+  parsedData?: UserDataBackup['data'];
+}

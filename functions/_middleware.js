@@ -43,7 +43,21 @@ export async function onRequest(context) {
     return Response.redirect(targetUrl.toString(), 301);
   }
 
-  // 3. Normal traffic on production domain
+  // 3. Admin Security & Search Engine Shield
+  if (url.pathname.startsWith('/admin') || url.pathname.startsWith('/api/admin')) {
+    const response = await context.next();
+    const newHeaders = new Headers(response.headers);
+    newHeaders.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    newHeaders.set('Cache-Control', 'no-store, private');
+    newHeaders.set('X-Frame-Options', 'DENY');
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeaders,
+    });
+  }
+
+  // 4. Normal traffic on production domain
   const response = await context.next();
   return response;
 }

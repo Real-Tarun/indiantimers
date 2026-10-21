@@ -19,8 +19,20 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+  <url>
+    <loc>https://indiantimers.com/my-exams/</loc>
+    <lastmod>2026-10-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 
   <!-- 2. Interactive Study & Focus Tools -->
+  <url>
+    <loc>https://indiantimers.com/tools/mock-test-timer/</loc>
+    <lastmod>2026-10-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
   <url>
     <loc>https://indiantimers.com/tools/pomodoro-timer/</loc>
     <lastmod>2026-10-18</lastmod>
@@ -28,10 +40,16 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://indiantimers.com/tools/mock-test-timer/</loc>
+    <loc>https://indiantimers.com/tools/countdown/embed/</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://indiantimers.com/countdown/</loc>
+    <lastmod>2026-10-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://indiantimers.com/tools/stopwatch/</loc>

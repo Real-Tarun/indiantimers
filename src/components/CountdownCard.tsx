@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import type { ExamRecord } from '../types/exam';
 import { calculateCountdown, type CountdownResult } from '../utils/countdown';
 import { storageService } from '../utils/storage';
@@ -18,7 +19,12 @@ export default function CountdownCard({ exam, compact = false }: Props) {
   const [copied, setCopied] = useState<boolean>(false);
   const [secFlash, setSecFlash] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const prevSecsRef = useRef<number>(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setIsFav(storageService.isFavorite(exam.id));
@@ -295,9 +301,9 @@ export default function CountdownCard({ exam, compact = false }: Props) {
         </div>
       </div>
 
-      {/* Fullscreen Overlay Mode */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-[100] flex flex-col justify-between p-6 sm:p-12 bg-white dark:bg-[#0E1017] transition-all overflow-y-auto">
+      {/* Fullscreen Overlay Mode (Mounted directly to body via portal to prevent parent overflow/transform clipping) */}
+      {isFullscreen && mounted && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[999999] flex flex-col justify-between p-6 sm:p-12 bg-white dark:bg-[#0E1017] transition-all overflow-y-auto w-screen h-screen">
           {/* Top Bar */}
           <div className="flex items-center justify-between w-full max-w-5xl mx-auto">
             <div className="flex items-center gap-3">
@@ -311,17 +317,30 @@ export default function CountdownCard({ exam, compact = false }: Props) {
               )}
             </div>
 
-            <button
-              onClick={toggleFullscreen}
-              type="button"
-              className="px-4 py-2 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-2 cursor-pointer shadow-xs"
-              title="Exit Fullscreen (Esc)"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <span>Exit Fullscreen (Esc)</span>
-            </button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <a
+                href={`/exams/${exam.slug}/`}
+                className="px-3.5 py-2 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition-all flex items-center gap-1.5 shadow-xs"
+                title="Open detailed exam countdown and syllabus"
+              >
+                <span>Full Exam Page</span>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+
+              <button
+                onClick={toggleFullscreen}
+                type="button"
+                className="px-4 py-2 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                title="Exit Fullscreen (Esc)"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Exit Fullscreen (Esc)</span>
+              </button>
+            </div>
           </div>
 
           {/* Center Main Countdown Stage */}
@@ -377,7 +396,8 @@ export default function CountdownCard({ exam, compact = false }: Props) {
             <span>Tip: Press <kbd className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">Esc</kbd> anytime to exit Fullscreen</span>
             <span className="font-semibold text-slate-600 dark:text-slate-400">IndianTimers · Verified Schedule Focus Suite</span>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

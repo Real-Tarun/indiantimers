@@ -47,10 +47,13 @@ let xml = `<?xml version="1.0" encoding="UTF-8"?>
 ${formatUrlBlock(`${siteUrl}/`, latestGlobalUpdate, 'daily', '1.0')}
 ${formatUrlBlock(`${siteUrl}/exams/`, latestExamDate, 'daily', '0.9')}
 ${formatUrlBlock(`${siteUrl}/calendar/2027/`, calendarLastmod, 'weekly', '0.9')}
+${formatUrlBlock(`${siteUrl}/my-exams/`, toolsLastmod, 'weekly', '0.9')}
 
   <!-- 2. Interactive Study & Focus Tools -->
-${formatUrlBlock(`${siteUrl}/tools/pomodoro-timer/`, toolsLastmod, 'weekly', '0.9')}
 ${formatUrlBlock(`${siteUrl}/tools/mock-test-timer/`, toolsLastmod, 'weekly', '0.9')}
+${formatUrlBlock(`${siteUrl}/tools/pomodoro-timer/`, toolsLastmod, 'weekly', '0.9')}
+${formatUrlBlock(`${siteUrl}/tools/countdown/embed/`, toolsLastmod, 'weekly', '0.9')}
+${formatUrlBlock(`${siteUrl}/countdown/`, toolsLastmod, 'weekly', '0.85')}
 ${formatUrlBlock(`${siteUrl}/tools/stopwatch/`, toolsLastmod, 'monthly', '0.8')}
 ${formatUrlBlock(`${siteUrl}/tools/countdown/`, toolsLastmod, 'monthly', '0.8')}
 ${formatUrlBlock(`${siteUrl}/tools/study-timer/`, toolsLastmod, 'monthly', '0.8')}

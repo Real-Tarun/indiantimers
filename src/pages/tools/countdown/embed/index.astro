@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import EmbedBuilder from '../../../../components/EmbedBuilder';
+import { siteConfig } from '../../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/countdown/' },
+  { name: 'Embed Widget Builder', url: '/tools/countdown/embed/' },
+];
+
+const embedSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'IndianTimers Exam Countdown Embed Widget Generator',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Generate customizable, responsive HTML iframe embed countdowns for NEET, JEE, UPSC, and board exams to integrate into educational blogs and LMS platforms.',
+};
+---
+
+<BaseLayout
+  title="Exam Countdown Embed Widget Generator | Free HTML Iframes | IndianTimers"
+  description="Embed free, live, drift-free exam countdown widgets onto your educational blog, school website, coaching portal, or Notion workspace. Fully responsive and customizable."
+  canonicalUrl={`${siteConfig.url}/tools/countdown/embed/`}
+  breadcrumbs={breadcrumbs}
+  schema={embedSchema}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/tools/countdown/" class="hover:underline">Custom Countdown</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Embed Builder</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+      Embeddable Exam Countdown Widgets
+    </h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+      Integrate real-time, zero-dependency examination countdown clocks directly into your coaching websites, student study forums, or personal blogs.
+    </p>
+  </div>
+
+  <EmbedBuilder client:load />
+</BaseLayout>

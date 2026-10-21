@@ -61,6 +61,18 @@ export default function MockTestTimer() {
     hasAlerted5mRef.current = false;
   };
 
+  const handleDurationChange = (newMins: number) => {
+    const val = Math.max(1, Math.min(600, newMins));
+    setDurationMinutes(val);
+    setSelectedPresetName('Custom Time');
+    if (!isActive) {
+      setRemainingSeconds(val * 60);
+      setIsCompleted(false);
+      hasAlerted30mRef.current = false;
+      hasAlerted5mRef.current = false;
+    }
+  };
+
   const handleStart = () => {
     setIsActive(true);
     setIsCompleted(false);
@@ -152,9 +164,15 @@ export default function MockTestTimer() {
     >
       {/* Preset Badges Bar */}
       <div className="mb-6">
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
-          Select Official Examination Paper Simulation:
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Select Examination Preset or Custom Time:
+          </label>
+          <span className="text-xs font-bold text-indigo-600 dark:text-[#D4FF4F]">
+            {durationMinutes} Minutes ({Math.floor(durationMinutes / 60)}h {durationMinutes % 60}m)
+          </span>
+        </div>
+
         <div className="flex flex-wrap gap-2">
           {PRESETS.map((p) => (
             <button
@@ -169,6 +187,16 @@ export default function MockTestTimer() {
               {p.name} ({p.durationMinutes}m)
             </button>
           ))}
+          <button
+            onClick={() => handleDurationChange(durationMinutes)}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              selectedPresetName === 'Custom Time'
+                ? 'bg-[#D4FF4F] text-[#111406] shadow-xs'
+                : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100'
+            }`}
+          >
+            ✏️ Custom Duration
+          </button>
         </div>
       </div>
 
@@ -176,7 +204,7 @@ export default function MockTestTimer() {
       <div className="text-center my-8">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] mb-4 shadow-xs">
           <Clock className="w-3.5 h-3.5" />
-          <span>{selectedPresetName} Mock Simulation</span>
+          <span>{selectedPresetName} ({durationMinutes}m)</span>
         </div>
 
         <div className="text-6xl sm:text-7xl md:text-8xl font-black font-tabular tracking-tight text-slate-900 dark:text-white leading-none">
@@ -197,8 +225,37 @@ export default function MockTestTimer() {
         </div>
       </div>
 
-      {/* Real-time Time-per-question Pacing Insight */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-black/[0.05] dark:border-white/[0.06] text-xs mb-8">
+      {/* Real-time Time & Question Pacing Controls */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-black/[0.05] dark:border-white/[0.06] text-xs mb-8">
+        {/* Custom Duration Input */}
+        <div>
+          <span className="text-slate-500 dark:text-slate-400 font-semibold block mb-1">Duration (Minutes)</span>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="number"
+              value={durationMinutes}
+              min="1"
+              max="600"
+              onChange={(e) => handleDurationChange(parseInt(e.target.value) || 1)}
+              className="w-20 px-2.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <span className="text-slate-400 font-semibold">mins</span>
+          </div>
+          <div className="flex items-center gap-1 mt-1.5">
+            {[30, 60, 90, 120, 180].map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => handleDurationChange(m)}
+                className="px-1.5 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300"
+              >
+                {m}m
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Questions count */}
         <div>
           <span className="text-slate-500 dark:text-slate-400 font-semibold block mb-1">Total Questions</span>
           <div className="flex items-center gap-1.5">
@@ -208,18 +265,23 @@ export default function MockTestTimer() {
               min="1"
               max="500"
               onChange={(e) => setQuestionCount(parseInt(e.target.value) || 1)}
-              className="w-16 px-2.5 py-1 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-white"
+              className="w-20 px-2.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-            <span className="text-slate-400 font-semibold">Questions</span>
+            <span className="text-slate-400 font-semibold">items</span>
           </div>
+          <p className="text-[10px] text-slate-400 mt-2 font-medium">
+            For pacing accuracy
+          </p>
         </div>
+
+        {/* Recommended Pacing */}
         <div>
-          <span className="text-slate-500 dark:text-slate-400 font-semibold block mb-1">Recommended Pacing</span>
-          <span className="font-extrabold text-slate-900 dark:text-[#D4FF4F] text-sm">
-            {timePerQuestionSeconds.toFixed(1)}s / question
+          <span className="text-slate-500 dark:text-slate-400 font-semibold block mb-1">Pacing Target</span>
+          <span className="font-extrabold text-slate-900 dark:text-[#D4FF4F] text-sm block">
+            {timePerQuestionSeconds.toFixed(1)}s / Q
           </span>
-          <span className="text-[10px] text-slate-400 block font-medium">
-            ({(timePerQuestionSeconds / 60).toFixed(2)} min)
+          <span className="text-[10px] text-slate-400 block font-medium mt-1">
+            ({(timePerQuestionSeconds / 60).toFixed(2)} min per question)
           </span>
         </div>
       </div>

@@ -17,6 +17,11 @@ async function testUrls() {
     'http://localhost:4321/tools/stopwatch/',
     'http://localhost:4321/tools/countdown/',
     'http://localhost:4321/tools/study-timer/',
+    'http://localhost:4321/tools/countdown/embed/',
+    'http://localhost:4321/countdown/',
+    'http://localhost:4321/embed/countdown/',
+    'http://localhost:4321/my-exams/',
+    'http://localhost:4321/admin/',
     'http://localhost:4321/dashboard/',
     'http://localhost:4321/blog/',
     'http://localhost:4321/blog/exam-calendar-2027-india/',
@@ -28,6 +33,7 @@ async function testUrls() {
     'http://localhost:4321/robots.txt',
     'http://localhost:4321/sitemap.xml',
     'http://localhost:4321/llms.txt',
+    'http://localhost:4321/llms-full.txt',
     'http://localhost:4321/manifest.json'
   ];
 

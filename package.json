@@ -8,7 +8,7 @@
     "build": "node scripts/copy_logos.mjs && node --experimental-strip-types scripts/generate_llms_full.mjs && node --experimental-strip-types scripts/generate_sitemap.mjs && astro build && node --experimental-strip-types scripts/generate_sitemap.mjs && node scripts/validate_sitemap.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test scripts/test-exams.test.mjs scripts/test-middleware.test.mjs && node scripts/validate_sitemap.mjs",
+    "test": "node --test scripts/test-exams.test.mjs scripts/test-middleware.test.mjs scripts/test-cockpit-features.test.mjs scripts/test-admin-monitoring.test.mjs && node scripts/validate_sitemap.mjs",
     "validate:sitemap": "node scripts/validate_sitemap.mjs"
   },
   "dependencies": {

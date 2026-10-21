@@ -25,7 +25,7 @@ export const EXAM_REGISTRY: ExamRecord[] = [
     durationMinutes: 200,
     timezone: 'Asia/Kolkata',
     dateStatus: 'tentative',
-    officialSourceUrl: 'https://nta.ac.in/',
+    officialSourceUrl: 'https://exams.nta.ac.in/NEET/',
     sourceNotificationTitle: 'NTA Academic Calendar Notification for National Level Undergraduate Entrances',
     officialWebsite: 'https://neet.nta.nic.in/',
     lastVerified: '2026-10-18',

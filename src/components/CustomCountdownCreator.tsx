@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { calculateCountdown, type CountdownResult } from '../utils/countdown';
 import { storageService } from '../utils/storage';
 import { siteConfig } from '../config/site';
@@ -17,6 +18,11 @@ export default function CustomCountdownCreator() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Read URL query params on load if visiting a shared link
   useEffect(() => {
@@ -340,9 +346,9 @@ export default function CustomCountdownCreator() {
         </div>
       </div>
 
-      {/* Fullscreen Overlay Mode */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-[100] flex flex-col justify-between p-6 sm:p-12 bg-white dark:bg-[#0E1017] transition-all overflow-y-auto">
+      {/* Fullscreen Overlay Mode (Portal to document.body) */}
+      {isFullscreen && mounted && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[999999] flex flex-col justify-between p-6 sm:p-12 bg-white dark:bg-[#0E1017] transition-all overflow-y-auto w-screen h-screen">
           {/* Top Bar */}
           <div className="flex items-center justify-between w-full max-w-5xl mx-auto">
             <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#D4FF4F] text-[#111406]">
@@ -417,7 +423,8 @@ export default function CustomCountdownCreator() {
             <span>Tip: Press <kbd className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">Esc</kbd> anytime to exit Fullscreen</span>
             <span className="font-semibold text-slate-600 dark:text-slate-400">IndianTimers Personal Focus</span>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

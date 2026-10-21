@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PersonalDashboard from '../../components/PersonalDashboard';
+import MyExamCockpit from '../../components/MyExamCockpit';
 import { siteConfig } from '../../config/site';
 
 const breadcrumbs = [
@@ -30,5 +30,5 @@ const breadcrumbs = [
     </p>
   </div>
 
-  <PersonalDashboard client:load />
+  <MyExamCockpit client:load />
 </BaseLayout>

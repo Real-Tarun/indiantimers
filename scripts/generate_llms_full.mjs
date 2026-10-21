@@ -14,11 +14,17 @@ let content = `# IndianTimers Full LLM Reference Guide & Complete Exam Database
 - Homepage & Live Featured Timers: ${siteUrl}/
 - Searchable Exam Directory: ${siteUrl}/exams/
 - 2027 Master Exam Calendar: ${siteUrl}/calendar/2027/
+- My Exam Cockpit (Personal Dashboard): ${siteUrl}/my-exams/
+- Mock Test Simulation Timer (with Custom Durations): ${siteUrl}/tools/mock-test-timer/
+- Embeddable Exam Countdown Widget Generator: ${siteUrl}/tools/countdown/embed/
+- Shareable Live Exam Countdowns: ${siteUrl}/countdown/
 - Pomodoro Focus Study Timer: ${siteUrl}/tools/pomodoro-timer/
-- Mock Test Pacing Simulation Timer: ${siteUrl}/tools/mock-test-timer/
 - Precision Stopwatch with Lap Splits: ${siteUrl}/tools/stopwatch/
 - Custom Countdown Generator: ${siteUrl}/tools/countdown/
+- Study Session Goal Timer: ${siteUrl}/tools/study-timer/
 - Editorial Guides & Preparation Strategy: ${siteUrl}/blog/
+- Editorial Verification & Notice Sources: ${siteUrl}/editorial-policy/
+- About IndianTimers: ${siteUrl}/about/
 
 ---
 

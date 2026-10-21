@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MyExamCockpit from '../../components/MyExamCockpit';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'My Exam Cockpit', url: '/my-exams/' },
+];
+
+const cockpitSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: "IndianTimers My Exam Cockpit",
+  applicationCategory: 'ProductivityApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: "Private local-first exam countdown cockpit to track target national examinations, custom mock test deadlines, and study productivity without accounts.",
+};
+---
+
+<BaseLayout
+  title="My Exam Cockpit — Personal Countdown Workspace | IndianTimers"
+  description="Your private, distraction-free examination countdown cockpit. Pin target national exams, add custom coaching mocks, organize deadlines, and export data without an account."
+  canonicalUrl={`${siteConfig.url}/my-exams/`}
+  robots="index, follow"
+  breadcrumbs={breadcrumbs}
+  schema={cockpitSchema}
+>
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">My Exam Cockpit</span>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+          My Exam Cockpit
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+          Your personal mission control for target entrance and board examinations. Stored locally and privately in your browser with full backup portability.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/50">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          Local-First & Private
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <MyExamCockpit client:load />
+</BaseLayout>

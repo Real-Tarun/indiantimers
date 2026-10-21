@@ -51,13 +51,10 @@ export const siteConfig: SiteConfig = {
     about: '/about/',
   },
   navigation: [
-    { name: 'Home', href: '/' },
     { name: 'All Exams', href: '/exams/' },
     { name: '2027 Calendar', href: '/calendar/2027/', badge: 'Official' },
-    { name: 'Timers', href: '/tools/pomodoro-timer/' },
-    { name: 'Mock Timer', href: '/tools/mock-test-timer/' },
-    { name: 'Dashboard', href: '/dashboard/' },
-    { name: 'Guides', href: '/blog/' },
+    { name: 'Mock Timer', href: '/tools/mock-test-timer/', badge: 'Simulate' },
+    { name: 'My Exams', href: '/my-exams/', badge: 'Cockpit' },
   ],
   categories: [
     {

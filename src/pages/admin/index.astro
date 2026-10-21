@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminNoticeDashboard from '../../components/AdminNoticeDashboard';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Admin Console', url: '/admin/' },
+];
+---
+
+<BaseLayout
+  title="Editorial Notice Monitoring & Admin Management | IndianTimers"
+  description="Protected administration portal for automated exam circular monitoring, official datesheet verification, and review-before-publish approvals."
+  canonicalUrl={`${siteConfig.url}/admin/`}
+  robots="noindex, nofollow, noarchive"
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Admin Notice Management</span>
+    </div>
+  </div>
+
+  <AdminNoticeDashboard client:load />
+</BaseLayout>

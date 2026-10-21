@@ -10,7 +10,6 @@ import ThemeToggle from './ThemeToggle';
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[64px] flex items-center justify-between gap-4">
     {/* Brand mark */}
     <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label="IndianTimers — Home">
-      <!-- Logomark: dark pill badge with lime clock icon -->
       <!-- Official Logomark -->
       <img
         src="/logo-192.png"
@@ -27,6 +26,7 @@ import ThemeToggle from './ThemeToggle';
 
     {/* Desktop nav */}
     <nav class="hidden md:flex items-center gap-1" aria-label="Main Navigation">
+      {/* High-engagement primary navigation links */}
       {siteConfig.navigation.map((item) => (
         <a
           href={item.href}
@@ -40,6 +40,244 @@ import ThemeToggle from './ThemeToggle';
           )}
         </a>
       ))}
+
+      {/* Tools & More Mega Hover Dropdown */}
+      <div class="relative group" id="tools-dropdown-wrapper">
+        <button
+          type="button"
+          id="tools-dropdown-btn"
+          class="relative px-3.5 py-1.5 rounded-full text-[13px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all duration-150 flex items-center gap-1.5 cursor-pointer focus:outline-none"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <span>Tools & More</span>
+          <svg
+            class="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-[var(--text-hero)] transition-transform duration-200 group-hover:rotate-180"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2.5"
+            id="dropdown-chevron"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Floating Mega Dropdown Panel */}
+        <div
+          id="tools-dropdown-panel"
+          class="absolute top-full -right-20 lg:left-1/2 lg:-translate-x-1/2 pt-2.5 w-[720px] max-w-[94vw] pointer-events-none opacity-0 translate-y-2 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all duration-200 ease-out z-50"
+        >
+          <div class="bg-white/95 dark:bg-[#161822]/95 backdrop-blur-2xl rounded-2xl border border-black/[0.08] dark:border-white/[0.1] shadow-2xl p-5 ring-1 ring-black/5">
+            <div class="grid grid-cols-12 gap-5">
+              
+              {/* Left Column: Interactive Study Suite & Embeds (7 cols) */}
+              <div class="col-span-7 space-y-2">
+                <div class="flex items-center justify-between pb-1 border-b border-black/[0.04] dark:border-white/[0.06]">
+                  <span class="text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">
+                    Interactive Study Suite
+                  </span>
+                  <span class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                    100% Free · No Login
+                  </span>
+                </div>
+
+                {/* FEATURED: Embed Countdown Widget */}
+                <a
+                  href="/tools/countdown/embed/"
+                  class="group/item flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-[#D4FF4F]/15 via-emerald-500/10 to-transparent border border-[#D4FF4F]/40 dark:border-[#D4FF4F]/25 hover:border-[#D4FF4F] hover:shadow-md transition-all duration-150"
+                  id="nav-link-embed-widget"
+                >
+                  <div class="w-8 h-8 rounded-lg bg-[#18181B] dark:bg-white text-[#D4FF4F] dark:text-[#111406] flex items-center justify-center shrink-0 font-mono font-bold text-[12px] group-hover/item:scale-105 transition-transform">
+                    &lt;/&gt;
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[13px] font-bold text-[var(--text-hero)] group-hover/item:text-[#111406] dark:group-hover/item:text-white">
+                        Embed Countdown Widget
+                      </span>
+                      <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
+                        NEW
+                      </span>
+                    </div>
+                    <p class="text-[11px] text-[var(--text-secondary)] leading-snug mt-0.5">
+                      Add live countdown cards to your website, blog, coaching LMS, or Notion notes.
+                    </p>
+                  </div>
+                </a>
+
+                {/* Custom Countdown Creator */}
+                <a
+                  href="/tools/countdown/"
+                  class="group/item flex items-start gap-2.5 p-2 rounded-xl hover:bg-[var(--bg-subtle)] transition-all duration-150"
+                >
+                  <div class="w-7 h-7 rounded-lg bg-[var(--bg-subtle)] text-[var(--text-hero)] flex items-center justify-center shrink-0 text-[13px] group-hover/item:scale-105 transition-transform">
+                    ⏱️
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[12px] font-semibold text-[var(--text-hero)]">
+                      Create Custom Countdown
+                    </div>
+                    <p class="text-[11px] text-[var(--text-muted)] leading-tight">
+                      Personal target timer for test series, revision deadlines & private goals.
+                    </p>
+                  </div>
+                </a>
+
+                {/* Pomodoro Focus Timer */}
+                <a
+                  href="/tools/pomodoro-timer/"
+                  class="group/item flex items-start gap-2.5 p-2 rounded-xl hover:bg-[var(--bg-subtle)] transition-all duration-150"
+                >
+                  <div class="w-7 h-7 rounded-lg bg-[var(--bg-subtle)] text-[var(--text-hero)] flex items-center justify-center shrink-0 text-[13px] group-hover/item:scale-105 transition-transform">
+                    🍅
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[12px] font-semibold text-[var(--text-hero)]">
+                      Pomodoro Focus Timer
+                    </div>
+                    <p class="text-[11px] text-[var(--text-muted)] leading-tight">
+                      25-minute deep focus intervals with scientific sound alarms & break cycles.
+                    </p>
+                  </div>
+                </a>
+
+                {/* Precision Stopwatch */}
+                <a
+                  href="/tools/stopwatch/"
+                  class="group/item flex items-start gap-2.5 p-2 rounded-xl hover:bg-[var(--bg-subtle)] transition-all duration-150"
+                >
+                  <div class="w-7 h-7 rounded-lg bg-[var(--bg-subtle)] text-[var(--text-hero)] flex items-center justify-center shrink-0 text-[13px] group-hover/item:scale-105 transition-transform">
+                    ⚡
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[12px] font-semibold text-[var(--text-hero)]">
+                      Precision Stopwatch & Laps
+                    </div>
+                    <p class="text-[11px] text-[var(--text-muted)] leading-tight">
+                      Split-second millisecond timer with lap pacing for question speed solving.
+                    </p>
+                  </div>
+                </a>
+
+                {/* Study Session Timer */}
+                <a
+                  href="/tools/study-timer/"
+                  class="group/item flex items-start gap-2.5 p-2 rounded-xl hover:bg-[var(--bg-subtle)] transition-all duration-150"
+                >
+                  <div class="w-7 h-7 rounded-lg bg-[var(--bg-subtle)] text-[var(--text-hero)] flex items-center justify-center shrink-0 text-[13px] group-hover/item:scale-105 transition-transform">
+                    📖
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[12px] font-semibold text-[var(--text-hero)]">
+                      Study Session Timer
+                    </div>
+                    <p class="text-[11px] text-[var(--text-muted)] leading-tight">
+                      Track daily study hours with goal milestones and progress rings.
+                    </p>
+                  </div>
+                </a>
+              </div>
+
+              {/* Right Column: Exam Streams & Resources (5 cols) */}
+              <div class="col-span-5 pl-4 border-l border-black/[0.06] dark:border-white/[0.08] flex flex-col justify-between">
+                <div>
+                  <div class="pb-1 border-b border-black/[0.04] dark:border-white/[0.06] mb-2.5">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">
+                      Browse by Stream
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <a
+                      href="/exams/engineering/"
+                      class="px-2 py-1.5 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all flex items-center gap-1.5"
+                    >
+                      <span>🏛️</span>
+                      <span>Engineering</span>
+                    </a>
+                    <a
+                      href="/exams/medical/"
+                      class="px-2 py-1.5 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all flex items-center gap-1.5"
+                    >
+                      <span>🩺</span>
+                      <span>Medical</span>
+                    </a>
+                    <a
+                      href="/exams/government/"
+                      class="px-2 py-1.5 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all flex items-center gap-1.5"
+                    >
+                      <span>🇮🇳</span>
+                      <span>Govt & UPSC</span>
+                    </a>
+                    <a
+                      href="/exams/law/"
+                      class="px-2 py-1.5 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all flex items-center gap-1.5"
+                    >
+                      <span>⚖️</span>
+                      <span>Law (CLAT)</span>
+                    </a>
+                    <a
+                      href="/exams/board-exams/"
+                      class="px-2 py-1.5 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all flex items-center gap-1.5"
+                    >
+                      <span>📝</span>
+                      <span>Board Exams</span>
+                    </a>
+                    <a
+                      href="/exams/management/"
+                      class="px-2 py-1.5 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all flex items-center gap-1.5"
+                    >
+                      <span>💼</span>
+                      <span>Management</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="pt-3 mt-3 border-t border-black/[0.04] dark:border-white/[0.06] space-y-1">
+                  <div class="text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)] mb-1">
+                    Guides & Information
+                  </div>
+                  <a
+                    href="/blog/"
+                    class="block px-2 py-1 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all"
+                  >
+                    📖 Exam Countdown Guides & Patterns
+                  </a>
+                  <a
+                    href="/editorial-policy/"
+                    class="block px-2 py-1 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all"
+                  >
+                    🛡️ Official Verification & Editorial Policy
+                  </a>
+                  <a
+                    href="/about/"
+                    class="block px-2 py-1 rounded-lg text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all"
+                  >
+                    ℹ️ About IndianTimers
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Strip */}
+            <div class="mt-3.5 pt-2.5 border-t border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between text-[11px]">
+              <span class="text-[var(--text-muted)] flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Zero Ads · Zero Trackers · Student First</span>
+              </span>
+              <a
+                href="/my-exams/"
+                class="font-bold text-[var(--text-hero)] hover:text-emerald-600 dark:hover:text-[#D4FF4F] flex items-center gap-1 transition-colors"
+              >
+                <span>Open Personal Cockpit</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </nav>
 
     {/* Right controls */}
@@ -78,22 +316,96 @@ import ThemeToggle from './ThemeToggle';
   {/* Mobile menu drawer */}
   <div
     id="mobile-menu"
-    class="hidden md:hidden relative border-t border-[var(--border-subtle)] bg-[var(--bg-glass-strong)] backdrop-blur-xl px-4 pb-4 pt-2 space-y-1"
+    class="hidden md:hidden relative border-t border-[var(--border-subtle)] bg-[var(--bg-glass-strong)] backdrop-blur-2xl px-4 pb-6 pt-3 space-y-3 max-h-[85vh] overflow-y-auto"
   >
-    {siteConfig.navigation.map((item) => (
+    {/* Primary high-engagement links */}
+    <div class="space-y-1">
+      <div class="px-2 text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">
+        Main Navigation
+      </div>
+      {siteConfig.navigation.map((item) => (
+        <a
+          href={item.href}
+          class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all"
+        >
+          <span>{item.name}</span>
+          {item.badge && (
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
+              {item.badge}
+            </span>
+          )}
+        </a>
+      ))}
+    </div>
+
+    {/* Study Tools & Embeds Section */}
+    <div class="pt-2 border-t border-black/[0.06] dark:border-white/[0.08] space-y-1">
+      <div class="px-2 text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">
+        Interactive Tools & Widgets
+      </div>
+      
+      {/* Highlighted Embed Widget link */}
       <a
-        href={item.href}
-        class="flex items-center justify-between px-3.5 py-2.5 rounded-full text-[14px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-hero)] hover:bg-[var(--bg-subtle)] transition-all"
+        href="/tools/countdown/embed/"
+        class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#D4FF4F]/20 to-transparent border border-[#D4FF4F]/50 text-[13px] font-bold text-[var(--text-hero)]"
       >
-        <span>{item.name}</span>
-        {item.badge && (
-          <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
-            {item.badge}
-          </span>
-        )}
+        <span class="flex items-center gap-2">
+          <span class="font-mono text-emerald-600 dark:text-emerald-400">&lt;/&gt;</span>
+          <span>Embed Countdown Widget</span>
+        </span>
+        <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
+          FREE WIDGET
+        </span>
       </a>
-    ))}
-    <div class="pt-2 pb-1">
+
+      <a
+        href="/tools/pomodoro-timer/"
+        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
+      >
+        <span>🍅</span>
+        <span>Pomodoro Focus Timer</span>
+      </a>
+      <a
+        href="/tools/stopwatch/"
+        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
+      >
+        <span>⚡</span>
+        <span>Precision Stopwatch</span>
+      </a>
+      <a
+        href="/tools/study-timer/"
+        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
+      >
+        <span>📖</span>
+        <span>Study Session Timer</span>
+      </a>
+    </div>
+
+    {/* Exam Categories */}
+    <div class="pt-2 border-t border-black/[0.06] dark:border-white/[0.08]">
+      <div class="px-2 text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)] mb-1.5">
+        Browse Streams
+      </div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <a href="/exams/engineering/" class="px-2.5 py-1.5 rounded-lg text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]">🏛️ Engineering</a>
+        <a href="/exams/medical/" class="px-2.5 py-1.5 rounded-lg text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]">🩺 Medical</a>
+        <a href="/exams/government/" class="px-2.5 py-1.5 rounded-lg text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]">🇮🇳 Govt & UPSC</a>
+        <a href="/exams/law/" class="px-2.5 py-1.5 rounded-lg text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]">⚖️ Law (CLAT)</a>
+        <a href="/exams/board-exams/" class="px-2.5 py-1.5 rounded-lg text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]">📝 Board Exams</a>
+        <a href="/exams/management/" class="px-2.5 py-1.5 rounded-lg text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]">💼 Management</a>
+      </div>
+    </div>
+
+    {/* Guides & Policy */}
+    <div class="pt-2 border-t border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between text-[12px] px-2 text-[var(--text-muted)]">
+      <a href="/blog/" class="hover:text-[var(--text-hero)]">Guides</a>
+      <span>·</span>
+      <a href="/editorial-policy/" class="hover:text-[var(--text-hero)]">Verification</a>
+      <span>·</span>
+      <a href="/about/" class="hover:text-[var(--text-hero)]">About</a>
+    </div>
+
+    <div class="pt-2">
       <a href="/tools/countdown/" class="btn-primary w-full justify-center text-[13px] py-2.5">
         + Create Custom Countdown
       </a>
@@ -101,19 +413,57 @@ import ThemeToggle from './ThemeToggle';
   </div>
 </header>
 
+<style>
+  /* Accessibility & touch toggle support */
+  #tools-dropdown-wrapper.is-open #tools-dropdown-panel {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #tools-dropdown-wrapper.is-open #dropdown-chevron {
+    transform: rotate(180deg);
+  }
+</style>
+
 <script>
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
   const hamburger = document.getElementById('hamburger-icon');
   const closeIcon = document.getElementById('close-icon');
 
-  if (btn && menu) {
-    btn.addEventListener('click', () => {
-      const isOpen = !menu.classList.contains('hidden');
-      menu.classList.toggle('hidden', isOpen);
-      btn.setAttribute('aria-expanded', String(!isOpen));
+  if (mobileBtn && mobileMenu) {
+    mobileBtn.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden', isOpen);
+      mobileBtn.setAttribute('aria-expanded', String(!isOpen));
       hamburger?.classList.toggle('hidden', !isOpen);
       closeIcon?.classList.toggle('hidden', isOpen);
+    });
+  }
+
+  // Interactive Tools dropdown click/touch support
+  const dropdownWrapper = document.getElementById('tools-dropdown-wrapper');
+  const dropdownBtn = document.getElementById('tools-dropdown-btn');
+
+  if (dropdownBtn && dropdownWrapper) {
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdownWrapper.classList.toggle('is-open');
+      dropdownBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdownWrapper.contains(e.target as Node)) {
+        dropdownWrapper.classList.remove('is-open');
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdownWrapper.classList.remove('is-open');
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
