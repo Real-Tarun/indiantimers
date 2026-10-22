@@ -22,7 +22,7 @@ interface MockPreset {
 }
 
 const PRESETS: MockPreset[] = [
-  { name: 'NEET UG', durationMinutes: 200, questionCount: 180, officialSource: 'NTA NEET UG Bulletin (3h 20m / 180 Qs to attempt)' },
+  { name: 'NEET UG', durationMinutes: 180, questionCount: 180, officialSource: 'NTA NEET UG Pattern (3h / 180 Compulsory Qs)' },
   { name: 'JEE Main', durationMinutes: 180, questionCount: 75, officialSource: 'NTA JEE Main Bulletin (3h)' },
   { name: 'UPSC CSE Prelims', durationMinutes: 120, questionCount: 100, officialSource: 'UPSC Gazette Notification (2h)' },
   { name: 'CAT', durationMinutes: 120, questionCount: 68, officialSource: 'IIM CAT Information Bulletin (2h / 68 Qs)' },
@@ -33,12 +33,12 @@ const PRESETS: MockPreset[] = [
 
 export default function MockTestTimer() {
   const [selectedPresetName, setSelectedPresetName] = useState('NEET UG');
-  const [durationMinutes, setDurationMinutes] = useState(200);
-  const [questionCount, setQuestionCount] = useState(200);
+  const [durationMinutes, setDurationMinutes] = useState(180);
+  const [questionCount, setQuestionCount] = useState(180);
   const [warnAt30m, setWarnAt30m] = useState(true);
   const [warnAt5m, setWarnAt5m] = useState(true);
 
-  const [remainingSeconds, setRemainingSeconds] = useState(200 * 60);
+  const [remainingSeconds, setRemainingSeconds] = useState(180 * 60);
   const [isActive, setIsActive] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);

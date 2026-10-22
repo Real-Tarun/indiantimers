@@ -31,13 +31,13 @@
 - **Conducting Authority**: National Testing Agency (NTA) ([Official Portal](https://neet.nta.nic.in/))
 - **Audited Exam Date**: 2027-05-02
 - **Schedule Status**: TENTATIVE (Audit Source: NTA Academic Calendar Notification for National Level Undergraduate Entrances)
-- **Session Timings**: 14:00 to 17:20 IST (200 minutes)
+- **Session Timings**: 14:00 to 17:00 IST (180 minutes)
 - **Registration Window**: 2027-02-09 to 2027-03-09
 - **Admit Card Release**: 2027-04-29
 - **Summary**: The single gateway national entrance examination for admission to MBBS, BDS, BAMS, BHMS, and AYUSH undergraduate medical courses across India.
 - **Key FAQs**:
   - *Q: What is the official exam duration for NEET UG 2027?*
-    *A: The exam duration is 3 hours and 20 minutes (200 minutes), from 02:00 PM to 05:20 PM (IST).*
+    *A: The official exam duration is 3 hours (180 minutes), conducted from 02:00 PM to 05:00 PM (IST) for 180 compulsory questions.*
   - *Q: Is the NEET UG 2027 date confirmed?*
     *A: The first Sunday of May (May 2, 2027) represents the standard tentative schedule on NTA annual calendars. Official confirmation circular will be released at neet.nta.nic.in.*
   - *Q: Are there negative marks in NEET 2027?*

@@ -28,11 +28,11 @@ Unlike generic global timer tools or ad-heavy countdown pages with unverified es
 ### B. PomodoroMe NEET Timer (pomodorome.com/neet-timer/)
 - **Strengths**: Combines a Pomodoro focus loop with a countdown banner; appeals directly to NEET aspirants.
 - **Weaknesses**:
-  - Generic timer logic with standard 25m intervals only; doesn't support the official 200-minute (3 hour 20 minute) full mock test simulation.
+  - Generic timer logic with standard 25m intervals only; doesn't support official full mock test simulations.
   - Single-exam focus with ad clutter.
   - No offline PWA support or export to Google Calendar / .ics.
 - **Differentiation for IndianTimers**:
-  - Built-in Mock Test Timer with official paper durations (NEET: 200 mins / 180 questions to attempt; JEE Main: 180 mins / 75 questions; UPSC Prelims: 120 mins).
+  - Built-in Mock Test Timer with official paper durations (NEET: 180 mins / 180 questions; JEE Main: 180 mins / 75 questions; UPSC Prelims: 120 mins).
   - Time-per-question pacing calculator and distraction-free full-screen mode.
 
 ### C. ExamClock (examclock.com)

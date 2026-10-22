@@ -50,29 +50,29 @@ export function getDetailedExamContent(exam: ExamRecord): DetailedExamContent {
       return {
         pattern: {
           mode: exam.id.includes('ug') ? 'Computer-Based Test (CBT Online Mode)' : 'Computer-Based Test (CBT Online Mode)',
-          totalQuestions: exam.id.includes('ug') ? '200 Questions (180 Compulsory MCQs across Section A & B)' : '200 Multiple Choice Questions',
+          totalQuestions: exam.id.includes('ug') ? '180 Questions (Compulsory MCQs: Physics 45, Chemistry 45, Biology 90)' : '200 Multiple Choice Questions',
           totalMarks: exam.id.includes('ug') ? '720 Marks' : '800 Marks',
           markingScheme: '+4 marks for each correct response, -1 mark penalty for each incorrect response, 0 for unattempted questions.',
           durationText,
           medium: exam.id.includes('ug') ? '13 Languages (English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Odia, Punjabi, Tamil, Telugu, Urdu)' : 'English Only',
-          shifts: exam.startTime && exam.endTime ? `${exam.startTime} to ${exam.endTime} IST (Single Afternoon Shift)` : 'Single Session: 02:00 PM to 05:20 PM IST',
+          shifts: exam.startTime && exam.endTime ? `${exam.startTime} to ${exam.endTime} IST (Single Afternoon Shift)` : 'Single Session: 02:00 PM to 05:00 PM IST',
         },
         sections: [
           {
             name: 'Biology (Botany & Zoology)',
-            weightage: '50% of Paper (360 Marks / 90 Questions to attempt)',
+            weightage: '50% of Paper (360 Marks / 90 Compulsory Questions)',
             keyTopics: ['Human Physiology (Endocrine, Circulatory, Neural Control)', 'Genetics & Evolution (Mendelian Genetics, DNA Replication, Protein Synthesis)', 'Ecology & Environment', 'Cell Biology & Biomolecules', 'Plant Physiology & Photosynthesis'],
             strategy: 'Biology is the primary rank-decider. Read every line, diagram caption, and summary table in Class 11 and Class 12 NCERT textbooks. Practice attempting 90 questions in 40 to 45 minutes during timed mock simulations to preserve time for numerical calculation in Physics.',
           },
           {
             name: 'Physics',
-            weightage: '25% of Paper (180 Marks / 45 Questions to attempt)',
+            weightage: '25% of Paper (180 Marks / 45 Compulsory Questions)',
             keyTopics: ['Mechanics (Work Energy Power, Rotational Dynamics, Gravitation)', 'Electrodynamics & Current Electricity', 'Modern Physics (Photoelectric Effect, Nuclear Physics, Semiconductors)', 'Optics (Ray and Wave Optics)', 'Thermodynamics & Kinetic Theory'],
             strategy: 'Focus heavily on formula memorization and units/dimensions. Solve the previous 15 years of NEET and AIPMT question papers. Pay special attention to Modern Physics and Semiconductors, which offer consistent high-yield returns with direct formula applications.',
           },
           {
             name: 'Chemistry',
-            weightage: '25% of Paper (180 Marks / 45 Questions to attempt)',
+            weightage: '25% of Paper (180 Marks / 45 Compulsory Questions)',
             keyTopics: ['Inorganic Chemistry (Coordination Compounds, Chemical Bonding, p-Block & d-Block)', 'Organic Chemistry (Name Reactions, Reaction Mechanisms, Biomolecules)', 'Physical Chemistry (Electrochemistry, Chemical Kinetics, Solutions, Thermodynamics)'],
             strategy: 'Treat NCERT as the definitive bible for Inorganic and Organic Chemistry. Tabulate named reactions and their intermediate reagents. In Physical Chemistry, practice numerical calculation by hand without relying on calculators to build computational speed.',
           },
@@ -94,7 +94,7 @@ export function getDetailedExamContent(exam: ExamRecord): DetailedExamContent {
             title: 'Phase 3: Full-Length Simulation & Circadian Clock Synchronization',
             timeframe: 'Final 30 Days',
             focus: 'Replicating official test environment and training cognitive alertness during the exact session hours.',
-            deliverables: ['Solve full 200-minute CBT mock tests strictly between 02:00 PM and 05:20 PM IST to match the official exam window.', 'Practice on-screen navigation, digital flagging, and section-switching using CBT interface simulators.', 'Review only formula sheets, error logbooks, and high-yield NCERT diagrams in the final 7 days.'],
+            deliverables: ['Solve full 180-minute CBT mock tests strictly between 02:00 PM and 05:00 PM IST to match the official exam window.', 'Practice on-screen navigation, digital flagging, and section-switching using CBT interface simulators.', 'Review only formula sheets, error logbooks, and high-yield NCERT diagrams in the final 7 days.'],
           },
         ],
         examDayGuidelines: {
@@ -106,7 +106,7 @@ export function getDetailedExamContent(exam: ExamRecord): DetailedExamContent {
           ],
           prohibitedItems: [
             'All electronic devices including mobile phones, smartwatches, Bluetooth headphones, fitness trackers, and health bands.',
-            'Stationery items such as geometry boxes, pencil pouches, log tables, calculators, writing pads, or blank scrap sheets (pens are provided inside the hall).',
+            'Stationery items such as geometry boxes, pencil pouches, log tables, calculators, writing pads, or blank scrap sheets (rough scribble sheets provided inside CBT examination hall).',
             'Wallets, handbags, goggles, caps, metallic ornaments, rings, bracelets, and metallic hairpins.',
             'Food items, snacks, or opaque water bottles (only transparent 500ml water bottles are allowed).',
           ],

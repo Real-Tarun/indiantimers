@@ -21,8 +21,8 @@ export const EXAM_REGISTRY: ExamRecord[] = [
       resultDate: '2027-06-14',
     },
     startTime: '14:00',
-    endTime: '17:20',
-    durationMinutes: 200,
+    endTime: '17:00',
+    durationMinutes: 180,
     timezone: 'Asia/Kolkata',
     dateStatus: 'tentative',
     officialSourceUrl: 'https://exams.nta.ac.in/NEET/',
@@ -32,7 +32,7 @@ export const EXAM_REGISTRY: ExamRecord[] = [
     isIndexable: true,
     isFeatured: true,
     shortDescription: 'The single gateway national entrance examination for admission to MBBS, BDS, BAMS, BHMS, and AYUSH undergraduate medical courses across India.',
-    detailedOverview: 'NEET (UG) 2027 will be administered in Computer-Based Test (CBT) mode across 13 languages — marking a historic shift from the legacy pen-and-paper OMR format. The question paper comprises 200 multiple-choice questions from Physics, Chemistry, and Biology (Botany & Zoology), with candidates required to attempt 180 compulsory questions (Section A: 35+35+70 fixed; Section B: attempt 10+10+20) within 200 minutes (720 maximum marks).',
+    detailedOverview: 'NEET (UG) 2027 will be administered in Computer-Based Test (CBT) mode across 13 languages — marking a historic shift from the legacy pen-and-paper OMR format. The revised pattern comprises 180 compulsory multiple-choice questions (Physics: 45, Chemistry: 45, Biology: 90) to be completed within 180 minutes (3 hours, 720 maximum marks), removing the previous optional Section B.',
     instructions: [
       'Reporting time at examination centre is strictly between 11:30 AM and 01:30 PM.',
       'No candidate will be permitted entry after 01:30 PM under any circumstances.',
@@ -42,14 +42,14 @@ export const EXAM_REGISTRY: ExamRecord[] = [
     ],
     preparationTips: [
       'Master NCERT line-by-line for Biology; over 85% of questions are directly NCERT-derived.',
-      'Simulate 2:00 PM to 5:20 PM mock tests weekly to adapt your circadian rhythm to afternoon alertness.',
+      'Simulate 2:00 PM to 5:00 PM mock tests weekly to adapt your circadian rhythm to afternoon alertness.',
       'Aim for a 45-second average speed per question in Biology to reserve time for numerical calculations in Physics.',
     ],
     relatedExamIds: ['neet-pg-2027', 'ini-cet-may-2027', 'cuet-ug-2027'],
     faqs: [
       {
         question: 'What is the official exam duration for NEET UG 2027?',
-        answer: 'The exam duration is 3 hours and 20 minutes (200 minutes), from 02:00 PM to 05:20 PM (IST).',
+        answer: 'The official exam duration is 3 hours (180 minutes), conducted from 02:00 PM to 05:00 PM (IST) for 180 compulsory questions.',
       },
       {
         question: 'Is the NEET UG 2027 date confirmed?',

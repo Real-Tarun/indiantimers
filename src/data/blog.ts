@@ -94,25 +94,25 @@ The National Eligibility cum Entrance Test (NEET UG) is India's sole qualifying 
 - **Information Bulletin Release**: First week of February 2027
 - **Online Application Form Window**: February to March 2027
 - **Admit Card Release**: Late April 2027
-- **Examination Date**: First Sunday of May 2027 (02:00 PM to 05:20 PM IST)
+- **Examination Date**: First Sunday of May 2027 (02:00 PM to 05:00 PM IST)
 
 ---
 
-## The 200-Minute Exam Structure
+## The 180-Minute / 180-Question Exam Structure
 
-Since 2022, NTA provides **200 minutes (3 hours 20 minutes)** for 200 questions, allowing candidates to attempt 180 questions across:
-- **Physics**: 35 (Section A) + 15 (Section B, attempt 10) = 45 Questions (180 Marks)
-- **Chemistry**: 35 (Section A) + 15 (Section B, attempt 10) = 45 Questions (180 Marks)
-- **Biology (Botany & Zoology)**: 70 (Section A) + 30 (Section B, attempt 20) = 90 Questions (360 Marks)
+The revised NEET pattern features **180 minutes (3 hours)** for 180 compulsory questions, with optional Section B questions removed:
+- **Physics**: 45 Compulsory Questions (180 Marks)
+- **Chemistry**: 45 Compulsory Questions (180 Marks)
+- **Biology (Botany & Zoology)**: 90 Compulsory Questions (360 Marks)
 
 ---
 
 ## Time Allocation Recommendations
 
-1. **Biology (90 Questions)**: 45–50 minutes. Because NCERT questions are largely factual, solving 2 questions per minute is achievable.
+1. **Biology (90 Questions)**: 45–50 minutes. Because NCERT questions are largely factual, solving questions swiftly is achievable.
 2. **Chemistry (45 Questions)**: 45–50 minutes. Tackle Organic & Inorganic swiftly, reserving time for Physical numerical calculations.
-3. **Physics (45 Questions)**: 65–70 minutes. Requires extensive multi-step computations and unit conversions.
-4. **CBT Review & Double-Check Buffer**: 20–25 minutes. Use digital flagging ('Mark for Review') during the exam and revisit flagged questions before submitting.
+3. **Physics (45 Questions)**: 60–65 minutes. Requires extensive multi-step computations and unit conversions.
+4. **CBT Review & Double-Check Buffer**: 15–20 minutes. Use digital flagging ('Mark for Review') during the exam and revisit flagged questions before submitting.
     `,
   },
   {
@@ -321,7 +321,7 @@ Reverse planning starts at **Exam Day (Day 0)** and works backwards:
 
 ### Phase 3: Final Simulation & Biological Adaptation (Last 30 Days)
 - **Goal**: Exam-hall endurance and biological rhythm alignment.
-- Run full-length mock papers strictly at the official exam time (e.g. 02:00 PM to 05:20 PM for NEET).
+- Run full-length mock papers strictly at the official exam time (e.g. 02:00 PM to 05:00 PM for NEET).
 - No new topics; purely error notebook review.
 
 ### Phase 2: Active Recall & PYQ Drills (Days -90 to -30)
