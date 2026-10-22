@@ -5,6 +5,7 @@ import { EXAM_REGISTRY, toDirectoryExam } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 import { getGoogleCalendarUrl } from '../../utils/calendar';
 import { getDetailedExamContent } from '../../utils/examContent';
+import { getExamJsonLd } from '../../utils/examSchema';
 import type { ExamRecord } from '../../types/exam';
 
 export async function getStaticPaths() {
@@ -34,44 +35,8 @@ const breadcrumbs = [
 
 const googleCalUrl = getGoogleCalendarUrl(exam, siteConfig.url);
 
-// JSON-LD structured data for Exam Page
-const examJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: `${exam.name} Countdown & Schedule`,
-  description: exam.shortDescription,
-  url: `${siteConfig.url}/exams/${exam.slug}/`,
-  publisher: {
-    '@type': 'Organization',
-    name: siteConfig.name,
-    url: siteConfig.url,
-  },
-  mainEntity: {
-    '@type': 'Event',
-    name: exam.name,
-    startDate: exam.dates.examDate,
-    endDate: exam.dates.examEndDate || exam.dates.examDate,
-    eventStatus:
-      exam.dateStatus === 'official'
-        ? 'https://schema.org/EventScheduled'
-        : exam.dateStatus === 'postponed'
-        ? 'https://schema.org/EventPostponed'
-        : 'https://schema.org/EventScheduled',
-    organizer: {
-      '@type': 'Organization',
-      name: exam.conductingAuthority,
-      url: exam.officialWebsite,
-    },
-    location: {
-      '@type': 'Place',
-      name: 'Designated Examination Centres across India',
-      address: {
-        '@type': 'PostalAddress',
-        addressCountry: 'IN',
-      },
-    },
-  },
-};
+// JSON-LD structured data for Exam Page (Google Search Console compliant with Event, description, image, performer, offers)
+const examJsonLd = getExamJsonLd(exam, siteConfig.url);
 
 // Combine all FAQs for Rich Snippets
 const allFaqs = [...(exam.faqs || []), ...detailedContent.additionalFaqs];

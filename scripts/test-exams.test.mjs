@@ -6,6 +6,7 @@ import { calculateCountdown, getTargetTimestamp } from '../src/utils/countdown.t
 import { generateICS, getGoogleCalendarUrl } from '../src/utils/calendar.ts';
 import { EXAM_REGISTRY } from '../src/data/exams.ts';
 import { siteConfig } from '../src/config/site.ts';
+import { getExamJsonLd } from '../src/utils/examSchema.ts';
 
 test('Exam Registry: Integrity and Provenance Validation', async (t) => {
   await t.test('has at least 40 verified high-priority examination records', () => {
@@ -152,3 +153,51 @@ test('Calendar Utilities: RFC 5545 ICS and Google Calendar Export', async (t) =>
     assert.ok(gUrl.includes(encodeURIComponent(`${sampleExam.shortName} Examination`)));
   });
 });
+
+test('Structured Data (JSON-LD): Google Search Console Event Compliance', async (t) => {
+  await t.test('every registered exam generates valid Event schema with all 4 required/recommended fields', () => {
+    for (const exam of EXAM_REGISTRY) {
+      const jsonLd = getExamJsonLd(exam, siteConfig.url);
+      assert.equal(jsonLd['@context'], 'https://schema.org');
+      assert.equal(jsonLd['@type'], 'WebPage');
+
+      const event = jsonLd.mainEntity;
+      assert.ok(event, `Exam ${exam.id} must have mainEntity`);
+      assert.equal(event['@type'], 'Event');
+      assert.equal(event.name, exam.name);
+
+      // 1. Check description (resolves Search Console "Missing field 'description'")
+      assert.ok(event.description, `Exam ${exam.id} Event missing description`);
+      assert.ok(typeof event.description === 'string' && event.description.length > 10);
+
+      // 2. Check image (resolves Search Console "Missing field 'image'")
+      assert.ok(Array.isArray(event.image), `Exam ${exam.id} Event image must be array`);
+      assert.ok(event.image.length > 0, `Exam ${exam.id} Event image array is empty`);
+      for (const img of event.image) {
+        assert.ok(img.startsWith('https://') || img.startsWith('http://'), `Invalid image URL: ${img}`);
+      }
+
+      // 3. Check performer (resolves Search Console "Missing field 'performer'")
+      assert.ok(event.performer, `Exam ${exam.id} Event missing performer`);
+      assert.equal(event.performer['@type'], 'Organization');
+      assert.ok(event.performer.name && event.performer.name.length > 0);
+
+      // 4. Check offers (resolves Search Console "Missing field 'offers'")
+      assert.ok(event.offers, `Exam ${exam.id} Event missing offers`);
+      assert.equal(event.offers['@type'], 'Offer');
+      assert.equal(event.offers.price, '0');
+      assert.equal(event.offers.priceCurrency, 'INR');
+      assert.equal(event.offers.availability, 'https://schema.org/InStock');
+      assert.ok(event.offers.url.startsWith('http'));
+
+      // Event Attendance Mode & Status
+      assert.equal(event.eventAttendanceMode, 'https://schema.org/OfflineEventAttendanceMode');
+      assert.ok(event.eventStatus.startsWith('https://schema.org/Event'));
+
+      // Location & Organizer
+      assert.ok(event.location && event.location['@type'] === 'Place');
+      assert.ok(event.organizer && event.organizer['@type'] === 'Organization');
+    }
+  });
+});
+
