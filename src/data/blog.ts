@@ -82,7 +82,7 @@ At **IndianTimers**, we categorize schedules into three actionable categories:
       name: 'IndianTimers Medical Prep Desk',
       role: 'Curriculum & Test Analyst',
     },
-    summary: 'Detailed timeline of the NTA NEET UG 2027 application cycle, OMR shift instructions, and how to utilize the 200-minute mock test timer.',
+    summary: 'Detailed timeline of the NTA NEET UG 2027 application cycle, CBT interface tips, and how to utilize the 200-minute mock test timer.',
     relatedExamIds: ['neet-ug-2027', 'ini-cet-may-2027'],
     relatedArticleSlugs: ['pomodoro-technique-for-competitive-exams', 'how-to-plan-study-time-around-exam-countdown'],
     content: `
@@ -112,7 +112,7 @@ Since 2022, NTA provides **200 minutes (3 hours 20 minutes)** for 200 questions,
 1. **Biology (90 Questions)**: 45–50 minutes. Because NCERT questions are largely factual, solving 2 questions per minute is achievable.
 2. **Chemistry (45 Questions)**: 45–50 minutes. Tackle Organic & Inorganic swiftly, reserving time for Physical numerical calculations.
 3. **Physics (45 Questions)**: 65–70 minutes. Requires extensive multi-step computations and unit conversions.
-4. **OMR Bubble Filling & Re-check Buffer**: 20–25 minutes. Never leave bubble filling until the final 10 minutes.
+4. **CBT Review & Double-Check Buffer**: 20–25 minutes. Use digital flagging ('Mark for Review') during the exam and revisit flagged questions before submitting.
     `,
   },
   {

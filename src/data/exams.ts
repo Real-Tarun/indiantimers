@@ -32,11 +32,12 @@ export const EXAM_REGISTRY: ExamRecord[] = [
     isIndexable: true,
     isFeatured: true,
     shortDescription: 'The single gateway national entrance examination for admission to MBBS, BDS, BAMS, BHMS, and AYUSH undergraduate medical courses across India.',
-    detailedOverview: 'NEET (UG) 2027 will be administered in pen-and-paper (OMR) format across 13 languages. The question paper comprises 200 multiple-choice questions from Physics, Chemistry, and Biology (Botany & Zoology), with candidates required to attempt 180 questions within 200 minutes.',
+    detailedOverview: 'NEET (UG) 2027 will be administered in Computer-Based Test (CBT) mode across 13 languages — marking a historic shift from the legacy pen-and-paper OMR format. The question paper comprises 200 multiple-choice questions from Physics, Chemistry, and Biology (Botany & Zoology), with candidates required to attempt 180 compulsory questions (Section A: 35+35+70 fixed; Section B: attempt 10+10+20) within 200 minutes (720 maximum marks).',
     instructions: [
       'Reporting time at examination centre is strictly between 11:30 AM and 01:30 PM.',
       'No candidate will be permitted entry after 01:30 PM under any circumstances.',
       'Only transparent water bottle, 50ml hand sanitizer, original Govt Photo ID, and printed admit card with passport photo are allowed.',
+      'The exam is now Computer-Based (CBT): rough scribble pads are provided at the center; no physical writing instruments are required. Surrender the scribble pad before leaving.',
       'Adhere strictly to the NTA dress code (light clothes with half sleeves, sandals/slippers without high heels).',
     ],
     preparationTips: [

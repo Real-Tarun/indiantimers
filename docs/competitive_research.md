@@ -32,7 +32,7 @@ Unlike generic global timer tools or ad-heavy countdown pages with unverified es
   - Single-exam focus with ad clutter.
   - No offline PWA support or export to Google Calendar / .ics.
 - **Differentiation for IndianTimers**:
-  - Built-in Mock Test Timer with official paper durations (NEET: 200 mins / 200 questions; JEE Main: 180 mins / 75 questions; UPSC Prelims: 120 mins).
+  - Built-in Mock Test Timer with official paper durations (NEET: 200 mins / 180 questions to attempt; JEE Main: 180 mins / 75 questions; UPSC Prelims: 120 mins).
   - Time-per-question pacing calculator and distraction-free full-screen mode.
 
 ### C. ExamClock (examclock.com)

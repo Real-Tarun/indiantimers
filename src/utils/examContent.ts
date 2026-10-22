@@ -49,8 +49,8 @@ export function getDetailedExamContent(exam: ExamRecord): DetailedExamContent {
     case 'medical':
       return {
         pattern: {
-          mode: exam.id.includes('ug') ? 'Pen-and-Paper (OMR Offline Mode)' : 'Computer-Based Test (CBT Online Mode)',
-          totalQuestions: exam.id.includes('ug') ? '200 Questions (180 to be attempted across Section A & B)' : '200 Multiple Choice Questions',
+          mode: exam.id.includes('ug') ? 'Computer-Based Test (CBT Online Mode)' : 'Computer-Based Test (CBT Online Mode)',
+          totalQuestions: exam.id.includes('ug') ? '200 Questions (180 Compulsory MCQs across Section A & B)' : '200 Multiple Choice Questions',
           totalMarks: exam.id.includes('ug') ? '720 Marks' : '800 Marks',
           markingScheme: '+4 marks for each correct response, -1 mark penalty for each incorrect response, 0 for unattempted questions.',
           durationText,
@@ -94,7 +94,7 @@ export function getDetailedExamContent(exam: ExamRecord): DetailedExamContent {
             title: 'Phase 3: Full-Length Simulation & Circadian Clock Synchronization',
             timeframe: 'Final 30 Days',
             focus: 'Replicating official test environment and training cognitive alertness during the exact session hours.',
-            deliverables: ['Solve full 200-minute mock tests strictly between 02:00 PM and 05:20 PM IST on physical OMR sheets.', 'Eliminate afternoon naps to train peak neurological focus during official exam hours.', 'Review only formula sheets, error logbooks, and high-yield NCERT diagrams in the final 7 days.'],
+            deliverables: ['Solve full 200-minute CBT mock tests strictly between 02:00 PM and 05:20 PM IST to match the official exam window.', 'Practice on-screen navigation, digital flagging, and section-switching using CBT interface simulators.', 'Review only formula sheets, error logbooks, and high-yield NCERT diagrams in the final 7 days.'],
           },
         ],
         examDayGuidelines: {
@@ -534,8 +534,8 @@ export function getDetailedExamContent(exam: ExamRecord): DetailedExamContent {
       return {
         pattern: {
           mode: 'Computer-Based Test (CBT Online Mode)',
-          totalQuestions: exam.id.includes('cat') ? '66 Questions (48 MCQs + 18 Non-MCQ TITA Questions)' : '60 to 76 Questions across Sections',
-          totalMarks: exam.id.includes('cat') ? '198 Marks' : '180 to 240 Marks',
+          totalQuestions: exam.id.includes('cat') ? '68 Questions (MCQs + Non-MCQ TITA Questions across 3 Sections)' : '60 to 76 Questions across Sections',
+          totalMarks: exam.id.includes('cat') ? '204 Marks' : '180 to 240 Marks',
           markingScheme: '+3 marks for each correct response, -1 mark penalty for incorrect MCQs. Non-MCQ / TITA (Type in the Answer) questions have zero negative marking penalty.',
           durationText: '120 minutes (CAT has strict 40-minute sectional time limits per section)',
           medium: 'English Only',

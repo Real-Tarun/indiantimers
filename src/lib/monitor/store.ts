@@ -17,7 +17,7 @@ const INITIAL_SEED_NOTICES: DetectedNotice[] = [
     currentExamDate: '2027-05-02',
     proposedExamDate: '2027-05-02',
     proposedDateStatus: 'official',
-    detectedSnippet: 'The National Testing Agency (NTA) will conduct NEET (UG) 2027 on Sunday, 02 May 2027 from 02:00 PM to 05:20 PM (IST) in Pen & Paper (offline) mode across India.',
+    detectedSnippet: 'The National Testing Agency (NTA) will conduct NEET (UG) 2027 on Sunday, 02 May 2027 from 02:00 PM to 05:20 PM (IST) in Computer-Based Test (CBT Online) mode across India.',
     confidenceScore: 0.98,
     status: 'pending_review',
     detectedAt: '2026-10-21T06:15:00.000Z',

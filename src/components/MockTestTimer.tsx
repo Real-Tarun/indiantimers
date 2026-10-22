@@ -22,10 +22,10 @@ interface MockPreset {
 }
 
 const PRESETS: MockPreset[] = [
-  { name: 'NEET UG', durationMinutes: 200, questionCount: 200, officialSource: 'NTA NEET UG Bulletin (3h 20m)' },
+  { name: 'NEET UG', durationMinutes: 200, questionCount: 180, officialSource: 'NTA NEET UG Bulletin (3h 20m / 180 Qs to attempt)' },
   { name: 'JEE Main', durationMinutes: 180, questionCount: 75, officialSource: 'NTA JEE Main Bulletin (3h)' },
   { name: 'UPSC CSE Prelims', durationMinutes: 120, questionCount: 100, officialSource: 'UPSC Gazette Notification (2h)' },
-  { name: 'CAT', durationMinutes: 120, questionCount: 66, officialSource: 'IIM CAT Information Bulletin (2h)' },
+  { name: 'CAT', durationMinutes: 120, questionCount: 68, officialSource: 'IIM CAT Information Bulletin (2h / 68 Qs)' },
   { name: 'GATE', durationMinutes: 180, questionCount: 65, officialSource: 'IIT GATE Committee (3h)' },
   { name: 'CLAT UG', durationMinutes: 120, questionCount: 120, officialSource: 'Consortium of NLUs (2h)' },
   { name: 'CBSE 10/12 Board', durationMinutes: 180, questionCount: 38, officialSource: 'CBSE Examination Guidelines (3h)' },
