@@ -394,6 +394,12 @@ export default function AdminNoticeDashboard() {
     showToast(`Notice dismissed from queue.`);
   };
 
+  const handleDismissAll = () => {
+    adminStore.dismissAllPending(adminEmail);
+    loadData();
+    showToast('All pending circulars dismissed and saved.');
+  };
+
   // Clock Editor Handlers
   const handleOpenClockEditor = (exam: ExamRecord) => {
     setEditingClock(exam);
@@ -941,6 +947,18 @@ export default function AdminNoticeDashboard() {
         <div className="space-y-4">
           {pendingNotices.length > 0 ? (
             <div className="space-y-3">
+              <div className="flex items-center justify-between pb-1">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  Showing {filteredNotices.length} of {pendingNotices.length} pending circulars
+                </span>
+                <button
+                  type="button"
+                  onClick={handleDismissAll}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors cursor-pointer"
+                >
+                  Dismiss All ({pendingNotices.length})
+                </button>
+              </div>
               {filteredNotices.map((notice) => (
                 <div
                   key={notice.id}

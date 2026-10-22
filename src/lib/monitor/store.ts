@@ -112,6 +112,8 @@ class AdminMonitorStore {
       this.baselines.set(exam.id, JSON.parse(JSON.stringify(exam)));
     }
     this.loadOverridesFromStorage();
+    this.loadNoticesFromStorage();
+    this.loadAuditLogsFromStorage();
   }
 
   loadOverridesFromStorage(): void {
@@ -138,6 +140,64 @@ class AdminMonitorStore {
       }
     } catch (err) {
       console.warn('Failed to restore clock overrides from storage:', err);
+    }
+  }
+
+  private saveNoticesToStorage(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      window.localStorage.setItem('it_admin_notices', JSON.stringify(this.notices));
+    } catch (err) {
+      console.warn('Failed to persist admin notices to localStorage:', err);
+    }
+  }
+
+  loadNoticesFromStorage(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      const raw = window.localStorage.getItem('it_admin_notices');
+      if (!raw) return;
+      const stored: DetectedNotice[] = JSON.parse(raw);
+      if (Array.isArray(stored)) {
+        const storedMap = new Map(stored.map((n) => [n.id, n]));
+        this.notices = this.notices.map((n) => storedMap.get(n.id) || n);
+        for (const storedNotice of stored) {
+          if (!this.notices.some((n) => n.id === storedNotice.id)) {
+            this.notices.push(storedNotice);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to restore admin notices from localStorage:', err);
+    }
+  }
+
+  private saveAuditLogsToStorage(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      window.localStorage.setItem('it_admin_audit_logs', JSON.stringify(this.auditLogs));
+    } catch (err) {
+      console.warn('Failed to persist admin audit logs to localStorage:', err);
+    }
+  }
+
+  loadAuditLogsFromStorage(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      const raw = window.localStorage.getItem('it_admin_audit_logs');
+      if (!raw) return;
+      const stored: AdminAuditEntry[] = JSON.parse(raw);
+      if (Array.isArray(stored) && stored.length > 0) {
+        const existingIds = new Set(this.auditLogs.map((l) => l.id));
+        for (const entry of stored) {
+          if (!existingIds.has(entry.id)) {
+            this.auditLogs.push(entry);
+            existingIds.add(entry.id);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to restore admin audit logs from localStorage:', err);
     }
   }
 
@@ -178,6 +238,7 @@ class AdminMonitorStore {
     );
     if (isDuplicate) return false;
     this.notices.unshift(notice);
+    this.saveNoticesToStorage();
     return true;
   }
 
@@ -245,6 +306,9 @@ class AdminMonitorStore {
     };
 
     this.auditLogs.unshift(auditEntry);
+    this.saveOverridesToStorage(exam);
+    this.saveNoticesToStorage();
+    this.saveAuditLogsToStorage();
     return { success: true, auditEntry };
   }
 
@@ -270,7 +334,44 @@ class AdminMonitorStore {
       sourceNoticeUrl: notice.sourceUrl,
       adminComment: comment || 'Notice dismissed / rejected as false positive.',
     });
+    this.saveNoticesToStorage();
+    this.saveAuditLogsToStorage();
     return true;
+  }
+
+  dismissAllPending(adminEmail: string): void {
+    for (const notice of this.notices) {
+      if (notice.status === 'pending_review') {
+        notice.status = 'rejected';
+        notice.reviewedAt = new Date().toISOString();
+        notice.reviewedBy = adminEmail;
+        const exam = EXAM_REGISTRY.find((e) => e.id === notice.matchedExamId);
+        this.auditLogs.unshift({
+          id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          timestamp: new Date().toISOString(),
+          adminEmail,
+          action: 'reject',
+          examId: notice.matchedExamId,
+          examName: exam?.name || notice.matchedExamName,
+          previousValues: {},
+          newValues: {},
+          sourceNoticeTitle: notice.title,
+          sourceNoticeUrl: notice.sourceUrl,
+          adminComment: 'Bulk dismissed by administrator.',
+        });
+      }
+    }
+    this.saveNoticesToStorage();
+    this.saveAuditLogsToStorage();
+  }
+
+  resetNoticesToDefault(): void {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem('it_admin_notices');
+      window.localStorage.removeItem('it_admin_audit_logs');
+    }
+    this.notices = [...INITIAL_SEED_NOTICES];
+    this.auditLogs = [...INITIAL_AUDIT_LOGS];
   }
 
   // --- Clock Management & Detailed Statistics ---
