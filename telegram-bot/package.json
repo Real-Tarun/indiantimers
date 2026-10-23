@@ -1,0 +1,15 @@
+{
+  "name": "examtimers-telegram-bot",
+  "version": "1.0.0",
+  "description": "Automated Telegram Broadcast & Quiz Bot for Indian Exam Aspirants",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "broadcast:morning": "node src/morning-broadcast.js",
+    "broadcast:poll": "node src/afternoon-poll.js",
+    "test:bot": "node src/test-bot.js"
+  },
+  "keywords": ["telegram-bot", "exam-countdown", "neet", "jee", "upsc"],
+  "author": "IndianTimers",
+  "license": "MIT"
+}

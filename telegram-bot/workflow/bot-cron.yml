@@ -1,0 +1,50 @@
+name: Daily Telegram Exam Broadcast & Quiz
+
+on:
+  schedule:
+    # Morning Countdown & Motivation at 7:30 AM IST (02:00 UTC)
+    - cron: '0 2 * * *'
+    # Afternoon Interactive Quiz Poll at 2:00 PM IST (08:30 UTC)
+    - cron: '30 8 * * *'
+  # Allows manual 1-click trigger from GitHub Actions dashboard
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose action to run'
+        required: true
+        default: 'morning'
+        type: choice
+        options:
+          - 'morning'
+          - 'poll'
+
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Morning broadcast step (runs automatically at 02:00 UTC or when manually chosen)
+      - name: Run Morning Motivation & Multi-Exam Countdown
+        if: github.event.schedule == '0 2 * * *' || github.event.inputs.action == 'morning' || (github.event_name == 'workflow_dispatch' && github.event.inputs.action != 'poll')
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node src/morning-broadcast.js
+
+      # Afternoon quiz step (runs automatically at 08:30 UTC or when manually chosen)
+      - name: Run Afternoon Interactive Quiz Poll
+        if: github.event.schedule == '30 8 * * *' || github.event.inputs.action == 'poll'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node src/afternoon-poll.js
