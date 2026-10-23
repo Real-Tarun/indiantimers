@@ -95,13 +95,12 @@ async function callGemini(prompt, systemInstruction = '', jsonMode = false) {
  * Generates an inspiring morning quote and innovative topper hack.
  */
 export async function generateDailyHack() {
-  const system = `You are an elite mentor for Indian exam aspirants (NEET, JEE, UPSC, SSC, NDA, Boards). Write in crisp, energetic Hinglish. Keep it highly practical. Never output raw markdown asterisks (*** or **). Use clean bold headers.`;
-  const prompt = `Generate a fresh, unique "Daily Topper Study Hack" for Indian competitive exam aspirants.
+  const system = `You are an elite mentor for Indian exam aspirants (NEET, JEE, UPSC, SSC, NDA, Boards). Write in crisp, energetic Hinglish. Keep it ultra compact under 50 words. Never output raw markdown asterisks (*** or **). Use clean bold headers.`;
+  const prompt = `Generate a compact "Daily Topper Study Hack" for Indian competitive exam aspirants.
 Requirements:
-1. A 1-line powerful reality check / motivation (Hinglish).
-2. The name of the technique (e.g., 20-20-20 Focus Rule, Interleaving Method, Blurting Technique, Feynman Step, 3-Pass Mock Rule, Error-Log Mastery).
-3. Exactly 2-3 short bullet points on how to execute it today.
-4. Keep it under 100 words. Format cleanly with bullet points (•) and clean bold titles. Do NOT use markdown code blocks or *** symbols.`;
+1. Technique name in bold.
+2. Exactly 2 ultra-short bullet points (•) on how to execute it today.
+3. Total length strictly under 50 words. Format cleanly with bullet points (•). Do NOT use markdown code blocks or *** symbols.`;
 
   const raw = await callGemini(prompt, system);
   return cleanTelegramHtml(raw);

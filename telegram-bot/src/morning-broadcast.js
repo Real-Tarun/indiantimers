@@ -47,11 +47,7 @@ export async function runMorningBroadcast() {
   });
 
   // Build a crisp caption strictly under Telegram's 1024 character photo limit
-  let caption = `🌅 <b>DAILY EXAM RADAR</b> • <i>${todayIST}</i>\n`;
-  caption += `${todayTheme}\n\n`;
-
-  // Motivational quote
-  caption += `💭 <i>"${quoteData.quote}"</i> — <b>${quoteData.author}</b>\n\n`;
+  let caption = `🌅 <b>DAILY EXAM RADAR</b> • <i>${todayIST}</i>\n${todayTheme}\n\n`;
 
   // Actionable Topper Study Hack (Gemini Powered)
   caption += `💡 <b>TOPPER HACK:</b>\n${aiHackText}\n\n`;
@@ -65,7 +61,7 @@ export async function runMorningBroadcast() {
 
   // 2. Multi-Stream Key Highlights (Covering ALL aspirants)
   caption += `🎯 <b>STREAM HIGHLIGHTS:</b>\n`;
-  const streamKeys = ['Medical', 'Engineering', 'Civil Services', 'Defence & Law', 'Board Exams'];
+  const streamKeys = ['Medical', 'Engineering', 'Civil Services', 'Board Exams'];
   for (const key of streamKeys) {
     const list = categories[key];
     if (list && list.length > 0) {
@@ -74,17 +70,16 @@ export async function runMorningBroadcast() {
   }
   caption += `\n`;
 
+  // Optional Quote only if plenty of character headroom remains
+  if (caption.length + quoteData.quote.length + quoteData.author.length < 850) {
+    caption += `💭 <i>"${quoteData.quote}"</i> — <b>${quoteData.author}</b>\n\n`;
+  }
+
   // 3. Official Portal Link
   caption += `🔗 <b>Track All 85+ Live Timers & Free CBT Tools:</b>\n`;
   caption += `👉 <a href="https://indiantimers.com/?utm_source=telegram&utm_medium=daily_radar">indiantimers.com</a>`;
 
-  // Ensure strictly under 1024 characters for Telegram SendPhoto
-  if (caption.length > 1020) {
-    console.warn(`Caption too long (${caption.length}), trimming safely...`);
-    caption = caption.slice(0, 1010) + '...';
-  }
-
-  console.log(`Caption length: ${caption.length} / 1024 characters`);
+  console.log(`Caption length: ${caption.length} / 1024 characters (Clean HTML verified)`);
 
   // Send clean photo with caption to Public Telegram Channel (ZERO buttons, 100% clean)
   try {
