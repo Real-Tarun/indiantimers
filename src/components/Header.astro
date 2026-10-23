@@ -82,26 +82,44 @@ import ThemeToggle from './ThemeToggle';
                   </span>
                 </div>
 
-                {/* FEATURED: Embed Countdown Widget */}
+                {/* FEATURED: Marks vs Percentile & Rank Predictor */}
                 <a
-                  href="/tools/countdown/embed/"
-                  class="group/item flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-[#D4FF4F]/15 via-emerald-500/10 to-transparent border border-[#D4FF4F]/40 dark:border-[#D4FF4F]/25 hover:border-[#D4FF4F] hover:shadow-md transition-all duration-150"
-                  id="nav-link-embed-widget"
+                  href="/tools/marks-vs-percentile/"
+                  class="group/item flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-indigo-500/15 via-[#D4FF4F]/10 to-transparent border border-indigo-500/30 dark:border-indigo-500/40 hover:border-indigo-500 hover:shadow-md transition-all duration-150"
+                  id="nav-link-marks-percentile"
                 >
-                  <div class="w-8 h-8 rounded-lg bg-[#18181B] dark:bg-white text-[#D4FF4F] dark:text-[#111406] flex items-center justify-center shrink-0 font-mono font-bold text-[12px] group-hover/item:scale-105 transition-transform">
-                    &lt;/&gt;
+                  <div class="w-8 h-8 rounded-lg bg-indigo-600 dark:bg-indigo-500 text-white flex items-center justify-center shrink-0 font-bold text-[14px] group-hover/item:scale-105 transition-transform shadow-xs">
+                    📊
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-1.5">
-                      <span class="text-[13px] font-bold text-[var(--text-hero)] group-hover/item:text-[#111406] dark:group-hover/item:text-white">
-                        Embed Countdown Widget
+                      <span class="text-[13px] font-bold text-[var(--text-hero)] group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400">
+                        Marks vs Percentile &amp; Rank
                       </span>
                       <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
                         NEW
                       </span>
                     </div>
                     <p class="text-[11px] text-[var(--text-secondary)] leading-snug mt-0.5">
-                      Add live countdown cards to your website, blog, coaching LMS, or Notion notes.
+                      Instant AIR, NTA percentile &amp; college predictor for JEE Main &amp; NEET mock scores.
+                    </p>
+                  </div>
+                </a>
+
+                {/* Age & Attempt Limit Calculator */}
+                <a
+                  href="/tools/age-eligibility-calculator/"
+                  class="group/item flex items-start gap-2.5 p-2 rounded-xl hover:bg-[var(--bg-subtle)] transition-all duration-150"
+                >
+                  <div class="w-7 h-7 rounded-lg bg-[var(--bg-subtle)] text-[var(--text-hero)] flex items-center justify-center shrink-0 text-[13px] group-hover/item:scale-105 transition-transform">
+                    🎯
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[12px] font-semibold text-[var(--text-hero)]">
+                      Age &amp; Attempt Limit Checker
+                    </div>
+                    <p class="text-[11px] text-[var(--text-muted)] leading-tight">
+                      Official age criteria, cut-off dates &amp; remaining attempts for NEET, JEE &amp; UPSC.
                     </p>
                   </div>
                 </a>
@@ -119,7 +137,7 @@ import ThemeToggle from './ThemeToggle';
                       Create Custom Countdown
                     </div>
                     <p class="text-[11px] text-[var(--text-muted)] leading-tight">
-                      Personal target timer for test series, revision deadlines & private goals.
+                      Personal target timer for test series, revision deadlines &amp; private goals.
                     </p>
                   </div>
                 </a>
@@ -379,20 +397,34 @@ import ThemeToggle from './ThemeToggle';
         Interactive Tools & Widgets
       </div>
       
-      {/* Highlighted Embed Widget link */}
+      {/* Highlighted New Tool: Marks vs Percentile */}
       <a
-        href="/tools/countdown/embed/"
-        class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#D4FF4F]/20 to-transparent border border-[#D4FF4F]/50 text-[13px] font-bold text-[var(--text-hero)]"
+        href="/tools/marks-vs-percentile/"
+        class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500/20 via-[#D4FF4F]/15 to-transparent border border-indigo-500/40 text-[13px] font-bold text-[var(--text-hero)]"
       >
         <span class="flex items-center gap-2">
-          <span class="font-mono text-emerald-600 dark:text-emerald-400">&lt;/&gt;</span>
-          <span>Embed Countdown Widget</span>
+          <span>📊</span>
+          <span>Marks vs Percentile &amp; Rank</span>
         </span>
         <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
-          FREE WIDGET
+          NEW
         </span>
       </a>
 
+      <a
+        href="/tools/age-eligibility-calculator/"
+        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
+      >
+        <span>🎯</span>
+        <span>Age &amp; Attempt Limit Checker</span>
+      </a>
+      <a
+        href="/tools/countdown/"
+        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"
+      >
+        <span>⏱️</span>
+        <span>Custom Countdown Timer</span>
+      </a>
       <a
         href="/tools/pomodoro-timer/"
         class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-subtle)]"

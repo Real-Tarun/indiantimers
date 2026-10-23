@@ -14,6 +14,8 @@ IndianTimers provides precision live countdowns, official schedule milestones, d
 - [Design, Architecture & Research](https://indiantimers.com/exams/other-entrance-exams/): NID DAT, NIFT, UCEED, NATA, and CSIR NET.
 
 ## Student Focus & Productivity Suite
+- [Marks vs Percentile & Rank Predictor](https://indiantimers.com/tools/marks-vs-percentile/): Instant All India Rank (AIR), NTA percentile, and college tier predictor for JEE Main (300 marks) and NEET UG (720 marks) mock test scores, featuring shift difficulty modeling (Easy/Moderate/Tough) and historical 2024 Re-NEET inflation, 2025, 2026, and 2027 CBT projections.
+- [Age & Attempt Limit Calculator](https://indiantimers.com/tools/age-eligibility-calculator/): Real-time eligibility calculator verifying official age limits, cut-off dates (31-Dec for NEET, 1-Aug for UPSC), 12th board passing rules, and category-wise attempt caps for NEET, JEE Main, JEE Advanced, UPSC CSE, and NDA.
 - [My Exam Cockpit (Personal Workspace)](https://indiantimers.com/my-exams/): Private, local-first exam dashboard to pin target exams, add custom coaching mocks, track daily study hours, and export/import Schema V1 JSON backups without login.
 - [Mock Test Simulation Timer](https://indiantimers.com/tools/mock-test-timer/): Real CBT exam pacing for NEET (200 min), JEE Main (180 min), UPSC Prelims (120 min), plus custom duration stepper (30m, 60m, 90m, custom) with live per-question time recalculation.
 - [Embeddable Exam Countdown Widgets](https://indiantimers.com/tools/countdown/embed/): Free, responsive HTML iframe embed code generator for educational blogs, WordPress, Notion, and coaching LMS portals.

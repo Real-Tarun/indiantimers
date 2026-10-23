@@ -50,6 +50,8 @@ ${formatUrlBlock(`${siteUrl}/calendar/2027/`, calendarLastmod, 'weekly', '0.9')}
 ${formatUrlBlock(`${siteUrl}/my-exams/`, toolsLastmod, 'weekly', '0.9')}
 
   <!-- 2. Interactive Study & Focus Tools -->
+${formatUrlBlock(`${siteUrl}/tools/marks-vs-percentile/`, '2026-10-23', 'daily', '0.95')}
+${formatUrlBlock(`${siteUrl}/tools/age-eligibility-calculator/`, '2026-10-23', 'weekly', '0.9')}
 ${formatUrlBlock(`${siteUrl}/tools/mock-test-timer/`, toolsLastmod, 'weekly', '0.9')}
 ${formatUrlBlock(`${siteUrl}/tools/pomodoro-timer/`, toolsLastmod, 'weekly', '0.9')}
 ${formatUrlBlock(`${siteUrl}/tools/countdown/embed/`, toolsLastmod, 'weekly', '0.9')}

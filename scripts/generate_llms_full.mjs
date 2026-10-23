@@ -14,6 +14,8 @@ let content = `# IndianTimers Full LLM Reference Guide & Complete Exam Database
 - Homepage & Live Featured Timers: ${siteUrl}/
 - Searchable Exam Directory: ${siteUrl}/exams/
 - 2027 Master Exam Calendar: ${siteUrl}/calendar/2027/
+- Marks vs Percentile & Rank Predictor: ${siteUrl}/tools/marks-vs-percentile/
+- Age & Attempt Limit Eligibility Calculator: ${siteUrl}/tools/age-eligibility-calculator/
 - My Exam Cockpit (Personal Dashboard): ${siteUrl}/my-exams/
 - Mock Test Simulation Timer (with Custom Durations): ${siteUrl}/tools/mock-test-timer/
 - Embeddable Exam Countdown Widget Generator: ${siteUrl}/tools/countdown/embed/

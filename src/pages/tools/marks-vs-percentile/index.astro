@@ -1,0 +1,293 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import MarksVsPercentileCalculator from '../../../components/MarksVsPercentileCalculator';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/marks-vs-percentile/' },
+  { name: 'Marks vs Percentile & Rank Predictor', url: '/tools/marks-vs-percentile/' },
+];
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'JEE Main & NEET Marks vs Percentile & Rank Calculator',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Instant interactive score analyzer for JEE Main (out of 300) and NEET UG (out of 720) with shift difficulty adjustment, expected percentile, All India Rank (AIR), and college prediction.',
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How many marks in JEE Main are needed for 99 percentile in 2027?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'In JEE Main, 99 percentile typically requires between 180 to 215 marks out of 300 depending on shift difficulty. In a tough shift (with lengthier mathematics), 175-185 marks can secure 99 percentile, whereas in an easy shift, 205-215 marks may be needed.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What was the NEET 2024 cutoff inflation and how does it affect NEET 2027?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'NEET 2024 witnessed unprecedented rank inflation where 67 candidates secured AIR 1 with 720/720 marks, pushing the general AIQ MBBS cutoff up to 650+ marks. For NEET 2027, with the transition to Computer-Based Test (CBT) mode and revised syllabus rigor, the AIQ 15% government MBBS cutoff is projected to normalize around 615–625 marks.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What marks are required in NEET 2027 for Government MBBS via All India Quota (AIQ)?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For General/UR category candidates, a score of 620+ marks (projected AIR within 22,000) is considered safe for securing an MBBS seat in government medical colleges under 15% All India Quota (AIQ). For OBC and EWS, 615+ is safe, and for SC/ST candidates, 530+ marks generally ensure government college admission.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the qualifying cutoff percentile for JEE Advanced 2027?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The qualifying cutoff for General category to appear in JEE Advanced ranges between 90.5 to 93.5 percentile (~90-105 marks). For OBC-NCL it is ~73-75 percentile (~68-75 marks), EWS ~75-77 percentile (~70-78 marks), SC ~52-54 percentile (~45-52 marks), and ST ~38-40 percentile (~32-38 marks).',
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="JEE Main & NEET Marks vs Percentile 2027: Rank & College Predictor | IndianTimers"
+  description="Calculate your expected percentile, All India Rank (AIR), and college admission chances from your mock test marks for JEE Main (300m) and NEET UG (720m). Calibrated against 2024-2026 historical trends and 2027 CBT benchmarks."
+  canonicalUrl={`${siteConfig.url}/tools/marks-vs-percentile/`}
+  breadcrumbs={breadcrumbs}
+  schema={pageSchema}
+>
+  <!-- SEO & Breadcrumb Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/tools/mock-test-timer/" class="hover:underline">Tools</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Marks vs Percentile</span>
+    </div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-[#D4FF4F] text-[#111406] shadow-xs mb-3">
+      <span class="w-2 h-2 rounded-full bg-[#111406] animate-pulse"></span>
+      2027 Session Benchmarks · Shift Calibrated
+    </div>
+
+    <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight font-display">
+      Marks vs Percentile &amp; Rank Calculator (JEE Main &amp; NEET)
+    </h1>
+
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+      Convert your Sunday mock test scores into estimated All India Ranks (AIR), NTA percentiles, and college admission chances. Calibrated against historical cutoffs from 2024 to 2026, accounting for paper difficulty shifts and the 2027 CBT examination patterns.
+    </p>
+  </div>
+
+  <!-- Interactive Calculator Island -->
+  <div class="mb-14">
+    <MarksVsPercentileCalculator client:load />
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       EDITORIAL & HISTORICAL BENCHMARK ANALYSIS (HIGH TEXT-TO-HTML FOR SEO)
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div class="space-y-12 max-w-4xl mx-auto">
+    
+    <!-- Section 1: JEE Main Shift-Wise Marks vs Percentile Table -->
+    <section class="bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+            NTA Engineering Score Matrix
+          </span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display">
+            JEE Main Marks vs Percentile (Shift-Wise Calibrated)
+          </h2>
+        </div>
+        <span class="text-xs font-bold px-3 py-1 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-full">
+          Out of 300 Marks
+        </span>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        Percentile in JEE Main represents the percentage of candidates who scored equal to or lower than you in your specific shift. Because paper difficulty varies between morning and afternoon shifts, the required marks for 99 percentile fluctuate by 20 to 35 marks.
+      </p>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 dark:bg-slate-800/80 font-bold border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200">
+            <tr>
+              <th class="py-3 px-4">Percentile Bracket</th>
+              <th class="py-3 px-4">Tough Shift Marks</th>
+              <th class="py-3 px-4">Moderate Shift Marks</th>
+              <th class="py-3 px-4">Easy Shift Marks</th>
+              <th class="py-3 px-4">Approximate AIR</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">99.9+ Percentile</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">255 - 265</td>
+              <td class="py-3 px-4 font-mono font-bold text-indigo-600">270 - 280</td>
+              <td class="py-3 px-4 font-mono font-bold text-amber-600">285 - 295</td>
+              <td class="py-3 px-4 font-mono">AIR 1 - 1,200</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">99.0+ Percentile</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">175 - 188</td>
+              <td class="py-3 px-4 font-mono font-bold text-indigo-600">192 - 208</td>
+              <td class="py-3 px-4 font-mono font-bold text-amber-600">212 - 225</td>
+              <td class="py-3 px-4 font-mono">AIR 10,000 - 13,000</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">98.0+ Percentile</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">150 - 162</td>
+              <td class="py-3 px-4 font-mono font-bold text-indigo-600">165 - 180</td>
+              <td class="py-3 px-4 font-mono font-bold text-amber-600">182 - 198</td>
+              <td class="py-3 px-4 font-mono">AIR 22,000 - 26,000</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">97.0+ Percentile</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">135 - 146</td>
+              <td class="py-3 px-4 font-mono font-bold text-indigo-600">150 - 164</td>
+              <td class="py-3 px-4 font-mono font-bold text-amber-600">166 - 180</td>
+              <td class="py-3 px-4 font-mono">AIR 34,000 - 39,000</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">95.0+ Percentile</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">110 - 122</td>
+              <td class="py-3 px-4 font-mono font-bold text-indigo-600">125 - 138</td>
+              <td class="py-3 px-4 font-mono font-bold text-amber-600">140 - 155</td>
+              <td class="py-3 px-4 font-mono">AIR 58,000 - 66,000</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">90.0+ (Advanced Cutoff)</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">82 - 92</td>
+              <td class="py-3 px-4 font-mono font-bold text-indigo-600">95 - 105</td>
+              <td class="py-3 px-4 font-mono font-bold text-amber-600">108 - 120</td>
+              <td class="py-3 px-4 font-mono">AIR 1,15,000 - 1,30,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 2: NEET UG Historical Rank Inflation & 2027 Projections -->
+    <section class="bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+            Medical Entrance Insights
+          </span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display">
+            NEET UG Marks vs Rank: 2024 Inflation vs 2027 CBT Projections
+          </h2>
+        </div>
+        <span class="text-xs font-bold px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full">
+          Out of 720 Marks
+        </span>
+      </div>
+
+      <div class="prose dark:prose-invert max-w-none text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4 mb-6">
+        <p>
+          The medical admissions landscape in India shifted dramatically following the <strong>NEET UG 2024 controversy</strong>, where an extraordinary 67 students attained a perfect 720/720 score due to grace marks and paper leak litigations. In 2024, a candidate scoring 650 marks found their rank pushed past AIR 28,000 — well outside the General Category 15% All India Quota (AIQ) threshold.
+        </p>
+        <p>
+          In <strong>NEET 2025 and 2026</strong>, NTA tightened evaluation protocols and eliminated non-standard grace marks, bringing the AIQ general closing score down to the 630–635 range. For <strong>NEET 2027</strong>, with the official transition to <em>Computer-Based Testing (CBT)</em> and strict 180 compulsory questions, rank cutoffs are projected to stabilize further.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 dark:bg-slate-800/80 font-bold border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200">
+            <tr>
+              <th class="py-3 px-4">Score (out of 720)</th>
+              <th class="py-3 px-4">2024 Rank (Inflation Year)</th>
+              <th class="py-3 px-4">2026 Rank (Post-Normalization)</th>
+              <th class="py-3 px-4">2027 Projected Rank</th>
+              <th class="py-3 px-4">AIQ 15% Admission Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">700 - 720</td>
+              <td class="py-3 px-4 font-mono">AIR 1 - 2,250</td>
+              <td class="py-3 px-4 font-mono">AIR 1 - 380</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">AIR 1 - 250</td>
+              <td class="py-3 px-4">AIIMS New Delhi, JIPMER, Top Central GMCs</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">660 - 699</td>
+              <td class="py-3 px-4 font-mono">AIR 2,251 - 21,500</td>
+              <td class="py-3 px-4 font-mono">AIR 381 - 4,200</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">AIR 251 - 3,800</td>
+              <td class="py-3 px-4">Top State Government Medical Colleges</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">630 - 659</td>
+              <td class="py-3 px-4 font-mono">AIR 21,501 - 48,000</td>
+              <td class="py-3 px-4 font-mono">AIR 4,201 - 16,500</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">AIR 3,801 - 15,500</td>
+              <td class="py-3 px-4">Guaranteed AIQ 15% Govt MBBS Seat</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">610 - 629</td>
+              <td class="py-3 px-4 font-mono">AIR 48,001 - 78,000</td>
+              <td class="py-3 px-4 font-mono">AIR 16,501 - 27,000</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">AIR 15,501 - 24,000</td>
+              <td class="py-3 px-4">Borderline AIQ Round 3 / Confirmed State 85%</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">550 - 609</td>
+              <td class="py-3 px-4 font-mono">AIR 78,001 - 1,55,000</td>
+              <td class="py-3 px-4 font-mono">AIR 27,001 - 72,000</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">AIR 24,001 - 68,000</td>
+              <td class="py-3 px-4">Govt BDS / BAMS / SC/ST MBBS Quota</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">450 - 549</td>
+              <td class="py-3 px-4 font-mono">AIR 1,55,001 - 2,80,000</td>
+              <td class="py-3 px-4 font-mono">AIR 72,001 - 1,60,000</td>
+              <td class="py-3 px-4 font-mono font-bold text-emerald-600">AIR 68,001 - 1,50,000</td>
+              <td class="py-3 px-4">Private Medical Colleges / Semi-Govt Quota</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 3: Frequently Asked Questions (FAQPage Structured Data) -->
+    <section class="bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-xs">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display mb-6">
+        Frequently Asked Questions: Scores, Percentiles &amp; AIR
+      </h2>
+
+      <div class="space-y-4">
+        {faqSchema.mainEntity.map((item) => (
+          <details class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 cursor-pointer group">
+            <summary class="font-bold text-sm text-slate-900 dark:text-white flex items-center justify-between select-none list-none">
+              <span>{item.name}</span>
+              <span class="text-xs transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              {item.acceptedAnswer.text}
+            </p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</BaseLayout>

@@ -12,6 +12,8 @@ async function testUrls() {
     'http://localhost:4321/exams/neet-ug-2027/',
     'http://localhost:4321/exams/jee-main-2027-session-1/',
     'http://localhost:4321/calendar/2027/',
+    'http://localhost:4321/tools/marks-vs-percentile/',
+    'http://localhost:4321/tools/age-eligibility-calculator/',
     'http://localhost:4321/tools/pomodoro-timer/',
     'http://localhost:4321/tools/mock-test-timer/',
     'http://localhost:4321/tools/stopwatch/',

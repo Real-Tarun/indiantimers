@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AgeEligibilityCalculator from '../../../components/AgeEligibilityCalculator';
+import { siteConfig } from '../../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Tools', url: '/tools/age-eligibility-calculator/' },
+  { name: 'Age & Attempt Limit Checker', url: '/tools/age-eligibility-calculator/' },
+];
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Indian Competitive Exam Age Limit & Attempt Calculator',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+  description: 'Check your eligibility and remaining attempt limits for NEET UG, JEE Main, JEE Advanced, UPSC CSE, and NDA. Instant calculation based on Date of Birth, 12th passing year, and quota category.',
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is there an upper age limit for NEET UG 2027?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. As per the Supreme Court of India ruling in 2022 and National Medical Commission (NMC) directives, there is no upper age limit for NEET (UG). Candidates of any age who have completed 17 years by 31st December 2027 and passed 10+2 with PCB can appear.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many attempts are allowed for JEE Main and JEE Advanced?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For JEE Main, candidates can appear in 3 consecutive years following their first Class 12 board examination (with 2 sessions per year, making it up to 6 total sessions). For JEE Advanced, a candidate can attempt the examination a maximum of 2 times in 2 consecutive years.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the cutoff date for age calculation in UPSC Civil Services?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'UPSC calculates candidate age strictly as of 1st August of the examination year. For UPSC CSE 2027, the candidate must be between 21 and 32 years of age as of 1st August 2027 (with 3-year relaxation for OBC, 5-year for SC/ST, and 10-year for PwD).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can a candidate who passed 12th in 2024 appear for JEE Advanced 2027?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. JEE Advanced strictly allows attempts only in 2 consecutive years after first passing Class 12. A candidate who appeared for Class 12 in 2024 has exhausted their attempts in 2024 and 2025.',
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Exam Age Limit & Attempt Calculator 2027: NEET, JEE, UPSC, NDA | IndianTimers"
+  description="Instant age and attempt eligibility checker for NEET UG, JEE Main, JEE Advanced, UPSC CSE, and NDA based on official NTA, IIT, and UPSC circulars. Check your attempts left in 1 second."
+  canonicalUrl={`${siteConfig.url}/tools/age-eligibility-calculator/`}
+  breadcrumbs={breadcrumbs}
+  schema={pageSchema}
+>
+  <!-- SEO & Breadcrumb Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <a href="/tools/mock-test-timer/" class="hover:underline">Tools</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Age &amp; Attempt Calculator</span>
+    </div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-[#D4FF4F] text-[#111406] shadow-xs mb-3">
+      <span class="w-2 h-2 rounded-full bg-[#111406] animate-pulse"></span>
+      Official DoPT, NTA &amp; NMC Criteria Verified
+    </div>
+
+    <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-3 tracking-tight font-display">
+      Official Age Limit &amp; Attempt Eligibility Calculator
+    </h1>
+
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+      Verify whether you meet the exact age criteria, cut-off dates, and remaining attempt limits for India’s premier national examinations. Avoid application form rejections by checking against verified official clauses.
+    </p>
+  </div>
+
+  <!-- Interactive Calculator Island -->
+  <div class="mb-14">
+    <AgeEligibilityCalculator client:load />
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       OFFICIAL ELIGIBILITY MATRIX & CLAUSES (HIGH SEO DENSITY)
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div class="space-y-12 max-w-4xl mx-auto">
+    <!-- Section 1: Master Exam Eligibility Matrix -->
+    <section class="bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-xs">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display mb-4">
+        National Examination Age Criteria &amp; Attempt Rules (2026–2027)
+      </h2>
+
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+        Below is the master compilation of eligibility criteria as codified by the National Testing Agency (NTA), Union Public Service Commission (UPSC), and Joint Admission Board (JAB).
+      </p>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 dark:bg-slate-800/80 font-bold border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200">
+            <tr>
+              <th class="py-3 px-4">Exam Name</th>
+              <th class="py-3 px-4">Minimum Age (Cutoff Date)</th>
+              <th class="py-3 px-4">Upper Age Limit</th>
+              <th class="py-3 px-4">Maximum Attempts</th>
+              <th class="py-3 px-4">12th/Degree Year Requirement</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">NEET UG</td>
+              <td class="py-3 px-4">17 Years (by 31-Dec-2027)</td>
+              <td class="py-3 px-4 font-bold text-emerald-600">No Upper Limit</td>
+              <td class="py-3 px-4 font-bold text-emerald-600">Unlimited</td>
+              <td class="py-3 px-4">Passed/Appearing with PCB &amp; English</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">JEE Main</td>
+              <td class="py-3 px-4">No Lower Age Limit</td>
+              <td class="py-3 px-4 font-bold text-emerald-600">No Upper Limit</td>
+              <td class="py-3 px-4">3 Consecutive Years (6 Sessions)</td>
+              <td class="py-3 px-4">Passed 12th in 2025, 2026 or 2027</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">JEE Advanced</td>
+              <td class="py-3 px-4">No Lower Limit</td>
+              <td class="py-3 px-4">Born on/after 1-Oct-2002 (1997 for SC/ST)</td>
+              <td class="py-3 px-4 font-bold text-rose-600">2 Consecutive Years Only</td>
+              <td class="py-3 px-4">First appeared 12th in 2026 or 2027</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">UPSC CSE</td>
+              <td class="py-3 px-4">21 Years (as of 1-Aug-2027)</td>
+              <td class="py-3 px-4">32 Yrs (Gen), 35 (OBC), 37 (SC/ST)</td>
+              <td class="py-3 px-4">6 (Gen), 9 (OBC), Unlimited (SC/ST)</td>
+              <td class="py-3 px-4">Graduate in Any Discipline</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">NDA &amp; NA</td>
+              <td class="py-3 px-4">16.5 Years</td>
+              <td class="py-3 px-4 font-bold text-rose-600">19.5 Years</td>
+              <td class="py-3 px-4">Restricted strictly by age window</td>
+              <td class="py-3 px-4">12th pass (PCM for Air Force/Navy)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 2: Frequently Asked Questions (FAQPage Structured Data) -->
+    <section class="bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 sm:p-8 shadow-xs">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-display mb-6">
+        Frequently Asked Questions: Age, Limits &amp; Attempts
+      </h2>
+
+      <div class="space-y-4">
+        {faqSchema.mainEntity.map((item) => (
+          <details class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 cursor-pointer group">
+            <summary class="font-bold text-sm text-slate-900 dark:text-white flex items-center justify-between select-none list-none">
+              <span>{item.name}</span>
+              <span class="text-xs transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              {item.acceptedAnswer.text}
+            </p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</BaseLayout>

@@ -28,6 +28,18 @@
 
   <!-- 2. Interactive Study & Focus Tools -->
   <url>
+    <loc>https://indiantimers.com/tools/marks-vs-percentile/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://indiantimers.com/tools/age-eligibility-calculator/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://indiantimers.com/tools/mock-test-timer/</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>weekly</changefreq>
