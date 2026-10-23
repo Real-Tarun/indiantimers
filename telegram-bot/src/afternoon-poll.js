@@ -1,8 +1,16 @@
 import { getRandomQuiz } from './quizzes.js';
 import { sendQuizPoll, sendMessage } from './telegram.js';
+import { isBotEnabled } from './bot-control.js';
 
 export async function runAfternoonPoll() {
   console.log('🚀 Running Afternoon Quiz Poll...');
+
+  // Check remote kill-switch / admin toggle
+  const enabled = await isBotEnabled();
+  if (!enabled) {
+    console.log('⏸️ Telegram Bot is PAUSED via Admin Dashboard. Skipping afternoon quiz.');
+    return { skipped: true, reason: 'bot_paused_by_admin' };
+  }
 
   const quiz = getRandomQuiz();
 

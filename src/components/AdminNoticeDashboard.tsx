@@ -42,6 +42,9 @@ import {
   MousePointerClick,
   Download,
   Trash2,
+  Play,
+  Pause,
+  Power,
 } from 'lucide-react';
 import { communityClicksManager, type CommunityClickStats } from '../lib/monitor/community-clicks.ts';
 
@@ -132,6 +135,8 @@ export default function AdminNoticeDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [communityStats, setCommunityStats] = useState<CommunityClickStats>(() => communityClicksManager.getStats());
   const [isRefreshingClicks, setIsRefreshingClicks] = useState(false);
+  const [botEnabled, setBotEnabled] = useState<boolean>(true);
+  const [isTogglingBot, setIsTogglingBot] = useState<boolean>(false);
 
   // Loading & Filter States
   const [isCheckingSources, setIsCheckingSources] = useState(false);
@@ -196,10 +201,12 @@ export default function AdminNoticeDashboard() {
     setExams([...adminStore.getAllExams()]);
     setStats(adminStore.getSystemStatistics());
     setCommunityStats(communityClicksManager.getStats());
+    fetchBotStatus();
   };
 
   const handleRefreshCommunityClicks = async () => {
     setIsRefreshingClicks(true);
+    fetchBotStatus();
     try {
       const q = typeof window !== 'undefined' ? window.location.search : '';
       const res = await fetch('/api/admin/clicks' + q, { credentials: 'include' });
@@ -239,6 +246,45 @@ export default function AdminNoticeDashboard() {
     link.click();
     URL.revokeObjectURL(url);
     showToast('Downloaded community clicks CSV log.');
+  };
+
+  const fetchBotStatus = async () => {
+    try {
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/bot-status' + q, { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.enabled === 'boolean') {
+          setBotEnabled(data.enabled);
+        }
+      }
+    } catch {
+      // Offline fallback
+    }
+  };
+
+  const handleToggleBot = async () => {
+    setIsTogglingBot(true);
+    try {
+      const targetState = !botEnabled;
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/bot-status' + q, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ enabled: targetState }),
+      });
+      if (res.ok) {
+        setBotEnabled(targetState);
+        showToast(targetState ? 'Telegram Bot ACTIVATED. Broadcasts will run.' : 'Telegram Bot PAUSED. All automated broadcasts stopped.');
+      } else {
+        showToast('Failed to update bot status. Check permissions.');
+      }
+    } catch {
+      showToast('Network error while toggling bot status.');
+    } finally {
+      setIsTogglingBot(false);
+    }
   };
 
   useEffect(() => {
@@ -1453,6 +1499,62 @@ export default function AdminNoticeDashboard() {
                   <Send className="w-3.5 h-3.5" />
                   <span>Open Telegram</span>
                 </a>
+              </div>
+            </div>
+
+            {/* Master Bot Automation Controller (ON / OFF Switch) */}
+            <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800/80">
+              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1a1d28] border border-black/[0.06] dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                <div className="flex items-center gap-3">
+                  <div className={`w-3.5 h-3.5 rounded-full shrink-0 ${botEnabled ? 'bg-emerald-500 shadow-md shadow-emerald-500/50 animate-pulse' : 'bg-rose-500 shadow-md shadow-rose-500/50'}`} />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                        Automated Daily Broadcast Bot Controller
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        botEnabled 
+                          ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
+                          : 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-500/30'
+                      }`}>
+                        {botEnabled ? '🟢 RUNNING (ON)' : '🔴 PAUSED (OFF)'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      {botEnabled 
+                        ? 'Morning countdowns, Topper hacks, and afternoon quizzes are broadcasting on schedule.' 
+                        : 'All automated scheduled broadcasts are completely paused.'}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleToggleBot}
+                  disabled={isTogglingBot}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0 ${
+                    botEnabled
+                      ? 'bg-rose-600 hover:bg-rose-700 text-white hover:scale-105 hover:shadow-rose-500/20'
+                      : 'bg-emerald-600 hover:bg-emerald-700 text-white hover:scale-105 hover:shadow-emerald-500/20'
+                  }`}
+                  title={botEnabled ? 'Click to Pause Bot' : 'Click to Activate Bot'}
+                >
+                  {isTogglingBot ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Updating...</span>
+                    </>
+                  ) : botEnabled ? (
+                    <>
+                      <Pause className="w-3.5 h-3.5" />
+                      <span>⏸️ STOP BOT</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5" />
+                      <span>▶️ START BOT</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
