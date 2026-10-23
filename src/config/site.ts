@@ -16,6 +16,7 @@ export interface SiteConfig {
     about: string;
     telegram: string;
     whatsapp: string;
+    support: string;
   };
   contactEmail: string;
   navigation: Array<{
@@ -54,6 +55,7 @@ export const siteConfig: SiteConfig = {
     about: '/about/',
     telegram: 'https://t.me/indiantimers',
     whatsapp: 'https://whatsapp.com/channel/0029VbDeHd8FHWq0d939hU3J',
+    support: '/support/',
   },
   contactEmail: 'you.pncml123@gmail.com',
   navigation: [
@@ -61,6 +63,7 @@ export const siteConfig: SiteConfig = {
     { name: '2027 Calendar', href: '/calendar/2027/', badge: 'Official' },
     { name: 'Mock Timer', href: '/tools/mock-test-timer/', badge: 'Simulate' },
     { name: 'My Exams', href: '/my-exams/', badge: 'Cockpit' },
+    { name: 'Support Us', href: '/support/', badge: '💖' },
   ],
   categories: [
     {

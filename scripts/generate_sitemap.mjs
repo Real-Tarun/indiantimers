@@ -87,6 +87,7 @@ for (const post of BLOG_POSTS) {
 }
 
 xml += `\n  <!-- 6. Trust, Editorial Policy & Transparency -->
+${formatUrlBlock(`${siteUrl}/support/`, '2026-10-23', 'daily', '0.85')}
 ${formatUrlBlock(`${siteUrl}/about/`, trustLastmod, 'monthly', '0.5')}
 ${formatUrlBlock(`${siteUrl}/editorial-policy/`, trustLastmod, 'monthly', '0.5')}
 ${formatUrlBlock(`${siteUrl}/contact/`, trustLastmod, 'monthly', '0.5')}

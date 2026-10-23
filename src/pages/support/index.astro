@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SupportUsInteractive from '../../components/SupportUsInteractive';
+import { siteConfig } from '../../config/site';
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Support Us', url: '/support/' },
+];
+
+const donateSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Support IndianTimers — Student Creator Initiative & Hall of Fame',
+  description: 'Support Tarun, an independent student creator building IndianTimers for Indian students. Donate via UPI to keep exam countdowns 100% free and ad-free.',
+  url: `${siteConfig.url}/support/`,
+  potentialAction: {
+    '@type': 'DonateAction',
+    recipient: {
+      '@type': 'Person',
+      name: 'Tarun Kumar',
+      jobTitle: 'Founder & Student Developer',
+    },
+  },
+};
+---
+
+<BaseLayout
+  title="Support IndianTimers — Solo Student Creator Initiative & Hall of Fame"
+  description="Support Tarun, a student and solo developer building IndianTimers. Voluntary UPI contributions (tarun.in@fam) keep our servers online, verified, and 100% ad-free for every aspirant in India."
+  canonicalUrl={`${siteConfig.url}/support/`}
+  schema={donateSchema}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mb-4">
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+      <a href="/" class="hover:underline">Home</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200 font-semibold">Support Us &amp; Hall of Fame</span>
+    </div>
+  </div>
+
+  <SupportUsInteractive client:load />
+</BaseLayout>

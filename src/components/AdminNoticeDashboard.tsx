@@ -45,8 +45,10 @@ import {
   Play,
   Pause,
   Power,
+  Heart,
 } from 'lucide-react';
 import { communityClicksManager, type CommunityClickStats } from '../lib/monitor/community-clicks.ts';
+import AdminDonationsTab from './AdminDonationsTab.tsx';
 
 // Cryptographic SHA-256 Hashing for Master Passwords
 async function hashSecret(plainText: string): Promise<string> {
@@ -124,8 +126,8 @@ export default function AdminNoticeDashboard() {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutTimer, setLockoutTimer] = useState(0);
 
-  // Active Navigation Tab: 'pending' | 'clocks' | 'analytics' | 'community' | 'sources' | 'audit' | 'security'
-  const [activeTab, setActiveTab] = useState<'pending' | 'clocks' | 'analytics' | 'community' | 'sources' | 'audit' | 'security'>('clocks');
+  // Active Navigation Tab: 'pending' | 'clocks' | 'analytics' | 'community' | 'donations' | 'sources' | 'audit' | 'security'
+  const [activeTab, setActiveTab] = useState<'pending' | 'clocks' | 'analytics' | 'community' | 'donations' | 'sources' | 'audit' | 'security'>('clocks');
 
   // Core Data States
   const [notices, setNotices] = useState<DetectedNotice[]>([]);
@@ -1047,6 +1049,22 @@ export default function AdminNoticeDashboard() {
           <span>Channel Clicks &amp; Traffic</span>
           <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-[#D4FF4F] text-[#111406]">
             LIVE
+          </span>
+        </button>
+
+        {/* Donations & Supporters Tab */}
+        <button
+          onClick={() => setActiveTab('donations')}
+          className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'donations'
+              ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111406] shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+          <span>Supporters &amp; Donations</span>
+          <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-rose-500 text-white">
+            NEW
           </span>
         </button>
 
@@ -2375,6 +2393,13 @@ export default function AdminNoticeDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* TAB 8: SUPPORTERS & DONATION UTR VERIFICATIONS */}
+      {/* ==================================================== */}
+      {activeTab === 'donations' && (
+        <AdminDonationsTab showToast={showToast} />
       )}
 
       {/* ==================================================== */}
