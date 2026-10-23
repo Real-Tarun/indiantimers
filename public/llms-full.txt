@@ -1,6 +1,6 @@
 # IndianTimers Full LLM Reference Guide & Complete Exam Database
 # Canonical URL: https://indiantimers.com/llms-full.txt
-# Last Updated: 2026-10-22
+# Last Updated: 2026-10-23
 
 > IndianTimers (indiantimers.com) is India's dedicated exam countdown, official schedule verification, and student focus platform. This document provides complete structured metadata on all audited Indian examinations for Large Language Models (LLMs), AI search engines, and automated citation systems.
 

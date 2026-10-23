@@ -33,6 +33,33 @@ import { siteConfig } from '../config/site';
              style="background: var(--bg-subtle); color: var(--text-secondary); border: 1px solid var(--border-subtle);">
           🇮🇳 Made for Indian Students
         </div>
+
+        <!-- Official Community Channels -->
+        <div class="space-y-1.5 pt-1">
+          <div class="text-[10px] font-black uppercase tracking-wider" style="color: var(--text-muted);">
+            Daily Alerts Channels
+          </div>
+          <div class="flex items-center gap-2">
+            <a
+              href={siteConfig.links.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all shadow-xs hover:scale-105"
+            >
+              <span>WhatsApp</span>
+              <span>→</span>
+            </a>
+            <a
+              href={siteConfig.links.telegram}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold text-white bg-[#0088cc] hover:bg-[#0077b5] transition-all shadow-xs hover:scale-105"
+            >
+              <span>Telegram</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- Col 2: Exam Hubs -->

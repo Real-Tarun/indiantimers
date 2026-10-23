@@ -14,6 +14,8 @@ export interface SiteConfig {
     editorialPolicy: string;
     contact: string;
     about: string;
+    telegram: string;
+    whatsapp: string;
   };
   contactEmail: string;
   navigation: Array<{
@@ -50,6 +52,8 @@ export const siteConfig: SiteConfig = {
     editorialPolicy: '/editorial-policy/',
     contact: '/contact/',
     about: '/about/',
+    telegram: 'https://t.me/indiantimers',
+    whatsapp: 'https://whatsapp.com/channel/0029VbDeHd8FHWq0d939hU3J',
   },
   contactEmail: 'you.pncml123@gmail.com',
   navigation: [
