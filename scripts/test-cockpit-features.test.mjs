@@ -231,3 +231,46 @@ test('Embed & Shareable Countdown Integration', async (t) => {
     assert.strictEqual(benchmark.officialSourceUrl, 'https://exams.nta.ac.in/NEET/');
   });
 });
+
+test('Community Link Click Telemetry & Analytics', async (t) => {
+  const { communityClicksManager } = await import('../src/lib/monitor/community-clicks.ts');
+  communityClicksManager.resetStats();
+
+  await t.test('records whatsapp and telegram clicks accurately', () => {
+    communityClicksManager.recordClick({
+      channel: 'whatsapp',
+      placement: 'header',
+      page: '/',
+      isUnique: true,
+    });
+    communityClicksManager.recordClick({
+      channel: 'whatsapp',
+      placement: 'header',
+      page: '/exams/neet-ug-2027/',
+      isUnique: false,
+    });
+    communityClicksManager.recordClick({
+      channel: 'telegram',
+      placement: 'exam_detail',
+      page: '/exams/jee-main-2027-session-1/',
+      isUnique: true,
+    });
+
+    const stats = communityClicksManager.getStats();
+    assert.strictEqual(stats.whatsapp.totalClicks, 2);
+    assert.strictEqual(stats.whatsapp.uniqueUsers, 1);
+    assert.strictEqual(stats.telegram.totalClicks, 1);
+    assert.strictEqual(stats.telegram.uniqueUsers, 1);
+    assert.strictEqual(stats.whatsapp.placements.header, 2);
+    assert.strictEqual(stats.telegram.placements.exam_detail, 1);
+    assert.strictEqual(stats.recentClicks.length, 3);
+  });
+
+  await t.test('resets telemetry cleanly', () => {
+    communityClicksManager.resetStats();
+    const stats = communityClicksManager.getStats();
+    assert.strictEqual(stats.whatsapp.totalClicks, 0);
+    assert.strictEqual(stats.telegram.totalClicks, 0);
+    assert.strictEqual(stats.recentClicks.length, 0);
+  });
+});

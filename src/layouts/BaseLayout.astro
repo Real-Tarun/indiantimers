@@ -162,5 +162,114 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
     </main>
 
     <Footer />
+
+    {/* Non-Blocking Community Link Click Telemetry (0ms Latency for Users) */}
+    <script is:inline>
+      (function() {
+        document.addEventListener('click', function(e) {
+          try {
+            var target = e.target;
+            if (!target) return;
+            var link = target.closest ? target.closest('a') : null;
+            if (!link) return;
+            var href = link.getAttribute('href') || '';
+            var channel = null;
+            if (href.indexOf('whatsapp.com/channel/') !== -1) {
+              channel = 'whatsapp';
+            } else if (href.indexOf('t.me/') !== -1) {
+              channel = 'telegram';
+            }
+            if (!channel) return;
+
+            var placement = link.getAttribute('data-track-cta') ||
+              (link.closest('header') ? 'header' :
+               link.closest('footer') ? 'footer' :
+               link.closest('[data-exam-slug]') ? 'exam_detail' :
+               window.location.pathname === '/' ? 'homepage' : 'tools_content');
+
+            var storageKey = 'it_community_click_stats_v1';
+            var userKey = 'it_joined_' + channel;
+            var isUnique = false;
+            if (!localStorage.getItem(userKey)) {
+              isUnique = true;
+              localStorage.setItem(userKey, String(Date.now()));
+            }
+
+            // Local cache update for instant Admin Dash reflection
+            try {
+              var raw = localStorage.getItem(storageKey);
+              var stats = raw ? JSON.parse(raw) : {
+                whatsapp: { totalClicks: 0, uniqueUsers: 0, placements: {} },
+                telegram: { totalClicks: 0, uniqueUsers: 0, placements: {} },
+                daily: [],
+                recentClicks: []
+              };
+              if (!stats[channel]) stats[channel] = { totalClicks: 0, uniqueUsers: 0, placements: {} };
+              stats[channel].totalClicks = (stats[channel].totalClicks || 0) + 1;
+              if (isUnique) {
+                stats[channel].uniqueUsers = (stats[channel].uniqueUsers || 0) + 1;
+              }
+              if (!stats[channel].placements) stats[channel].placements = {};
+              stats[channel].placements[placement] = (stats[channel].placements[placement] || 0) + 1;
+
+              var today = new Date().toISOString().split('T')[0];
+              if (!Array.isArray(stats.daily)) stats.daily = [];
+              var dayObj = null;
+              for (var i = 0; i < stats.daily.length; i++) {
+                if (stats.daily[i].date === today) { dayObj = stats.daily[i]; break; }
+              }
+              if (!dayObj) {
+                dayObj = { date: today, whatsapp: 0, telegram: 0, uniqueUsers: 0 };
+                stats.daily.push(dayObj);
+              }
+              dayObj[channel] = (dayObj[channel] || 0) + 1;
+              if (isUnique) dayObj.uniqueUsers = (dayObj.uniqueUsers || 0) + 1;
+
+              if (!Array.isArray(stats.recentClicks)) stats.recentClicks = [];
+              stats.recentClicks.unshift({
+                id: 'clk_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+                channel: channel,
+                placement: placement,
+                page: window.location.pathname,
+                timestamp: new Date().toISOString(),
+                isUnique: isUnique
+              });
+              if (stats.recentClicks.length > 50) stats.recentClicks.pop();
+
+              localStorage.setItem(storageKey, JSON.stringify(stats));
+              window.dispatchEvent(new CustomEvent('it:community_click', { detail: { channel: channel, placement: placement, isUnique: isUnique } }));
+            } catch (storageErr) {}
+
+            // Send non-blocking beacon to Cloudflare Pages edge function
+            var payload = JSON.stringify({
+              channel: channel,
+              placement: placement,
+              page: window.location.pathname,
+              isUnique: isUnique,
+              timestamp: new Date().toISOString()
+            });
+            if (navigator.sendBeacon) {
+              navigator.sendBeacon('/api/track-click', payload);
+            } else {
+              fetch('/api/track-click', { method: 'POST', body: payload, keepalive: true }).catch(function(){});
+            }
+
+            // Google Analytics 4 Event
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'join_community_click', {
+                channel: channel,
+                placement: placement,
+                is_unique: isUnique
+              });
+            }
+
+            // Microsoft Clarity Event
+            if (typeof window.clarity === 'function') {
+              window.clarity('event', 'join_' + channel);
+            }
+          } catch (err) {}
+        }, true);
+      })();
+    </script>
   </body>
 </html>
