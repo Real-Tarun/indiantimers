@@ -66,6 +66,11 @@
   --digit-size: clamp(2.5rem, 5vw, 3.5rem);
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 html.dark {
   /* Surfaces — Dark Mode */
   --bg-base: #0E1017;

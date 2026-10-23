@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PomodoroTimer from '../../../components/PomodoroTimer';
+import TimerSupportBanner from '../../../components/TimerSupportBanner.astro';
 import { siteConfig } from '../../../config/site';
 
 const breadcrumbs = [
@@ -30,7 +31,9 @@ const breadcrumbs = [
     </p>
   </div>
 
-  <div class="max-w-3xl mx-auto mb-12">
+  <div class="max-w-3xl mx-auto mb-8">
     <PomodoroTimer client:load />
   </div>
+
+  <TimerSupportBanner className="max-w-3xl mx-auto mb-10" />
 </BaseLayout>

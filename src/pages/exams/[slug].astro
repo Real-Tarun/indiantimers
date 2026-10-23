@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CountdownCard from '../../components/CountdownCard';
+import TimerSupportBanner from '../../components/TimerSupportBanner.astro';
 import { EXAM_REGISTRY, toDirectoryExam } from '../../data/exams';
 import { siteConfig } from '../../config/site';
 import { getGoogleCalendarUrl } from '../../utils/calendar';
@@ -192,6 +193,8 @@ const schemas = faqJsonLd ? [examJsonLd, faqJsonLd] : [examJsonLd];
           <span>Verified on: <strong class="text-slate-800 dark:text-slate-200">{exam.lastVerified}</strong></span>
         </div>
       </div>
+
+      <TimerSupportBanner />
 
       {/* Official Notification & Audit Provenance Box */}
       <div class="p-6 rounded-[22px] bg-white dark:bg-[#171923] border border-black/[0.06] dark:border-white/[0.08] shadow-xs text-xs">
