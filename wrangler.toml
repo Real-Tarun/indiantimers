@@ -1,0 +1,7 @@
+name = "indiantimers"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-23"
+
+[[kv_namespaces]]
+binding = "COMMUNITY_KV"
+id = "5b3cbff04e9e4ed59f90e530b7533e60"

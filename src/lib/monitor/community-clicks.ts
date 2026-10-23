@@ -70,7 +70,7 @@ class CommunityClicksManager {
 
   private loadStats(): CommunityClickStats {
     if (typeof window === 'undefined' || !window.localStorage) {
-      return JSON.parse(JSON.stringify(INITIAL_STATS));
+      return this.stats ? this.stats : JSON.parse(JSON.stringify(INITIAL_STATS));
     }
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -105,12 +105,56 @@ class CommunityClicksManager {
   }
 
   public getStats(): CommunityClickStats {
+    this.stats = this.loadStats();
     return JSON.parse(JSON.stringify(this.stats));
+  }
+
+  public mergeServerStats(serverStats: any): void {
+    if (!serverStats) return;
+    this.stats = this.loadStats();
+
+    if (serverStats.whatsapp) {
+      this.stats.whatsapp.totalClicks = Math.max(this.stats.whatsapp.totalClicks, serverStats.whatsapp.totalClicks || 0);
+      this.stats.whatsapp.uniqueUsers = Math.max(this.stats.whatsapp.uniqueUsers, serverStats.whatsapp.uniqueUsers || 0);
+      if (serverStats.whatsapp.placements) {
+        for (const [k, v] of Object.entries(serverStats.whatsapp.placements)) {
+          this.stats.whatsapp.placements[k] = Math.max(this.stats.whatsapp.placements[k] || 0, Number(v) || 0);
+        }
+      }
+    }
+
+    if (serverStats.telegram) {
+      this.stats.telegram.totalClicks = Math.max(this.stats.telegram.totalClicks, serverStats.telegram.totalClicks || 0);
+      this.stats.telegram.uniqueUsers = Math.max(this.stats.telegram.uniqueUsers, serverStats.telegram.uniqueUsers || 0);
+      if (serverStats.telegram.placements) {
+        for (const [k, v] of Object.entries(serverStats.telegram.placements)) {
+          this.stats.telegram.placements[k] = Math.max(this.stats.telegram.placements[k] || 0, Number(v) || 0);
+        }
+      }
+    }
+
+    if (Array.isArray(serverStats.recentClicks) && serverStats.recentClicks.length > 0) {
+      const existingIds = new Set(this.stats.recentClicks.map((r) => r.id));
+      for (const rc of serverStats.recentClicks) {
+        if (!existingIds.has(rc.id)) {
+          this.stats.recentClicks.unshift(rc);
+          existingIds.add(rc.id);
+        }
+      }
+      this.stats.recentClicks.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+      if (this.stats.recentClicks.length > 50) {
+        this.stats.recentClicks = this.stats.recentClicks.slice(0, 50);
+      }
+    }
+
+    this.saveStats();
   }
 
   public recordClick(payload: ClickEventPayload): void {
     const channel = payload.channel;
     if (channel !== 'whatsapp' && channel !== 'telegram') return;
+
+    this.stats = this.loadStats();
 
     const placement = payload.placement || 'general';
     const isUnique = !!payload.isUnique;
@@ -170,3 +214,4 @@ class CommunityClicksManager {
 }
 
 export const communityClicksManager = new CommunityClicksManager();
+

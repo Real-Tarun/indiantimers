@@ -204,7 +204,9 @@ export default function AdminNoticeDashboard() {
       const res = await fetch('/api/admin/clicks');
       if (res.ok) {
         const data = await res.json();
-        // Server response received
+        if (data) {
+          communityClicksManager.mergeServerStats(data);
+        }
       }
     } catch {
       // Offline fallback
@@ -251,16 +253,35 @@ export default function AdminNoticeDashboard() {
         setIsAuthenticated(true);
       }
 
-      // Realtime listener for community clicks
+      // Realtime listener for community clicks (in-window and cross-window/cross-tab)
       const handleLiveClick = () => {
         setCommunityStats(communityClicksManager.getStats());
       };
+      const handleStorageChange = (e: StorageEvent) => {
+        if (!e.key || e.key === 'it_community_click_stats_v1' || e.key.startsWith('it_user_joined_')) {
+          setCommunityStats(communityClicksManager.getStats());
+        }
+      };
+
       window.addEventListener('it:community_click', handleLiveClick);
+      window.addEventListener('storage', handleStorageChange);
 
       loadData();
 
+      // Background query to serverless edge KV to merge live cross-device student clicks
+      fetch('/api/admin/clicks')
+        .then((r) => r.json())
+        .then((serverData) => {
+          if (serverData) {
+            communityClicksManager.mergeServerStats(serverData);
+            setCommunityStats(communityClicksManager.getStats());
+          }
+        })
+        .catch(() => {});
+
       return () => {
         window.removeEventListener('it:community_click', handleLiveClick);
+        window.removeEventListener('storage', handleStorageChange);
       };
     }
     loadData();
@@ -1350,7 +1371,8 @@ export default function AdminNoticeDashboard() {
               </div>
               <div className="space-y-3 text-xs">
                 {[
-                  { label: 'Header Navigation CTA', key: 'header' },
+                  { label: 'Header Navigation (Desktop)', key: 'header' },
+                  { label: 'Mobile Nav Drawer', key: 'header_mobile' },
                   { label: 'Exam Countdown Alert Box', key: 'exam_detail' },
                   { label: 'Homepage Community Banner', key: 'homepage' },
                   { label: 'Footer Section', key: 'footer' },
@@ -1391,7 +1413,8 @@ export default function AdminNoticeDashboard() {
               </div>
               <div className="space-y-3 text-xs">
                 {[
-                  { label: 'Header Navigation CTA', key: 'header' },
+                  { label: 'Header Navigation (Desktop)', key: 'header' },
+                  { label: 'Mobile Nav Drawer', key: 'header_mobile' },
                   { label: 'Exam Countdown Alert Box', key: 'exam_detail' },
                   { label: 'Homepage Community Banner', key: 'homepage' },
                   { label: 'Footer Section', key: 'footer' },
