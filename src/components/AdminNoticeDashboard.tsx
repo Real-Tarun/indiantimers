@@ -136,7 +136,15 @@ export default function AdminNoticeDashboard() {
   const [communityStats, setCommunityStats] = useState<CommunityClickStats>(() => communityClicksManager.getStats());
   const [isRefreshingClicks, setIsRefreshingClicks] = useState(false);
   const [botEnabled, setBotEnabled] = useState<boolean>(true);
+  const [morningEnabled, setMorningEnabled] = useState<boolean>(true);
+  const [quizEnabled, setQuizEnabled] = useState<boolean>(true);
+  const [eveningEnabled, setEveningEnabled] = useState<boolean>(true);
   const [isTogglingBot, setIsTogglingBot] = useState<boolean>(false);
+  const [broadcastActionInProgress, setBroadcastActionInProgress] = useState<string | null>(null);
+  const [customPrompt, setCustomPrompt] = useState<string>('');
+  const [isGeneratingAI, setIsGeneratingAI] = useState<boolean>(false);
+  const [generatedPreview, setGeneratedPreview] = useState<string>('');
+  const [isBroadcasting, setIsBroadcasting] = useState<boolean>(false);
 
   // Loading & Filter States
   const [isCheckingSources, setIsCheckingSources] = useState(false);
@@ -254,36 +262,122 @@ export default function AdminNoticeDashboard() {
       const res = await fetch('/api/admin/bot-status' + q, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
-        if (typeof data.enabled === 'boolean') {
-          setBotEnabled(data.enabled);
-        }
+        if (typeof data.enabled === 'boolean') setBotEnabled(data.enabled);
+        if (typeof data.morningEnabled === 'boolean') setMorningEnabled(data.morningEnabled);
+        if (typeof data.quizEnabled === 'boolean') setQuizEnabled(data.quizEnabled);
+        if (typeof data.eveningEnabled === 'boolean') setEveningEnabled(data.eveningEnabled);
       }
     } catch {
       // Offline fallback
     }
   };
 
-  const handleToggleBot = async () => {
+  const handleToggleSchedule = async (field: 'enabled' | 'morningEnabled' | 'quizEnabled' | 'eveningEnabled', currentVal: boolean) => {
     setIsTogglingBot(true);
     try {
-      const targetState = !botEnabled;
+      const targetState = !currentVal;
       const q = typeof window !== 'undefined' ? window.location.search : '';
       const res = await fetch('/api/admin/bot-status' + q, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ enabled: targetState }),
+        body: JSON.stringify({ [field]: targetState }),
       });
       if (res.ok) {
-        setBotEnabled(targetState);
-        showToast(targetState ? 'Telegram Bot ACTIVATED. Broadcasts will run.' : 'Telegram Bot PAUSED. All automated broadcasts stopped.');
+        if (field === 'enabled') setBotEnabled(targetState);
+        if (field === 'morningEnabled') setMorningEnabled(targetState);
+        if (field === 'quizEnabled') setQuizEnabled(targetState);
+        if (field === 'eveningEnabled') setEveningEnabled(targetState);
+        showToast(targetState ? `Activated ${field}` : `Paused ${field}`);
       } else {
-        showToast('Failed to update bot status. Check permissions.');
+        showToast('Failed to update bot schedule setting.');
       }
     } catch {
-      showToast('Network error while toggling bot status.');
+      showToast('Network error while updating bot settings.');
     } finally {
       setIsTogglingBot(false);
+    }
+  };
+
+  const handleToggleBot = () => handleToggleSchedule('enabled', botEnabled);
+
+  const handleInstantBroadcast = async (action: 'hack' | 'quiz' | 'trick' | 'poll') => {
+    setBroadcastActionInProgress(action);
+    try {
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/bot-broadcast' + q, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`🚀 ${data.message || 'Live broadcast sent to @indiantimers!'}`);
+      } else {
+        showToast(`Failed: ${data.error || 'Broadcast failed'}`);
+      }
+    } catch {
+      showToast('Network error while triggering broadcast.');
+    } finally {
+      setBroadcastActionInProgress(null);
+    }
+  };
+
+  const handleGenerateCustomAI = async () => {
+    if (!customPrompt.trim()) {
+      showToast('Please type a topic or prompt first.');
+      return;
+    }
+    setIsGeneratingAI(true);
+    try {
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/bot-broadcast' + q, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'generate_custom', prompt: customPrompt }),
+      });
+      const data = await res.json();
+      if (data.success && data.generated) {
+        setGeneratedPreview(data.generated);
+        showToast('✨ Generated with Gemini 3.5 Flash! Check preview below.');
+      } else {
+        showToast(`AI generation failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch {
+      showToast('Network error during AI generation.');
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
+  const handleSendCustomBroadcast = async () => {
+    if (!generatedPreview.trim()) {
+      showToast('No content to send.');
+      return;
+    }
+    setIsBroadcasting(true);
+    try {
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/bot-broadcast' + q, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'send_custom', text: generatedPreview }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('🚀 Custom post broadcasted live to @indiantimers!');
+        setGeneratedPreview('');
+        setCustomPrompt('');
+      } else {
+        showToast(`Failed to broadcast: ${data.error || 'Unknown error'}`);
+      }
+    } catch {
+      showToast('Network error during broadcast.');
+    } finally {
+      setIsBroadcasting(false);
     }
   };
 
@@ -1502,15 +1596,16 @@ export default function AdminNoticeDashboard() {
               </div>
             </div>
 
-            {/* Master Bot Automation Controller (ON / OFF Switch) */}
-            <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800/80">
-              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1a1d28] border border-black/[0.06] dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+            {/* Master Bot Automation Controller (ON / OFF Switch) & AI Studio */}
+            <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800/80 space-y-4">
+              {/* Master Switch Banner */}
+              <div className="p-4 rounded-2xl bg-white dark:bg-[#1a1d28] border border-black/[0.06] dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
                 <div className="flex items-center gap-3">
                   <div className={`w-3.5 h-3.5 rounded-full shrink-0 ${botEnabled ? 'bg-emerald-500 shadow-md shadow-emerald-500/50 animate-pulse' : 'bg-rose-500 shadow-md shadow-rose-500/50'}`} />
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
-                        Automated Daily Broadcast Bot Controller
+                        Master Automated Bot Controller
                       </span>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                         botEnabled 
@@ -1522,7 +1617,7 @@ export default function AdminNoticeDashboard() {
                     </div>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                       {botEnabled 
-                        ? 'Morning countdowns, Topper hacks, and afternoon quizzes are broadcasting on schedule.' 
+                        ? 'Automated broadcasts, Topper hacks, and AI quizzes are active on schedule.' 
                         : 'All automated scheduled broadcasts are completely paused.'}
                     </p>
                   </div>
@@ -1555,6 +1650,233 @@ export default function AdminNoticeDashboard() {
                     </>
                   )}
                 </button>
+              </div>
+
+              {/* Individual Schedule Toggles */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#151720] border border-black/[0.04] dark:border-white/[0.04] flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200">☀️ 7:30 AM Morning</div>
+                    <div className="text-[10px] text-slate-500">Radar &amp; Topper Hack</div>
+                  </div>
+                  <button
+                    onClick={() => handleToggleSchedule('morningEnabled', morningEnabled)}
+                    disabled={isTogglingBot || !botEnabled}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer disabled:opacity-40 ${
+                      morningEnabled && botEnabled
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    {morningEnabled && botEnabled ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#151720] border border-black/[0.04] dark:border-white/[0.04] flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200">🎯 2:00 PM Afternoon</div>
+                    <div className="text-[10px] text-slate-500">AI PYQ Quiz Poll</div>
+                  </div>
+                  <button
+                    onClick={() => handleToggleSchedule('quizEnabled', quizEnabled)}
+                    disabled={isTogglingBot || !botEnabled}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer disabled:opacity-40 ${
+                      quizEnabled && botEnabled
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    {quizEnabled && botEnabled ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#151720] border border-black/[0.04] dark:border-white/[0.04] flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200">🌙 7:30 PM Evening</div>
+                    <div className="text-[10px] text-slate-500">Study Hours Poll</div>
+                  </div>
+                  <button
+                    onClick={() => handleToggleSchedule('eveningEnabled', eveningEnabled)}
+                    disabled={isTogglingBot || !botEnabled}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer disabled:opacity-40 ${
+                      eveningEnabled && botEnabled
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    {eveningEnabled && botEnabled ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+              </div>
+
+              {/* 1-Click Instant Broadcast Deck */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-500/20 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">⚡</span>
+                    <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                      1-Click Instant Broadcast Deck (Post Right Now)
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold bg-blue-500/10 px-2 py-0.5 rounded-full">
+                    Gemini 3.5 Flash Powered
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button
+                    onClick={() => handleInstantBroadcast('hack')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-black/[0.06] dark:border-white/[0.06] text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>💡</span>
+                      <span>Topper Hack</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'hack' ? 'Broadcasting...' : 'Generate & Post'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('quiz')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-purple-50 dark:hover:bg-purple-900/30 border border-black/[0.06] dark:border-white/[0.06] text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>🎯</span>
+                      <span>AI PYQ Quiz</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'quiz' ? 'Broadcasting...' : 'Generate & Post'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('trick')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-amber-50 dark:hover:bg-amber-900/30 border border-black/[0.06] dark:border-white/[0.06] text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>⚡</span>
+                      <span>Subject Trick</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'trick' ? 'Broadcasting...' : 'Generate & Post'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('poll')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-black/[0.06] dark:border-white/[0.06] text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>📊</span>
+                      <span>Study Poll</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'poll' ? 'Broadcasting...' : 'Post Check-in'}
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Custom AI Prompt Generator Studio */}
+              <div className="p-3.5 rounded-2xl bg-white dark:bg-[#1a1d28] border border-black/[0.06] dark:border-white/[0.06] space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">🤖</span>
+                    <span className="text-xs font-black text-slate-900 dark:text-white">
+                      Custom AI Post Studio (Type any topic)
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-500">
+                    Live Channel: @indiantimers
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="e.g. Tips for NEET Organic Chemistry, or UPSC Modern History timeline trick..."
+                    className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#12141c] border border-black/[0.08] dark:border-white/[0.08] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleGenerateCustomAI();
+                    }}
+                  />
+                  <button
+                    onClick={handleGenerateCustomAI}
+                    disabled={isGeneratingAI || !customPrompt.trim()}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-all cursor-pointer disabled:opacity-50 shrink-0 flex items-center justify-center gap-1.5"
+                  >
+                    {isGeneratingAI ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Generating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>✨ Generate Post</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Generated Content Preview & Live Broadcast Button */}
+                {generatedPreview && (
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#141620] border border-blue-500/30 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                        ✨ Live AI Preview (You can edit before broadcasting):
+                      </span>
+                      <button
+                        onClick={() => setGeneratedPreview('')}
+                        className="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                      >
+                        ✕ Dismiss
+                      </button>
+                    </div>
+
+                    <textarea
+                      value={generatedPreview}
+                      onChange={(e) => setGeneratedPreview(e.target.value)}
+                      rows={5}
+                      className="w-full p-2.5 rounded-lg text-xs font-mono bg-white dark:bg-[#1a1d28] border border-black/[0.08] dark:border-white/[0.08] text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(generatedPreview);
+                          showToast('Copied preview to clipboard.');
+                        }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 cursor-pointer"
+                      >
+                        📋 Copy
+                      </button>
+                      <button
+                        onClick={handleSendCustomBroadcast}
+                        disabled={isBroadcasting}
+                        className="px-4 py-1.5 rounded-lg text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                      >
+                        {isBroadcasting ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>Broadcasting...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-3.5 h-3.5" />
+                            <span>🚀 Broadcast Live to @indiantimers</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

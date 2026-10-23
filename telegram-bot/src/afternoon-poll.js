@@ -1,25 +1,46 @@
 import { getRandomQuiz } from './quizzes.js';
 import { sendQuizPoll, sendMessage } from './telegram.js';
 import { isBotEnabled } from './bot-control.js';
+import { generateAIQuiz } from './gemini.js';
 
 export async function runAfternoonPoll() {
   console.log('🚀 Running Afternoon Quiz Poll...');
 
   // Check remote kill-switch / admin toggle
-  const enabled = await isBotEnabled();
+  const enabled = await isBotEnabled('quiz');
   if (!enabled) {
-    console.log('⏸️ Telegram Bot is PAUSED via Admin Dashboard. Skipping afternoon quiz.');
+    console.log('⏸️ Telegram Bot (Afternoon Quiz) is PAUSED via Admin Dashboard. Skipping.');
     return { skipped: true, reason: 'bot_paused_by_admin' };
   }
 
-  const quiz = getRandomQuiz();
+  // Try generating a fresh, high-yield Quiz question with Google Gemini AI
+  let quiz = null;
+  try {
+    const aiQuiz = await generateAIQuiz();
+    if (aiQuiz && aiQuiz.question && Array.isArray(aiQuiz.options) && aiQuiz.options.length >= 2) {
+      quiz = {
+        exam: aiQuiz.exam || 'Competitive Exam',
+        category: aiQuiz.subject || 'PYQ Challenge',
+        question: aiQuiz.question,
+        options: aiQuiz.options,
+        correctOptionId: typeof aiQuiz.correctOptionId === 'number' ? aiQuiz.correctOptionId : 0,
+        explanation: aiQuiz.explanation || 'Verified conceptual answer for aspirants.'
+      };
+      console.log('✨ Fresh PYQ Quiz generated with Google Gemini 3.5 Flash!');
+    }
+  } catch (err) {
+    console.warn('⚠️ Gemini fallback to curated quiz bank:', err.message);
+  }
+
+  if (!quiz) {
+    quiz = getRandomQuiz();
+  }
 
   const questionTitle = `📝 [${quiz.exam} - ${quiz.category}]\n${quiz.question}`;
 
   try {
     const rawChatId = process.env.TELEGRAM_CHAT_ID || '';
-    const [channelChatId, secondaryChatId] = rawChatId.split(',').map((s) => s.trim());
-    const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || secondaryChatId;
+    const [channelChatId] = rawChatId.split(',').map((s) => s.trim());
 
     // 1. Send the native interactive quiz poll to public channel
     const pollResult = await sendQuizPoll(
@@ -30,7 +51,7 @@ export async function runAfternoonPoll() {
       { chatId: channelChatId || undefined }
     );
 
-    console.log('✅ Quiz poll sent successfully! Poll ID:', pollResult.result?.poll?.id);
+    console.log('✅ Quiz poll sent successfully to Public Channel! Poll ID:', pollResult.result?.poll?.id);
 
     // 2. Send quick follow-up with study tool link
     const followUp = `💡 <b>Daily Practice Tip:</b>\n` +
@@ -40,42 +61,6 @@ export async function runAfternoonPoll() {
 
     await sendMessage(followUp, { disableWebPreview: true, chatId: channelChatId || undefined });
     console.log('✅ Follow-up tool link sent!');
-
-    // 3. If Admin Personal Chat ID is configured, send private DM with 1-Click WhatsApp Button
-    if (adminChatId) {
-      try {
-        const letters = ['A', 'B', 'C', 'D'];
-        let waQuiz = `📝 *DAILY PRACTICE QUIZ* • [${quiz.exam} - ${quiz.category}]\n\n` +
-          `*Q:* ${quiz.question}\n\n`;
-        quiz.options.forEach((opt, idx) => {
-          waQuiz += `${letters[idx]}) ${opt}\n`;
-        });
-        waQuiz += `\n💡 *Answer & Explanation:*\n👉 ${quiz.explanation}\n\n` +
-          `⏱️ *Practice on Free CBT Simulator:*\n👉 https://indiantimers.com/tools/mock-test-timer/`;
-
-        const waShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waQuiz)}`;
-
-        await sendMessage(
-          `📝 <b>Afternoon Quiz is LIVE on Telegram!</b>\n\nTap below to copy & post to WhatsApp Channel:`,
-          {
-            chatId: adminChatId,
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: '🟢 Post Quiz to WhatsApp Channel',
-                    url: waShareUrl,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-        console.log('✅ Admin private notification sent with 1-Click WhatsApp Quiz button!');
-      } catch (adminErr) {
-        console.warn('⚠️ Could not send admin personal DM:', adminErr.message);
-      }
-    }
 
     return pollResult;
   } catch (error) {

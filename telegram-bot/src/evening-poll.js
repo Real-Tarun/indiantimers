@@ -1,13 +1,13 @@
-import { sendQuizPoll, sendMessage } from './telegram.js';
+import { sendMessage } from './telegram.js';
 import { isBotEnabled } from './bot-control.js';
 
 export async function runEveningPoll() {
   console.log('🚀 Running Evening Study Accountability Poll...');
 
   // Check remote kill-switch / admin toggle
-  const enabled = await isBotEnabled();
+  const enabled = await isBotEnabled('evening');
   if (!enabled) {
-    console.log('⏸️ Telegram Bot is PAUSED via Admin Dashboard. Skipping evening poll.');
+    console.log('⏸️ Telegram Bot (Evening Poll) is PAUSED via Admin Dashboard. Skipping.');
     return { skipped: true, reason: 'bot_paused_by_admin' };
   }
 
@@ -29,8 +29,7 @@ export async function runEveningPoll() {
 
   try {
     const rawChatId = process.env.TELEGRAM_CHAT_ID || '';
-    const [channelChatId, secondaryChatId] = rawChatId.split(',').map((s) => s.trim());
-    const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || secondaryChatId;
+    const [channelChatId] = rawChatId.split(',').map((s) => s.trim());
 
     // Send anonymous poll (regular poll, not quiz)
     const BASE_URL = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -49,7 +48,7 @@ export async function runEveningPoll() {
     });
 
     const pollResult = await res.json();
-    console.log('✅ Evening poll sent successfully!');
+    console.log('✅ Evening poll sent successfully to Public Channel!');
 
     // Follow-up encouragement
     const followUp = `🌙 <b>Evening Review:</b>\n` +
@@ -58,39 +57,6 @@ export async function runEveningPoll() {
       `👉 <a href="https://indiantimers.com/tools/study-timer/">indiantimers.com/tools/study-timer/</a>`;
 
     await sendMessage(followUp, { disableWebPreview: true, chatId: channelChatId || undefined });
-
-    // Admin WhatsApp 1-Click Share
-    if (adminChatId) {
-      try {
-        const waText = `📊 *DAILY STUDY ACCOUNTABILITY CHECK* • ${todayIST}\n\n` +
-          `Aspirants, aaj kitne ghante focused self-study hui?\n\n` +
-          `1️⃣ 8+ Ghante (Topper Mode)\n` +
-          `2️⃣ 6 to 8 Ghante (Solid Focus)\n` +
-          `3️⃣ 4 to 6 Ghante (Good Progress)\n` +
-          `4️⃣ 2 to 4 Ghante (Kal push karenge!)\n\n` +
-          `🎯 Apni streak maintain karein:\n` +
-          `https://indiantimers.com/tools/study-timer/`;
-
-        const waShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waText)}`;
-
-        await sendMessage(
-          `📊 <b>Evening Study Poll is LIVE on Telegram!</b>\n\nTap below to copy & post to WhatsApp Channel:`,
-          {
-            chatId: adminChatId,
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: '🟢 Post Study Poll to WhatsApp',
-                    url: waShareUrl,
-                  },
-                ],
-              ],
-            },
-          }
-        );
-      } catch {}
-    }
 
     return pollResult;
   } catch (error) {

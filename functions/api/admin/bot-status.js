@@ -1,13 +1,16 @@
 /**
  * Admin API Endpoint: /api/admin/bot-status
  * 
- * Provides global ON / OFF toggle controller for the automated Telegram Bot.
+ * Provides global ON / OFF toggle controller & individual schedule switches for the automated Telegram Bot.
  * Allows Admin to pause or resume automated morning countdowns, quizzes, and study polls.
  */
 
 // In-memory fallback if KV is temporarily unbound
 let inMemoryBotStatus = {
   enabled: true,
+  morningEnabled: true,
+  quizEnabled: true,
+  eveningEnabled: true,
   updatedAt: new Date().toISOString(),
 };
 
@@ -18,7 +21,7 @@ export async function onRequestGet(context) {
     try {
       const raw = await context.env.COMMUNITY_KV.get('stats:bot_status');
       if (raw) {
-        status = JSON.parse(raw);
+        status = { ...status, ...JSON.parse(raw) };
       }
     } catch (err) {
       console.warn('Error reading bot_status from KV:', err.message);
@@ -37,11 +40,22 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json().catch(() => ({}));
-    const enabled = typeof body.enabled === 'boolean' ? body.enabled : true;
     const nowIso = new Date().toISOString();
 
+    let current = { ...inMemoryBotStatus };
+    if (context.env?.COMMUNITY_KV) {
+      try {
+        const raw = await context.env.COMMUNITY_KV.get('stats:bot_status');
+        if (raw) current = { ...current, ...JSON.parse(raw) };
+      } catch {}
+    }
+
     const newStatus = {
-      enabled,
+      ...current,
+      enabled: typeof body.enabled === 'boolean' ? body.enabled : current.enabled,
+      morningEnabled: typeof body.morningEnabled === 'boolean' ? body.morningEnabled : current.morningEnabled,
+      quizEnabled: typeof body.quizEnabled === 'boolean' ? body.quizEnabled : current.quizEnabled,
+      eveningEnabled: typeof body.eveningEnabled === 'boolean' ? body.eveningEnabled : current.eveningEnabled,
       updatedAt: nowIso,
       toggledBy: context.data?.adminEmail || 'admin',
     };
