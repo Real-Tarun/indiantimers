@@ -9,9 +9,10 @@ import { siteConfig } from '../config/site';
 interface Props {
   exam: ExamRecord;
   compact?: boolean;
+  showDetailsLink?: boolean;
 }
 
-export default function CountdownCard({ exam: initialExam, compact = false }: Props) {
+export default function CountdownCard({ exam: initialExam, compact = false, showDetailsLink = true }: Props) {
   const [exam, setExam] = useState<ExamRecord>(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
@@ -41,11 +42,20 @@ export default function CountdownCard({ exam: initialExam, compact = false }: Pr
   const [secFlash, setSecFlash] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isSamePage, setIsSamePage] = useState(false);
   const prevSecsRef = useRef<number>(0);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/\/+$/, '');
+      if (path === `/exams/${exam.slug}`) {
+        setIsSamePage(true);
+      }
+    }
+  }, [exam.slug]);
+
+  const hideDetailsLink = !showDetailsLink || isSamePage;
 
   useEffect(() => {
     const handleClockUpdate = (e: Event) => {
@@ -240,9 +250,13 @@ export default function CountdownCard({ exam: initialExam, compact = false }: Pr
           {/* Exam short name & target date */}
           <div>
             <h3 className="font-display font-bold text-[17px] sm:text-[18px] text-slate-900 dark:text-white leading-tight">
-              <a href={`/exams/${exam.slug}/`} className="hover:underline underline-offset-2">
-                {exam.shortName}
-              </a>
+              {!hideDetailsLink ? (
+                <a href={`/exams/${exam.slug}/`} className="hover:underline underline-offset-2">
+                  {exam.shortName}
+                </a>
+              ) : (
+                <span>{exam.shortName}</span>
+              )}
             </h3>
             <p className="text-[12px] font-semibold text-slate-600 dark:text-slate-400 mt-1">
               {countdown.formattedTargetDate}
@@ -301,17 +315,24 @@ export default function CountdownCard({ exam: initialExam, compact = false }: Pr
             </div>
           )}
 
-          {/* Footer: View details + ICS export + Fullscreen button */}
+          {/* Footer: View details / Live Status + ICS export + Fullscreen button */}
           <div className="flex items-center justify-between pt-2 mt-auto border-t border-black/[0.04] dark:border-white/[0.05]">
-            <a
-              href={`/exams/${exam.slug}/`}
-              className="text-[12px] font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-[#D4FF4F] flex items-center gap-1 transition-colors group-hover:translate-x-0.5 duration-150"
-            >
-              <span>View Details</span>
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
+            {!hideDetailsLink ? (
+              <a
+                href={`/exams/${exam.slug}/`}
+                className="text-[12px] font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-[#D4FF4F] flex items-center gap-1 transition-colors group-hover:translate-x-0.5 duration-150"
+              >
+                <span>View Details</span>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+            ) : (
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400 select-none">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Live Synced Clock</span>
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <button
@@ -359,16 +380,18 @@ export default function CountdownCard({ exam: initialExam, compact = false }: Pr
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <a
-                href={`/exams/${exam.slug}/`}
-                className="px-3.5 py-2 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition-all flex items-center gap-1.5 shadow-xs"
-                title="Open detailed exam countdown and syllabus"
-              >
-                <span>Full Exam Page</span>
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
+              {!hideDetailsLink && (
+                <a
+                  href={`/exams/${exam.slug}/`}
+                  className="px-3.5 py-2 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition-all flex items-center gap-1.5 shadow-xs"
+                  title="Open detailed exam countdown and syllabus"
+                >
+                  <span>Full Exam Page</span>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              )}
 
               <button
                 onClick={toggleFullscreen}
