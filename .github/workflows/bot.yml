@@ -1,0 +1,37 @@
+name: Daily Telegram Exam Broadcast & Quiz
+
+on:
+  schedule:
+    # Subah 7:30 AM IST (02:00 UTC)
+    - cron: '0 2 * * *'
+    # Dopahar 2:00 PM IST (08:30 UTC)
+    - cron: '30 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  broadcast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Morning Motivation & Multi-Exam Countdown
+        if: github.event.schedule == '0 2 * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node telegram-bot/src/morning-broadcast.js
+
+      - name: Run Afternoon Interactive Quiz Poll
+        if: github.event.schedule == '30 8 * * *'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node telegram-bot/src/afternoon-poll.js
