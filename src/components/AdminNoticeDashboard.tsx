@@ -201,7 +201,8 @@ export default function AdminNoticeDashboard() {
   const handleRefreshCommunityClicks = async () => {
     setIsRefreshingClicks(true);
     try {
-      const res = await fetch('/api/admin/clicks');
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/clicks' + q, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         if (data) {
@@ -269,7 +270,8 @@ export default function AdminNoticeDashboard() {
       loadData();
 
       // Background query to serverless edge KV to merge live cross-device student clicks
-      fetch('/api/admin/clicks')
+      const q = window.location.search;
+      fetch('/api/admin/clicks' + q, { credentials: 'include' })
         .then((r) => r.json())
         .then((serverData) => {
           if (serverData) {
