@@ -20,6 +20,32 @@ function getApiKey(env) {
   }
 }
 
+/**
+ * Sanitizes markdown text into Telegram HTML without raw asterisks or broken symbols
+ */
+function cleanTelegramHtml(text) {
+  if (!text) return '';
+  let s = String(text);
+  // 1. Horizontal divider lines (--- or *** on their own line)
+  s = s.replace(/^\s*[\*\-_]{3,}\s*$/gm, '───────────────');
+  // 2. Headers
+  s = s.replace(/^#{1,6}\s*(.+)$/gm, '<b>$1</b>');
+  // 3. Bold + Italic ***text***
+  s = s.replace(/\*\*\*([^\*\n]+)\*\*\*/g, '<b><i>$1</i></b>');
+  // 4. Bold **text**
+  s = s.replace(/\*\*([^\*\n]+)\*\*/g, '<b>$1</b>');
+  // 5. Bullets
+  s = s.replace(/^[\*\-]\s+/gm, '• ');
+  // 6. Italic *text* or _text_
+  s = s.replace(/(?<!\*)\*([^\*\n]+)\*(?!\*)/g, '<i>$1</i>');
+  s = s.replace(/(?<!_)_([^_\n]+)_(?!_)/g, '<i>$1</i>');
+  // 7. Strip stray asterisks and backticks
+  s = s.replace(/[\*`]/g, '');
+  // 8. Clean excessive newlines
+  s = s.replace(/\n{3,}/g, '\n\n');
+  return s.trim();
+}
+
 async function sendTelegram(method, payload) {
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
   const res = await fetch(url, {
@@ -51,26 +77,100 @@ async function callGemini(prompt, system = '', jsonMode = false, env = null) {
     body: JSON.stringify(body),
   });
   const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+}
+
+const QUIZ_PRESETS = [
+  { key: 'neet', exam: 'NEET UG', subject: 'Biology (Genetics & Physiology)', focus: 'NCERT standard high-yield Biology concept' },
+  { key: 'jee', exam: 'JEE Main', subject: 'Physics (Mechanics & Waves)', focus: 'conceptual calculation-friendly JEE Main physics question' },
+  { key: 'chem', exam: 'JEE / NEET', subject: 'Organic Chemistry', focus: 'organic reaction mechanism or functional groups question' },
+  { key: 'ssc', exam: 'SSC CGL', subject: 'General Intelligence & Reasoning', focus: 'speed-based logical reasoning series or analogy question' },
+  { key: 'upsc', exam: 'UPSC CSE', subject: 'Indian Polity & Constitution', focus: 'UPSC Prelims level question on Fundamental Rights, Articles or Parliament' },
+  { key: 'clat', exam: 'CLAT', subject: 'Legal Reasoning & Constitution', focus: 'authentic CLAT legal reasoning or fundamental duties question' },
+];
+
+async function broadcastRealQuiz(categoryOrPrompt, env) {
+  const cat = (categoryOrPrompt || '').toLowerCase();
+  let preset = null;
+
+  if (cat.includes('neet') || cat.includes('bio')) preset = QUIZ_PRESETS[0];
+  else if (cat.includes('jee') || cat.includes('phys')) preset = QUIZ_PRESETS[1];
+  else if (cat.includes('chem')) preset = QUIZ_PRESETS[2];
+  else if (cat.includes('ssc') || cat.includes('reasoning')) preset = QUIZ_PRESETS[3];
+  else if (cat.includes('upsc') || cat.includes('polity')) preset = QUIZ_PRESETS[4];
+  else if (cat.includes('clat') || cat.includes('legal') || cat.includes('law')) preset = QUIZ_PRESETS[5];
+  else if (categoryOrPrompt && categoryOrPrompt !== 'random') {
+    preset = { exam: 'Competitive Exam', subject: categoryOrPrompt, focus: `conceptual question specifically on "${categoryOrPrompt}"` };
+  } else {
+    preset = QUIZ_PRESETS[Math.floor(Math.random() * QUIZ_PRESETS.length)];
+  }
+
+  const prompt = `Generate a high-yield Multiple Choice Question strictly for ${preset.exam} - Subject: ${preset.subject}.
+Focus: ${preset.focus}.
+
+Return JSON strictly in this structure:
+{
+  "exam": "${preset.exam}",
+  "subject": "${preset.subject}",
+  "question": "Question text under 220 characters. No asterisks.",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "correctOptionId": 0,
+  "explanation": "Clear 1-sentence conceptual explanation under 160 characters."
+}
+Rules:
+- Exactly 4 options. Keep each option short (under 35 chars).
+- Do not use ***, **, or markdown symbols.
+- correctOptionId must be 0, 1, 2, or 3.`;
+
+  const quizJsonRaw = await callGemini(prompt, 'Output STRICTLY valid JSON only.', true, env);
+  let q = {};
+  try {
+    q = JSON.parse(quizJsonRaw);
+  } catch {
+    q = JSON.parse(quizJsonRaw.replace(/```json|```/g, '').trim());
+  }
+
+  const qText = String(q.question || '').replace(/[\*`]/g, '').trim();
+  const options = (q.options || ['A', 'B', 'C', 'D']).map((o) => String(o).replace(/[\*`]/g, '').slice(0, 50));
+  const explanation = String(q.explanation || 'Verified conceptual answer.').replace(/[\*`]/g, '').slice(0, 190);
+  const correctIdx = typeof q.correctOptionId === 'number' && q.correctOptionId >= 0 && q.correctOptionId <= 3 ? q.correctOptionId : 0;
+
+  // Send Real Native Quiz Poll to Channel
+  await sendTelegram('sendPoll', {
+    chat_id: CHANNEL_ID,
+    question: `📝 [${q.exam || preset.exam} - ${q.subject || preset.subject}]\n${qText}`.slice(0, 290),
+    options,
+    type: 'quiz',
+    correct_option_id: correctIdx,
+    explanation,
+    is_anonymous: true,
+  });
+
+  // Follow-up CBT tool link
+  await sendTelegram('sendMessage', {
+    chat_id: CHANNEL_ID,
+    text: `💡 <b>Daily CBT Practice:</b> Simulate real exam conditions with our free CBT Mock Test Timer!\n👉 <a href="https://indiantimers.com/tools/mock-test-timer/">indiantimers.com/tools/mock-test-timer/</a>`,
+    parse_mode: 'HTML',
+    disable_web_page_preview: true,
+  });
+
+  return q.exam || preset.exam;
 }
 
 export async function onRequestPost(context) {
   try {
     const update = await context.request.json().catch(() => null);
-    if (!update) {
-      return new Response('No payload', { status: 200 });
-    }
+    if (!update) return new Response('No payload', { status: 200 });
 
-    // 1. Identify Sender
     const message = update.message;
     const callbackQuery = update.callback_query;
     const sender = message?.from || callbackQuery?.from;
+    const env = context.env;
 
-    if (!sender) {
-      return new Response('OK', { status: 200 });
-    }
+    if (!sender) return new Response('OK', { status: 200 });
 
-    // 2. Strict Admin-Only Authorization
+    // Strict Admin Authorization
     if (Number(sender.id) !== ADMIN_ID) {
       if (message?.chat?.id) {
         await sendTelegram('sendMessage', {
@@ -82,22 +182,25 @@ export async function onRequestPost(context) {
       return new Response('Unauthorized', { status: 200 });
     }
 
-    // 3. Handle Inline Button Clicks (Callback Queries)
+    // Handle Inline Button Taps
     if (callbackQuery) {
       const data = callbackQuery.data;
       const callbackId = callbackQuery.id;
 
       await sendTelegram('answerCallbackQuery', {
         callback_query_id: callbackId,
-        text: '⚡ Processing action with Gemini AI...',
+        text: '⚡ Processing with Gemini AI...',
       });
 
       if (data === 'btn_daily_hack') {
-        const hack = await callGemini(
-          'Generate a high-impact Topper Study Hack with motivation in crisp Hinglish for competitive exam aspirants. Keep under 100 words with bold headings and emojis.',
-          'You are an elite exam coach for Indian aspirants.'
+        const rawHack = await callGemini(
+          'Generate a high-impact Topper Study Hack with motivation in crisp Hinglish for competitive exam aspirants. Keep under 100 words with bullet points (•) and bold headings. Never use *** or raw markdown divider lines.',
+          'You are an elite exam coach for Indian aspirants.',
+          false,
+          env
         );
-        const text = `💡 <b>TODAY\'S TOPPER STUDY HACK</b>\n\n${hack}\n\n🔗 <b>More Hacks &amp; Free Timers:</b>\n👉 <a href="https://indiantimers.com/?utm_source=telegram">indiantimers.com</a>`;
+        const cleanHack = cleanTelegramHtml(rawHack);
+        const text = `💡 <b>TODAY\'S TOPPER STUDY HACK</b>\n\n${cleanHack}\n\n🔗 <b>More Hacks &amp; Free Timers:</b>\n👉 <a href="https://indiantimers.com/?utm_source=telegram">indiantimers.com</a>`;
         await sendTelegram('sendMessage', {
           chat_id: CHANNEL_ID,
           text,
@@ -109,40 +212,23 @@ export async function onRequestPost(context) {
           text: `✅ <b>Success!</b> Daily Hack posted live to ${CHANNEL_ID}!`,
           parse_mode: 'HTML',
         });
-      } else if (data === 'btn_ai_quiz') {
-        const quizJsonRaw = await callGemini(
-          'Generate 1 authentic PYQ MCQ for Indian aspirants (NEET, JEE, UPSC, or SSC). Return JSON with fields: exam, subject, question, options (array of 4 strings), correctOptionId (0-3), explanation (1-2 lines).',
-          'Return strictly valid JSON only.',
-          true
-        );
-        let q = {};
-        try {
-          q = JSON.parse(quizJsonRaw);
-        } catch {
-          q = JSON.parse(quizJsonRaw.replace(/```json|```/g, '').trim());
-        }
-
-        await sendTelegram('sendPoll', {
-          chat_id: CHANNEL_ID,
-          question: `📝 [${q.exam} - ${q.subject}]\n${q.question}`.slice(0, 300),
-          options: q.options.map((opt) => String(opt).slice(0, 100)),
-          type: 'quiz',
-          correct_option_id: q.correctOptionId || 0,
-          explanation: (q.explanation || 'Verified concept').slice(0, 200),
-          is_anonymous: true,
-        });
-
+      } else if (data.startsWith('btn_quiz_')) {
+        const cat = data.replace('btn_quiz_', '');
+        const examName = await broadcastRealQuiz(cat, env);
         await sendTelegram('sendMessage', {
           chat_id: ADMIN_ID,
-          text: `✅ <b>Success!</b> AI Quiz on <i>${q.subject}</i> posted live to ${CHANNEL_ID}!`,
+          text: `✅ <b>Success!</b> Real Quiz Poll for <b>[${examName}]</b> posted live to ${CHANNEL_ID}!`,
           parse_mode: 'HTML',
         });
       } else if (data === 'btn_subject_trick') {
-        const trick = await callGemini(
-          'Generate an ultra-crisp Mnemonic or Desi Shortcut Trick for a high-weightage topic in NEET, JEE, or UPSC (Physics/Chemistry/Bio/Polity). Under 100 words with emojis.',
-          'You are a premier trick & shortcut teacher.'
+        const rawTrick = await callGemini(
+          'Generate an ultra-crisp Mnemonic or Desi Shortcut Trick for a high-weightage topic in NEET, JEE, or UPSC (Physics/Chemistry/Bio/Polity). Under 100 words with emojis. Never use ***.',
+          'You are a premier trick & shortcut teacher.',
+          false,
+          env
         );
-        const text = `⚡ <b>DESI SHORTCUT &amp; MNEMONIC TRICK</b>\n\n${trick}\n\n🎯 <b>Practice on CBT Mock Simulator:</b>\n👉 <a href="https://indiantimers.com/tools/mock-test-timer/">indiantimers.com/tools/mock-test-timer/</a>`;
+        const cleanTrick = cleanTelegramHtml(rawTrick);
+        const text = `⚡ <b>DESI SHORTCUT &amp; MNEMONIC TRICK</b>\n\n${cleanTrick}\n\n🎯 <b>Practice on CBT Mock Simulator:</b>\n👉 <a href="https://indiantimers.com/tools/mock-test-timer/">indiantimers.com/tools/mock-test-timer/</a>`;
         await sendTelegram('sendMessage', {
           chat_id: CHANNEL_ID,
           text,
@@ -185,7 +271,7 @@ export async function onRequestPost(context) {
       return new Response('OK', { status: 200 });
     }
 
-    // 4. Handle Direct Messages from Admin
+    // Handle Direct Messages from Admin
     if (message) {
       const text = message.text || '';
 
@@ -194,19 +280,44 @@ export async function onRequestPost(context) {
         return new Response('OK', { status: 200 });
       }
 
-      // Any other text is treated as a Custom Prompt to generate and broadcast!
+      // Check if Admin wants a QUIZ (e.g. "Physics quiz", "make a quiz on genetics", "mcq on polity")
+      const lowerText = text.toLowerCase();
+      const isQuizRequest = lowerText.includes('quiz') || lowerText.includes('poll') || lowerText.includes('mcq') || lowerText.includes('question');
+
+      if (isQuizRequest) {
+        await sendTelegram('sendMessage', {
+          chat_id: ADMIN_ID,
+          text: `🎯 <b>Quiz Request Detected:</b> <i>"${text}"</i>\n\n⚡ Generating a Real Interactive Telegram Poll and broadcasting to ${CHANNEL_ID}...`,
+          parse_mode: 'HTML',
+        });
+
+        const examName = await broadcastRealQuiz(text, env);
+
+        await sendTelegram('sendMessage', {
+          chat_id: ADMIN_ID,
+          text: `✅ <b>Real Quiz Poll Broadcasted!</b> Live poll on <b>[${examName}]</b> is now active on ${CHANNEL_ID}!`,
+          parse_mode: 'HTML',
+        });
+
+        return new Response('OK', { status: 200 });
+      }
+
+      // Regular Custom Post (Motivation, Hack, Advice)
       await sendTelegram('sendMessage', {
         chat_id: ADMIN_ID,
         text: `🤖 <b>Prompt Received:</b> <i>"${text}"</i>\n\n⚡ Generating post with Gemini 3.5 Flash and broadcasting to ${CHANNEL_ID}...`,
         parse_mode: 'HTML',
       });
 
-      const generated = await callGemini(
-        `Write an engaging, high-retention Telegram post for Indian aspirants about this topic: "${text}". Include punchy emojis, bold headers, and actionable advice. Under 180 words.`,
-        'You are the lead content creator for IndianTimers (@indiantimers).'
+      const rawGenerated = await callGemini(
+        `Write an engaging, high-retention Telegram post for Indian aspirants about this topic: "${text}". Include punchy emojis, bold headers, and actionable advice. Under 180 words. Never use *** or raw markdown divider lines.`,
+        'You are the lead content creator for IndianTimers (@indiantimers).',
+        false,
+        env
       );
 
-      const broadcastMessage = `${generated}\n\n🔗 <a href="https://indiantimers.com/?utm_source=telegram">indiantimers.com</a>`;
+      const cleanGenerated = cleanTelegramHtml(rawGenerated);
+      const broadcastMessage = `${cleanGenerated}\n\n🔗 <a href="https://indiantimers.com/?utm_source=telegram">indiantimers.com</a>`;
       await sendTelegram('sendMessage', {
         chat_id: CHANNEL_ID,
         text: broadcastMessage,
@@ -233,18 +344,26 @@ export async function onRequestPost(context) {
 async function sendAdminMenu() {
   const text = `👑 <b>IndianTimers Master Command Deck</b>\n\n` +
     `Hello Admin! You have exclusive control over <b>${CHANNEL_ID}</b>.\n` +
-    `Tap any 1-Click button below to instantly generate &amp; broadcast fresh AI content, or simply type any topic in this chat to generate a custom post!\n\n` +
-    `<i>⚡ Powered by Google Gemini 3.5 Flash</i>`;
+    `Tap any 1-Click button below to instantly post real polls or fresh hacks, or type any topic in this chat!\n\n` +
+    `💡 <i>Tip: Type "quiz on [topic]" anytime to send a real interactive poll!</i>`;
 
   const keyboard = {
     inline_keyboard: [
       [
-        { text: '💡 1-Click Daily Study Hack', callback_data: 'btn_daily_hack' },
-        { text: '🎯 1-Click AI Quiz Poll', callback_data: 'btn_ai_quiz' }
+        { text: '🧬 Post NEET Quiz Poll', callback_data: 'btn_quiz_neet' },
+        { text: '⚡ Post JEE Quiz Poll', callback_data: 'btn_quiz_jee' }
       ],
       [
-        { text: '⚡ 1-Click Formula / Mnemonic Trick', callback_data: 'btn_subject_trick' },
-        { text: '📊 1-Click Accountability Poll', callback_data: 'btn_study_poll' }
+        { text: '🏛️ Post UPSC Quiz Poll', callback_data: 'btn_quiz_upsc' },
+        { text: '📊 Post SSC Quiz Poll', callback_data: 'btn_quiz_ssc' }
+      ],
+      [
+        { text: '🎲 Random Stream Quiz Poll', callback_data: 'btn_quiz_random' },
+        { text: '💡 Post Daily Topper Hack', callback_data: 'btn_daily_hack' }
+      ],
+      [
+        { text: '⚡ Post Formula Trick', callback_data: 'btn_subject_trick' },
+        { text: '📈 Post Study Hours Poll', callback_data: 'btn_study_poll' }
       ],
       [
         { text: '🌐 Open Mission Control Web Dashboard', url: 'https://indiantimers.com/admin/?key=it_admin_secret_2027_k9x' }

@@ -301,15 +301,16 @@ export default function AdminNoticeDashboard() {
 
   const handleToggleBot = () => handleToggleSchedule('enabled', botEnabled);
 
-  const handleInstantBroadcast = async (action: 'hack' | 'quiz' | 'trick' | 'poll') => {
-    setBroadcastActionInProgress(action);
+  const handleInstantBroadcast = async (action: 'hack' | 'quiz' | 'trick' | 'poll', category?: string) => {
+    const actionKey = category ? `${action}_${category}` : action;
+    setBroadcastActionInProgress(actionKey);
     try {
       const q = typeof window !== 'undefined' ? window.location.search : '';
       const res = await fetch('/api/admin/bot-broadcast' + q, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, category }),
       });
       const data = await res.json();
       if (data.success) {
@@ -321,6 +322,35 @@ export default function AdminNoticeDashboard() {
       showToast('Network error while triggering broadcast.');
     } finally {
       setBroadcastActionInProgress(null);
+    }
+  };
+
+  const handleSendCustomQuizPoll = async () => {
+    if (!customPrompt.trim()) {
+      showToast('Please type a quiz topic first.');
+      return;
+    }
+    setIsBroadcasting(true);
+    try {
+      const q = typeof window !== 'undefined' ? window.location.search : '';
+      const res = await fetch('/api/admin/bot-broadcast' + q, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ action: 'quiz_custom', prompt: customPrompt }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`🚀 Real Quiz Poll on "${customPrompt}" broadcasted live to @indiantimers!`);
+        setCustomPrompt('');
+        setGeneratedPreview('');
+      } else {
+        showToast(`Failed: ${data.error || 'Could not send poll'}`);
+      }
+    } catch {
+      showToast('Network error while broadcasting quiz poll.');
+    } finally {
+      setIsBroadcasting(false);
     }
   };
 
@@ -1710,20 +1740,94 @@ export default function AdminNoticeDashboard() {
               </div>
 
               {/* 1-Click Instant Broadcast Deck */}
-              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-500/20 space-y-2.5">
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-500/20 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">⚡</span>
                     <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                      1-Click Instant Broadcast Deck (Post Right Now)
+                      1-Click Instant Real Quiz Polls (Choose Stream)
                     </span>
                   </div>
                   <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold bg-blue-500/10 px-2 py-0.5 rounded-full">
-                    Gemini 3.5 Flash Powered
+                    Official Telegram Polls
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {/* Diverse Exam Quiz Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  <button
+                    onClick={() => handleInstantBroadcast('quiz', 'neet')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-emerald-500/30 text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>🧬</span>
+                      <span>NEET Bio</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'quiz_neet' ? 'Sending...' : 'Send Real Poll'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('quiz', 'jee')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-cyan-50 dark:hover:bg-cyan-950/40 border border-cyan-500/30 text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>⚡</span>
+                      <span>JEE Physics</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'quiz_jee' ? 'Sending...' : 'Send Real Poll'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('quiz', 'upsc')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-indigo-500/30 text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>🏛️</span>
+                      <span>UPSC Polity</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'quiz_upsc' ? 'Sending...' : 'Send Real Poll'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('quiz', 'ssc')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-amber-500/30 text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>📊</span>
+                      <span>SSC Reasoning</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'quiz_ssc' ? 'Sending...' : 'Send Real Poll'}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => handleInstantBroadcast('quiz', 'random')}
+                    disabled={!!broadcastActionInProgress}
+                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-purple-50 dark:hover:bg-purple-950/40 border border-purple-500/30 text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02] col-span-2 sm:col-span-1"
+                  >
+                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <span>🎲</span>
+                      <span>Random Stream</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      {broadcastActionInProgress === 'quiz_random' ? 'Sending...' : 'Surprise Poll'}
+                    </div>
+                  </button>
+                </div>
+
+                {/* Hacks & Study Polls */}
+                <div className="pt-2 border-t border-black/[0.04] dark:border-white/[0.04] grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     onClick={() => handleInstantBroadcast('hack')}
                     disabled={!!broadcastActionInProgress}
@@ -1731,24 +1835,10 @@ export default function AdminNoticeDashboard() {
                   >
                     <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Topper Hack</span>
+                      <span>Topper Study Hack</span>
                     </div>
                     <div className="text-[10px] text-slate-500 mt-0.5">
-                      {broadcastActionInProgress === 'hack' ? 'Broadcasting...' : 'Generate & Post'}
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => handleInstantBroadcast('quiz')}
-                    disabled={!!broadcastActionInProgress}
-                    className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-purple-50 dark:hover:bg-purple-900/30 border border-black/[0.06] dark:border-white/[0.06] text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
-                  >
-                    <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span>🎯</span>
-                      <span>AI PYQ Quiz</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">
-                      {broadcastActionInProgress === 'quiz' ? 'Broadcasting...' : 'Generate & Post'}
+                      {broadcastActionInProgress === 'hack' ? 'Broadcasting...' : 'Clean Text Post'}
                     </div>
                   </button>
 
@@ -1759,10 +1849,10 @@ export default function AdminNoticeDashboard() {
                   >
                     <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                       <span>⚡</span>
-                      <span>Subject Trick</span>
+                      <span>Subject Formula Trick</span>
                     </div>
                     <div className="text-[10px] text-slate-500 mt-0.5">
-                      {broadcastActionInProgress === 'trick' ? 'Broadcasting...' : 'Generate & Post'}
+                      {broadcastActionInProgress === 'trick' ? 'Broadcasting...' : 'Desi Shortcut'}
                     </div>
                   </button>
 
@@ -1772,11 +1862,11 @@ export default function AdminNoticeDashboard() {
                     className="p-2.5 rounded-xl bg-white dark:bg-[#1a1d28] hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-black/[0.06] dark:border-white/[0.06] text-left transition-all cursor-pointer disabled:opacity-50 group hover:scale-[1.02]"
                   >
                     <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span>📊</span>
-                      <span>Study Poll</span>
+                      <span>📈</span>
+                      <span>Daily Study Hours Poll</span>
                     </div>
                     <div className="text-[10px] text-slate-500 mt-0.5">
-                      {broadcastActionInProgress === 'poll' ? 'Broadcasting...' : 'Post Check-in'}
+                      {broadcastActionInProgress === 'poll' ? 'Broadcasting...' : 'Self-Study Check'}
                     </div>
                   </button>
                 </div>
@@ -1788,11 +1878,11 @@ export default function AdminNoticeDashboard() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm">🤖</span>
                     <span className="text-xs font-black text-slate-900 dark:text-white">
-                      Custom AI Post Studio (Type any topic)
+                      Custom AI Post Studio (Type any topic or exam concept)
                     </span>
                   </div>
                   <span className="text-[10px] text-slate-500">
-                    Live Channel: @indiantimers
+                    Target: @indiantimers
                   </span>
                 </div>
 
@@ -1801,7 +1891,7 @@ export default function AdminNoticeDashboard() {
                     type="text"
                     value={customPrompt}
                     onChange={(e) => setCustomPrompt(e.target.value)}
-                    placeholder="e.g. Tips for NEET Organic Chemistry, or UPSC Modern History timeline trick..."
+                    placeholder="e.g. NEET Genetics crosses, or JEE Rotational motion, or UPSC Parliament bills..."
                     className="flex-1 px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-[#12141c] border border-black/[0.08] dark:border-white/[0.08] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleGenerateCustomAI();
@@ -1810,7 +1900,8 @@ export default function AdminNoticeDashboard() {
                   <button
                     onClick={handleGenerateCustomAI}
                     disabled={isGeneratingAI || !customPrompt.trim()}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-all cursor-pointer disabled:opacity-50 shrink-0 flex items-center justify-center gap-1.5"
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-all cursor-pointer disabled:opacity-50 shrink-0 flex items-center justify-center gap-1.5"
+                    title="Generate written advice/hack post"
                   >
                     {isGeneratingAI ? (
                       <>
@@ -1819,7 +1910,24 @@ export default function AdminNoticeDashboard() {
                       </>
                     ) : (
                       <>
-                        <span>✨ Generate Post</span>
+                        <span>📝 Generate Post</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleSendCustomQuizPoll}
+                    disabled={isBroadcasting || !customPrompt.trim()}
+                    className="px-3.5 py-2 rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-700 text-white transition-all cursor-pointer disabled:opacity-50 shrink-0 flex items-center justify-center gap-1.5 shadow-xs"
+                    title="Directly generates and broadcasts a real interactive Telegram Quiz Poll"
+                  >
+                    {isBroadcasting ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Creating Poll...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>🎯 Send Real Quiz Poll</span>
                       </>
                     )}
                   </button>
