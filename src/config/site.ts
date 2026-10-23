@@ -63,7 +63,6 @@ export const siteConfig: SiteConfig = {
     { name: '2027 Calendar', href: '/calendar/2027/', badge: 'Official' },
     { name: 'Mock Timer', href: '/tools/mock-test-timer/', badge: 'Simulate' },
     { name: 'My Exams', href: '/my-exams/', badge: 'Cockpit' },
-    { name: 'Support Us', href: '/support/', badge: '💖' },
   ],
   categories: [
     {

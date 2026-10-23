@@ -3,25 +3,15 @@ import assert from 'node:assert';
 import { supportStore } from '../src/lib/support/store.ts';
 
 describe('Support Us & Supporter Leaderboard System', () => {
-  it('correctly provides initial bootstrap leaderboard with Top 5 supporters ranked by amount', () => {
+  it('starts with a clean production state without fake mock donors', () => {
     const leaderboard = supportStore.getLeaderboard();
 
     assert.ok(Array.isArray(leaderboard.top5), 'Top 5 should be an array');
-    assert.strictEqual(leaderboard.top5.length, 5, 'Top 5 should contain exactly 5 supporters');
-    assert.ok(leaderboard.allSupporters.length >= 5, 'All supporters should contain at least 5');
-
-    // Verify sorted descending by amount
-    for (let i = 0; i < leaderboard.top5.length - 1; i++) {
-      assert.ok(
-        leaderboard.top5[i].amount >= leaderboard.top5[i + 1].amount,
-        `Rank #${i + 1} amount should be >= Rank #${i + 2}`
-      );
-      assert.strictEqual(leaderboard.top5[i].rank, i + 1, `Rank should equal ${i + 1}`);
-    }
-
-    // Verify stats
-    assert.ok(leaderboard.stats.totalRaised > 0, 'Total raised should be positive');
-    assert.strictEqual(leaderboard.stats.updateInterval, '12 Hours (Verified Review Cycle)');
+    assert.strictEqual(leaderboard.top5.length, 0, 'Initial Top 5 should be empty in production');
+    assert.strictEqual(leaderboard.allSupporters.length, 0, 'Initial supporters should be empty in production');
+    assert.strictEqual(leaderboard.stats.totalRaised, 0, 'Initial total raised should be 0');
+    assert.strictEqual(leaderboard.stats.totalSupporters, 0, 'Initial total supporters should be 0');
+    assert.strictEqual(leaderboard.stats.updateInterval, 'Average 12 Hours');
   });
 
   it('validates donation submission input constraints (₹10 min, ₹50k max, valid UTR)', () => {
@@ -100,7 +90,7 @@ describe('Support Us & Supporter Leaderboard System', () => {
     const approveOk = supportStore.approveDonation(res.record.id, 'admin@indiantimers.com', 'Verified in bank ledger');
     assert.strictEqual(approveOk, true);
 
-    // Now it should be published in the public leaderboard
+    // Now it should be published in the public leaderboard and Top 5
     const updatedLeaderboard = supportStore.getLeaderboard();
     assert.strictEqual(
       updatedLeaderboard.allSupporters.length,
@@ -111,6 +101,33 @@ describe('Support Us & Supporter Leaderboard System', () => {
     assert.ok(found, 'Newly approved donation should exist in leaderboard');
     assert.strictEqual(found.amount, 750);
     assert.strictEqual(found.name, 'Deepak Chopra');
+    assert.strictEqual(updatedLeaderboard.top5[0].utr, testUtr);
+    assert.strictEqual(updatedLeaderboard.top5[0].rank, 1);
+  });
+
+  it('ranks multiple approved donations descending by amount with rank badges', () => {
+    // Add two more donations
+    const utr1 = '421111' + Date.now().toString().slice(-6);
+    const utr2 = '422222' + Date.now().toString().slice(-6);
+
+    const res1 = supportStore.submitDonation({ name: 'Donor Low', amount: 100, utr: utr1 });
+    const res2 = supportStore.submitDonation({ name: 'Donor High', amount: 2000, utr: utr2 });
+
+    supportStore.approveDonation(res1.record.id, 'admin@indiantimers.com');
+    supportStore.approveDonation(res2.record.id, 'admin@indiantimers.com');
+
+    const leaderboard = supportStore.getLeaderboard();
+    assert.strictEqual(leaderboard.top5[0].name, 'Donor High');
+    assert.strictEqual(leaderboard.top5[0].amount, 2000);
+    assert.strictEqual(leaderboard.top5[0].rank, 1);
+
+    for (let i = 0; i < leaderboard.top5.length - 1; i++) {
+      assert.ok(
+        leaderboard.top5[i].amount >= leaderboard.top5[i + 1].amount,
+        `Rank #${i + 1} amount should be >= Rank #${i + 2}`
+      );
+      assert.strictEqual(leaderboard.top5[i].rank, i + 1);
+    }
   });
 
   it('correctly masks supporter name when isAnonymous is enabled', () => {
@@ -141,7 +158,6 @@ describe('Support Us & Supporter Leaderboard System', () => {
     assert.ok(rejectedItem, 'Item should be present in rejected list');
     assert.strictEqual(rejectedItem.status, 'rejected');
 
-    // Not in leaderboard
     const inLeaderboard = supportStore.getLeaderboard().allSupporters.some((s) => s.id === res.record.id);
     assert.strictEqual(inLeaderboard, false);
   });

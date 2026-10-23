@@ -1,122 +1,8 @@
 import type { SupporterRecord, LeaderboardResponse, DonationSubmissionInput, LeaderboardStats } from '../../types/support.ts';
 
-// Initial verified supporters (Curated bootstrap records so the leaderboard shines immediately)
-export const INITIAL_APPROVED_SUPPORTERS: SupporterRecord[] = [
-  {
-    id: 'don_init_01',
-    name: 'Ananya Sen',
-    amount: 5000,
-    utr: '429188392101',
-    message: 'Keeping IndianTimers clean, fast, and 100% ad-free is a massive service for lakhs of students. Proud to back you, Tarun!',
-    status: 'approved',
-    createdAt: '2026-10-18T10:30:00.000Z',
-    approvedAt: '2026-10-18T14:15:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_02',
-    name: 'Rohit Mehra',
-    amount: 2500,
-    utr: '429019482312',
-    message: 'Your official countdown literally saved me from missing the JEE Main shift deadline. Keep building, brother!',
-    status: 'approved',
-    createdAt: '2026-10-19T08:20:00.000Z',
-    approvedAt: '2026-10-19T12:00:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_03',
-    name: 'Vikram Singhania',
-    amount: 2100,
-    utr: '428877192844',
-    message: 'Hard to believe this is built single-handedly by a student. Super clean design and no junk popups. Kudos!',
-    status: 'approved',
-    createdAt: '2026-10-20T16:45:00.000Z',
-    approvedAt: '2026-10-20T19:30:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_04',
-    name: 'Dr. K. Radhakrishnan',
-    amount: 1500,
-    utr: '428610992381',
-    message: 'As a parent and educator, I appreciate the strict policy against speculative rumors. Highly commended initiative.',
-    status: 'approved',
-    createdAt: '2026-10-21T11:10:00.000Z',
-    approvedAt: '2026-10-21T15:00:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_05',
-    name: 'Priya Sharma',
-    amount: 1100,
-    utr: '428456102938',
-    message: 'Best Pomodoro timer and mock pacing tracker on the web. Small gift from a grateful NEET aspirant.',
-    status: 'approved',
-    createdAt: '2026-10-21T18:00:00.000Z',
-    approvedAt: '2026-10-21T21:30:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_06',
-    name: 'Aryan Patel',
-    amount: 501,
-    utr: '428319002194',
-    message: 'Love the dark mode and clean typography. Respect for the student creator hustle!',
-    status: 'approved',
-    createdAt: '2026-10-22T09:15:00.000Z',
-    approvedAt: '2026-10-22T13:45:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_07',
-    name: 'Siddharth M.',
-    amount: 500,
-    utr: '428109384912',
-    message: 'Chai on me! Your UPSC syllabus breakdown and timeline tool is phenomenal.',
-    status: 'approved',
-    createdAt: '2026-10-22T14:22:00.000Z',
-    approvedAt: '2026-10-22T18:10:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_init_08',
-    name: 'Anonymous Aspirant',
-    amount: 251,
-    utr: '427998129034',
-    message: 'Every aspirant needs this site bookmarked. Thank you Tarun!',
-    status: 'approved',
-    createdAt: '2026-10-23T07:40:00.000Z',
-    approvedAt: '2026-10-23T11:00:00.000Z',
-    isAnonymous: true,
-  },
-];
-
-export const INITIAL_PENDING_SUPPORTERS: SupporterRecord[] = [
-  {
-    id: 'don_pend_01',
-    name: 'Manish Verma',
-    amount: 300,
-    utr: '429384920182',
-    email: 'manish.v.aspirant@gmail.com',
-    phone: '+91 98765 43210',
-    message: 'Donated via GPay. Please verify UTR. Love the GATE 2027 countdown!',
-    status: 'pending',
-    createdAt: '2026-10-23T15:20:00.000Z',
-    isAnonymous: false,
-  },
-  {
-    id: 'don_pend_02',
-    name: 'Kavita Joshi',
-    amount: 151,
-    utr: '429385019284',
-    email: 'kavita.j@outlook.com',
-    message: 'Great student project, keep shining!',
-    status: 'pending',
-    createdAt: '2026-10-23T17:45:00.000Z',
-    isAnonymous: false,
-  },
-];
+// Clean initial state for live production (No mock or test data)
+export const INITIAL_APPROVED_SUPPORTERS: SupporterRecord[] = [];
+export const INITIAL_PENDING_SUPPORTERS: SupporterRecord[] = [];
 
 // In-Memory store singleton for node / Cloudflare Worker warm instances
 class SupportStore {
@@ -162,8 +48,7 @@ class SupportStore {
       totalRaised,
       totalSupporters: this.approved.length,
       lastUpdated: this.lastUpdated,
-      updateInterval: '12 Hours (Verified Review Cycle)',
-      monthlyGoal: 15000, // Monthly infrastructure target
+      updateInterval: 'Average 12 Hours',
     };
 
     return {

@@ -21,7 +21,7 @@ export interface LeaderboardStats {
   totalSupporters: number;
   lastUpdated: string;
   updateInterval: string;
-  monthlyGoal: number;
+  monthlyGoal?: number;
 }
 
 export interface LeaderboardResponse {
