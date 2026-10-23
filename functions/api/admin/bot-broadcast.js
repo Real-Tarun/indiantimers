@@ -97,8 +97,81 @@ export async function onRequestPost(context) {
     const action = body.action || '';
     const env = context.env;
 
-    // 1. Send Daily Hack (Clean formatted text)
-    if (action === 'hack') {
+    // 0. Auto-Cron Slot Determination (Dynamic IST Schedule)
+    let targetAction = action;
+    if (action === 'auto_cron') {
+      const now = new Date();
+      const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const istTime = new Date(utcMs + (5.5 * 3600000));
+      const hour = istTime.getHours();
+
+      if (hour >= 6 && hour <= 8) {
+        targetAction = 'morning';
+      } else if (hour >= 9 && hour <= 11) {
+        targetAction = 'trick';
+      } else if (hour >= 12 && hour <= 13) {
+        targetAction = 'quiz';
+      } else if (hour >= 14 && hour <= 16) {
+        targetAction = 'slump';
+      } else if (hour >= 17 && hour <= 18) {
+        targetAction = 'quiz';
+      } else if (hour >= 19 && hour <= 20) {
+        targetAction = 'strategy';
+      } else {
+        targetAction = 'poll';
+      }
+    }
+
+    // 1. Dynamic Morning Exam Radar & Kickoff
+    if (targetAction === 'morning') {
+      const todayIST = new Date().toLocaleDateString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+
+      const rawMorning = await callGemini(
+        `Write a fresh, high-energy morning study kickoff for Indian exam aspirants (NEET, JEE, UPSC, SSC, Boards) for ${todayIST}.
+Requirements:
+1. A 1-line unhackneyed punchy motivation in Hinglish.
+2. A 2-line practical "Daily Mindset Goal" (e.g. active recall, avoiding mobile distractions, deep work blocks).
+3. Under 70 words. Format cleanly with bullet points (•) and bold titles. Never use *** or raw markdown divider lines.`,
+        'You are an elite exam coach for Indian aspirants.',
+        false,
+        env
+      );
+      const cleanMorning = cleanTelegramHtml(rawMorning);
+
+      const now = new Date();
+      const neetDays = Math.max(0, Math.ceil((new Date('2027-05-02') - now) / 86400000));
+      const jeeDays = Math.max(0, Math.ceil((new Date('2027-01-22') - now) / 86400000));
+      const upscDays = Math.max(0, Math.ceil((new Date('2027-05-23') - now) / 86400000));
+      const boardDays = Math.max(0, Math.ceil((new Date('2027-02-15') - now) / 86400000));
+
+      const text = `🌅 <b>DAILY EXAM RADAR &amp; KICKOFF</b> • <i>${todayIST}</i>\n\n` +
+        `${cleanMorning}\n\n` +
+        `⏳ <b>KEY EXAM COUNTDOWNS:</b>\n` +
+        `• ⚡ <b>JEE Main 2027:</b> <code>${jeeDays} days left</code>\n` +
+        `• 📚 <b>Class 12 Boards:</b> <code>${boardDays} days left</code>\n` +
+        `• 🧬 <b>NEET UG 2027:</b> <code>${neetDays} days left</code>\n` +
+        `• 🏛️ <b>UPSC Prelims 2027:</b> <code>${upscDays} days left</code>\n\n` +
+        `🔗 <b>Live Exam Clocks &amp; Free Study Tools:</b>\n👉 <a href="https://indiantimers.com/?utm_source=telegram&utm_medium=daily_radar">indiantimers.com</a>`;
+
+      const tgRes = await sendTelegram('sendMessage', {
+        chat_id: CHANNEL_ID,
+        text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
+      return new Response(JSON.stringify({ success: true, action: targetAction, message: 'Morning Radar broadcasted live!', tgRes }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 2. Send Daily Hack (Clean formatted text)
+    if (targetAction === 'hack') {
       const rawHack = await callGemini(
         'Generate a high-impact Topper Study Hack with motivation in crisp Hinglish for competitive exam aspirants. Keep under 100 words with bullet points (•) and bold headings. Never use *** or raw markdown divider lines.',
         'You are an elite exam coach for Indian aspirants.',
@@ -113,13 +186,13 @@ export async function onRequestPost(context) {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
       });
-      return new Response(JSON.stringify({ success: true, action, message: 'Topper Hack broadcasted live!', tgRes }), {
+      return new Response(JSON.stringify({ success: true, action: targetAction, message: 'Topper Hack broadcasted live!', tgRes }), {
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    // 2. Send Real Interactive Telegram Quiz Poll (Diverse Exams)
-    if (action === 'quiz' || action === 'quiz_custom') {
+    // 3. Send Real Interactive Telegram Quiz Poll (Diverse Exams)
+    if (targetAction === 'quiz' || targetAction === 'quiz_custom') {
       const category = (body.category || body.prompt || '').toLowerCase().trim();
       let preset = null;
 
@@ -214,29 +287,94 @@ Rules:
       });
     }
 
-    // 3. Send Formula / Mnemonic Trick (Clean formatted text)
-    if (action === 'trick') {
+    // 4. Send Formula / Mnemonic Trick (Clean formatted text, random subject rotation)
+    if (targetAction === 'trick') {
+      const subjects = [
+        'NEET Biology (NCERT Classification, Genetics or Physiology)',
+        'JEE Physics (Electrodynamics, Mechanics or Modern Physics)',
+        'Organic Chemistry (Named Reactions, Functional Groups or Reagents)',
+        'UPSC Indian Polity (Fundamental Rights, Articles, Parliament or Schedules)',
+        'SSC CGL Reasoning (Number Series, Analogies or Coding-Decoding Tricks)',
+        'Modern Indian History (Acts, Movements, Chronology or Personalities)'
+      ];
+      const randomSub = subjects[Math.floor(Math.random() * subjects.length)];
       const rawTrick = await callGemini(
-        'Generate an ultra-crisp Mnemonic or Desi Shortcut Trick for a high-weightage topic in NEET, JEE, or UPSC (Physics/Chemistry/Bio/Polity). Under 100 words with emojis. Never use *** or raw markdown divider lines.',
-        'You are a premier trick & shortcut teacher for Indian exams.',
+        `Generate a brand new, highly clever Desi Mnemonic or Shortcut Trick for: ${randomSub}.
+Under 80 words with emojis and clean bullet points. Write in conversational Hinglish. Explain the trick simply so a student never forgets. Never use *** or raw markdown divider lines.`,
+        'You are a master shortcut teacher for competitive Indian exams.',
         false,
         env
       );
       const cleanTrick = cleanTelegramHtml(rawTrick);
-      const text = `⚡ <b>DESI SHORTCUT &amp; MNEMONIC TRICK</b>\n\n${cleanTrick}\n\n🎯 <b>Practice on CBT Mock Simulator:</b>\n👉 <a href="https://indiantimers.com/tools/mock-test-timer/">indiantimers.com/tools/mock-test-timer/</a>`;
+      const text = `⚡ <b>HIGH-YIELD SHORTCUT &amp; MNEMONIC TRICK</b>\n📚 <i>Focus: ${randomSub}</i>\n\n` +
+        `${cleanTrick}\n\n` +
+        `🎯 <b>Practice on Free CBT Mock Simulator:</b>\n👉 <a href="https://indiantimers.com/tools/mock-test-timer/">indiantimers.com/tools/mock-test-timer/</a>`;
+
       const tgRes = await sendTelegram('sendMessage', {
         chat_id: CHANNEL_ID,
         text,
         parse_mode: 'HTML',
         disable_web_page_preview: true,
       });
-      return new Response(JSON.stringify({ success: true, action, message: 'Trick broadcasted live!', tgRes }), {
+      return new Response(JSON.stringify({ success: true, action: targetAction, message: 'Trick broadcasted live!', tgRes }), {
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    // 4. Send Accountability Study Poll (Real Telegram Poll)
-    if (action === 'poll') {
+    // 5. Afternoon Focus Slump Breaker (3 PM Block)
+    if (targetAction === 'slump') {
+      const rawSlump = await callGemini(
+        `Write an ultra-practical, relatable 3 PM Afternoon Study Slump Breaker tip in energetic Hinglish for Indian aspirants.
+Give 2 actionable tactics to immediately beat afternoon sleepiness / brain fog (e.g. 10-minute active recall walk, water splash, switching from theory to question solving, 25/5 Pomodoro block).
+Under 80 words. Bullet points (•). Never use *** or raw markdown divider lines.`,
+        'You are an energetic study mentor for Indian aspirants.',
+        false,
+        env
+      );
+      const cleanSlump = cleanTelegramHtml(rawSlump);
+      const text = `💡 <b>3:00 PM AFTERNOON FOCUS BOOSTER</b>\n\n` +
+        `${cleanSlump}\n\n` +
+        `⏱️ <b>Start a 25-Min Deep Focus Session (Free):</b>\n👉 <a href="https://indiantimers.com/tools/pomodoro-timer/">indiantimers.com/tools/pomodoro-timer/</a>`;
+
+      const tgRes = await sendTelegram('sendMessage', {
+        chat_id: CHANNEL_ID,
+        text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
+      return new Response(JSON.stringify({ success: true, action: targetAction, message: 'Slump booster broadcasted live!', tgRes }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 6. Evening Exam Strategy & PYQ Factoid (8 PM Block)
+    if (targetAction === 'strategy') {
+      const rawStrat = await callGemini(
+        `Write a high-yield PYQ exam strategy or critical factoid in Hinglish for Indian competitive exams.
+Topic ideas: 2-Pass Exam Attempt Strategy, Negative Marking Elimination Method, High-weightage chapters rule, or common silly mistake traps.
+Under 90 words with punchy bullet points (•). Never use *** or raw markdown divider lines.`,
+        'You are an elite exam strategist for Indian aspirants.',
+        false,
+        env
+      );
+      const cleanStrat = cleanTelegramHtml(rawStrat);
+      const text = `🧠 <b>TOPPER EXAM STRATEGY &amp; PYQ FACTOID</b>\n\n` +
+        `${cleanStrat}\n\n` +
+        `⏳ <b>Check All 85+ Real-Time Exam Countdowns:</b>\n👉 <a href="https://indiantimers.com/">indiantimers.com</a>`;
+
+      const tgRes = await sendTelegram('sendMessage', {
+        chat_id: CHANNEL_ID,
+        text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
+      return new Response(JSON.stringify({ success: true, action: targetAction, message: 'Strategy broadcasted live!', tgRes }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 7. Send Accountability Study Poll (Real Telegram Poll + Night Review)
+    if (targetAction === 'poll') {
       const todayIST = new Date().toLocaleDateString('en-IN', {
         timeZone: 'Asia/Kolkata',
         weekday: 'short',
@@ -255,7 +393,15 @@ Rules:
         ],
         is_anonymous: true,
       });
-      return new Response(JSON.stringify({ success: true, action, message: 'Accountability Poll broadcasted live!', tgRes }), {
+
+      await sendTelegram('sendMessage', {
+        chat_id: CHANNEL_ID,
+        text: `🌙 <b>Night Review:</b> Consistency hi rankers banati hai! Kal ka target sone se pehle decide karein.\n\n⏱️ <b>Online Pomodoro &amp; Study Clock:</b>\n👉 <a href="https://indiantimers.com/tools/study-timer/">indiantimers.com/tools/study-timer/</a>`,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
+
+      return new Response(JSON.stringify({ success: true, action: targetAction, message: 'Accountability Poll broadcasted live!', tgRes }), {
         headers: { 'Content-Type': 'application/json' }
       });
     }
