@@ -365,7 +365,7 @@ import ThemeToggle from './ThemeToggle';
 
       <a
         href="/support/"
-        class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[12px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-50/80 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200/60 dark:border-rose-900/60 transition-all shadow-xs"
+        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[12px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50/90 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200/80 dark:border-rose-900/80 transition-all shadow-2xs shrink-0"
         aria-label="Support IndianTimers Student Initiative"
       >
         <span>💖</span>
@@ -408,6 +408,28 @@ import ThemeToggle from './ThemeToggle';
     id="mobile-menu"
     class="hidden md:hidden relative border-t border-[var(--border-subtle)] bg-[var(--bg-glass-strong)] backdrop-blur-2xl px-4 pb-6 pt-3 space-y-3 max-h-[85vh] overflow-y-auto"
   >
+    {/* Mobile Support Us Highlight Card */}
+    <div class="px-1 pb-1">
+      <a
+        href="/support/"
+        class="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-rose-50 to-pink-50/50 dark:from-rose-950/40 dark:to-pink-950/20 border border-rose-200/80 dark:border-rose-900/60 text-slate-900 dark:text-white group hover:shadow-xs transition-all"
+      >
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 flex items-center justify-center text-sm shadow-2xs">
+            💖
+          </span>
+          <div>
+            <div class="text-[13px] font-bold text-rose-950 dark:text-rose-200 flex items-center gap-1.5">
+              <span>Support IndianTimers</span>
+              <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-rose-200/70 dark:bg-rose-800 text-rose-800 dark:text-rose-200">Solo Student</span>
+            </div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400">UPI · Leaderboard · Wall of Fame</div>
+          </div>
+        </div>
+        <span class="text-rose-500 font-bold text-xs group-hover:translate-x-0.5 transition-transform">→</span>
+      </a>
+    </div>
+
     {/* Primary high-engagement links */}
     <div class="space-y-1">
       <div class="px-2 text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">

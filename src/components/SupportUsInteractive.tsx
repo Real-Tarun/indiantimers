@@ -21,9 +21,9 @@ const UPI_ID = 'tarun.in@fam';
 const UPI_NAME = 'Tarun Kumar';
 
 export default function SupportUsInteractive() {
-  // Amount selection state
-  const [selectedAmount, setSelectedAmount] = useState<number>(100);
-  const [customAmount, setCustomAmount] = useState<string>('100');
+  // Amount selection state (starts blank as requested)
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [customAmount, setCustomAmount] = useState<string>('');
   const [amountError, setAmountError] = useState<string>('');
 
   // Copy toast state
@@ -77,16 +77,26 @@ export default function SupportUsInteractive() {
 
   // Handle amount change
   const handleAmountSelect = (val: number) => {
-    setSelectedAmount(val);
-    setCustomAmount(String(val));
-    setAmountError('');
+    if (selectedAmount === val) {
+      setSelectedAmount(null);
+      setCustomAmount('');
+    } else {
+      setSelectedAmount(val);
+      setCustomAmount(String(val));
+      setAmountError('');
+    }
   };
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     setCustomAmount(raw);
+    if (raw.trim() === '') {
+      setSelectedAmount(null);
+      setAmountError('');
+      return;
+    }
     const parsed = Number(raw);
-    if (isNaN(parsed) || raw.trim() === '') {
+    if (isNaN(parsed)) {
       setAmountError('Please enter a valid amount.');
       return;
     }
@@ -102,10 +112,12 @@ export default function SupportUsInteractive() {
 
   // Dynamic QR Code URL for UPI scan
   const qrCodeUrl = useMemo(() => {
-    const validAmt = Math.max(10, Math.min(50000, selectedAmount || 10));
-    const upiUri = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(
+    let upiUri = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(
       UPI_NAME
-    )}&am=${validAmt}&cu=INR&tn=${encodeURIComponent('Support IndianTimers')}`;
+    )}&cu=INR&tn=${encodeURIComponent('Support IndianTimers')}`;
+    if (selectedAmount && selectedAmount >= 10 && selectedAmount <= 50000) {
+      upiUri += `&am=${selectedAmount}`;
+    }
     return `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(upiUri)}`;
   }, [selectedAmount]);
 
@@ -197,26 +209,36 @@ export default function SupportUsInteractive() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 px-4 py-2">
-      {/* ─── SECTION 1: SIMPLE, HONEST CREATOR NOTE (LIGHTWEIGHT) ─── */}
-      <section className="bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-xs">
-        <div className="flex items-center gap-2.5 text-xs font-semibold text-rose-600 dark:text-rose-400 mb-2">
+      {/* ─── SECTION 1: CREATOR NOTE (HUMAN, PROFESSIONAL, ENGLISH) ─── */}
+      <section className="bg-white dark:bg-[#171923] border border-black/[0.08] dark:border-white/[0.08] rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
+        <div className="flex items-center gap-2 text-xs font-semibold text-rose-600 dark:text-rose-400">
           <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
-          <span>Student &amp; Independent Creator Project</span>
+          <span>Independent Student Initiative</span>
         </div>
 
         <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
           Support IndianTimers
         </h1>
 
-        <div className="mt-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+        <div className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 pt-1">
           <p>
-            Hi! Main <strong>Tarun</strong> hoon — ek student aur independent developer. Maine IndianTimers ko akele
-            scratch se build kiya hai taaki Indian students ko fake circulars aur rumors ke beech verified countdowns aur
-            clean focus tools mil sakein.
+            Hi, I'm <strong>Tarun</strong> — a student and independent developer from India.
           </p>
           <p>
-            Platform ko maintain karne, high-speed servers chalane aur official updates track karne me continuous
-            costs aati hain. Aapka voluntary support is project ko aage badhane me direct madad karta hai.
+            Like millions of aspirants across the country preparing for competitive examinations, I experienced firsthand
+            how exhausting it is to navigate clickbait headlines, misleading datesheet rumors, and cluttered portals while
+            trying to focus on preparation.
+          </p>
+          <p>
+            I built IndianTimers as an independent project to give fellow students a calm, dependable space: accurate
+            countdown timers, verified official notifications, and distraction-free study utilities. Everything on this
+            platform is designed, coded, and maintained by me as a solo creator.
+          </p>
+          <p>
+            Running fast edge servers, monitoring official government circulars, and keeping the platform reliable involves
+            ongoing server and domain expenses. If IndianTimers has helped your journey in any way, your voluntary
+            contribution — no matter the amount — directly supports keeping this initiative alive and updated. Thank you for
+            your kindness and support!
           </p>
         </div>
       </section>
@@ -311,7 +333,12 @@ export default function SupportUsInteractive() {
                 </button>
               </div>
               <div className="text-[11px] text-slate-500">
-                Amount: <strong className="text-slate-800 dark:text-slate-200 font-mono">₹{selectedAmount}</strong> · Name: {UPI_NAME}
+                {selectedAmount ? (
+                  <>Amount: <strong className="text-slate-800 dark:text-slate-200 font-mono">₹{selectedAmount}</strong> · </>
+                ) : (
+                  <span className="text-slate-400">Scan to pay any amount · </span>
+                )}
+                Name: {UPI_NAME}
               </div>
             </div>
           </div>
@@ -402,6 +429,7 @@ export default function SupportUsInteractive() {
                   required
                   min="10"
                   max="50000"
+                  placeholder="Enter amount in ₹ (e.g. 100)"
                   value={customAmount}
                   onChange={handleCustomAmountChange}
                   className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
