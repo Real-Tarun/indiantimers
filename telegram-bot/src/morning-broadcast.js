@@ -44,12 +44,53 @@ export async function runMorningBroadcast() {
   caption += `🎯 <i>Aaj ka daily study target complete karein!</i>\n`;
   caption += `⏱️ <b>Live Timer &amp; CBT Clock:</b> <a href="https://indiantimers.com">IndianTimers.com</a>`;
 
+function toWhatsAppText(html) {
+  return html
+    .replace(/<b>(.*?)<\/b>/g, '*$1*')
+    .replace(/<i>(.*?)<\/i>/g, '_$1_')
+    .replace(/<code>(.*?)<\/code>/g, '*$1*')
+    .replace(/<a href="(.*?)">(.*?)<\/a>/g, '$2 ($1)')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
   console.log(`Caption length: ${caption.length} / 1024 characters`);
 
-  // Send photo with caption to Telegram
+  // 1. Send clean photo with caption to Public Telegram Channel (ZERO buttons, 100% clean)
   try {
-    const result = await sendPhoto(posterUrl, caption);
-    console.log('✅ Morning broadcast sent successfully! Message ID:', result.result?.message_id);
+    const rawChatId = process.env.TELEGRAM_CHAT_ID || '';
+    const [channelChatId, secondaryChatId] = rawChatId.split(',').map((s) => s.trim());
+    const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || secondaryChatId;
+
+    const result = await sendPhoto(posterUrl, caption, { chatId: channelChatId || undefined });
+    console.log('✅ Morning broadcast sent to Public Channel! Message ID:', result.result?.message_id);
+
+    // 2. If Admin Personal Chat ID is configured, send private DM with 1-Click WhatsApp Button
+    if (adminChatId) {
+      try {
+        const whatsappFormattedText = toWhatsAppText(caption);
+        const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappFormattedText)}`;
+
+        await sendPhoto(posterUrl, `📢 <b>Today's Morning Countdown is LIVE on Telegram!</b>\n\nTap below to post to WhatsApp Channel:`, {
+          chatId: adminChatId,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: '🟢 Post to WhatsApp Channel',
+                  url: whatsappShareUrl,
+                },
+              ],
+            ],
+          },
+        });
+        console.log('✅ Admin private notification sent with 1-Click WhatsApp button!');
+      } catch (adminErr) {
+        console.warn('⚠️ Could not send admin personal DM:', adminErr.message);
+      }
+    }
+
     return result;
   } catch (error) {
     console.error('❌ Failed to send morning broadcast:', error.message);

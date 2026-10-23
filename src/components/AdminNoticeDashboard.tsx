@@ -1358,6 +1358,105 @@ export default function AdminNoticeDashboard() {
             </div>
           </div>
 
+          {/* 1-Click WhatsApp & Telegram Channel Broadcast Studio */}
+          <div className="rounded-[24px] border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[0.04] via-transparent to-sky-500/[0.04] p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white tracking-wider uppercase">
+                    Admin Studio
+                  </span>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                    <span>📢 Daily Exam Broadcast &amp; 1-Click WhatsApp Publisher</span>
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  1-Click direct forward to official WhatsApp Channel with native bold/italic formatting. Zero risk of bans.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    const todayIST = new Date().toLocaleDateString('en-IN', {
+                      timeZone: 'Asia/Kolkata',
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    });
+                    const neetExam = exams.find((e) => e.slug === 'neet-ug-2027');
+                    const jeeExam = exams.find((e) => e.slug === 'jee-main-2027-session-1');
+                    const upscExam = exams.find((e) => e.slug === 'upsc-cse-prelims-2027');
+                    const sscExam = exams.find((e) => e.slug === 'ssc-cgl-tier-1-2027');
+                    const cbseExam = exams.find((e) => e.slug === 'cbse-class-10-board-2027');
+
+                    const text = `🌅 *DAILY EXAM COUNTDOWN* • _${todayIST}_\n\n` +
+                      `💭 _"Success is the sum of small efforts, repeated day in and day out."_\n` +
+                      `— *Robert Collier*\n\n` +
+                      `🚨 *CLOSEST UPCOMING EXAMS:*\n` +
+                      `• 🩺 *NEET UG 2027:* ${neetExam?.examDate || '2027-05-02'}\n` +
+                      `• ⚙️ *JEE Main 2027 (S1):* ${jeeExam?.examDate || '2027-01-22'}\n` +
+                      `• 🏛️ *UPSC CSE Prelims 2027:* ${upscExam?.examDate || '2027-05-23'}\n` +
+                      `• 📋 *SSC CGL 2027:* ${sscExam?.examDate || '2027-09-12'}\n` +
+                      `• 🏫 *CBSE Board 2027:* ${cbseExam?.examDate || '2027-02-15'}\n\n` +
+                      `🎯 *Aaj ka daily study target complete karein!*\n` +
+                      `⏱️ *Live Clocks & CBT:* https://indiantimers.com\n` +
+                      `📱 *Join WhatsApp:* https://whatsapp.com/channel/0029VbDeHd8FHWq0d939hU3J`;
+
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                    showToast('Opening WhatsApp with pre-filled countdown broadcast!');
+                  }}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer hover:scale-105"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>🟢 Post to WhatsApp Channel</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    const todayIST = new Date().toLocaleDateString('en-IN', {
+                      timeZone: 'Asia/Kolkata',
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    });
+                    const neetExam = exams.find((e) => e.slug === 'neet-ug-2027');
+                    const jeeExam = exams.find((e) => e.slug === 'jee-main-2027-session-1');
+                    const upscExam = exams.find((e) => e.slug === 'upsc-cse-prelims-2027');
+
+                    const text = `🌅 *DAILY EXAM COUNTDOWN* • _${todayIST}_\n\n` +
+                      `🚨 *MAJOR EXAMS:*\n` +
+                      `• 🩺 *NEET UG 2027:* ${neetExam?.examDate || '2027-05-02'}\n` +
+                      `• ⚙️ *JEE Main 2027 (S1):* ${jeeExam?.examDate || '2027-01-22'}\n` +
+                      `• 🏛️ *UPSC CSE Prelims 2027:* ${upscExam?.examDate || '2027-05-23'}\n\n` +
+                      `⏱️ *Live Timers:* https://indiantimers.com`;
+
+                    if (navigator.clipboard) {
+                      navigator.clipboard.writeText(text);
+                      showToast('Copied formatted WhatsApp text to clipboard!');
+                    }
+                  }}
+                  className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copy Text</span>
+                </button>
+
+                <a
+                  href="https://t.me/indiantimers"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 rounded-xl text-xs font-bold bg-[#0088cc] hover:bg-[#0077b5] text-white transition-all flex items-center gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Open Telegram</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
           {/* Placement Heatmap & Conversion Surfaces */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* WhatsApp Placement Card */}
