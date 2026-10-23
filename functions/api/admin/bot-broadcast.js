@@ -303,7 +303,49 @@ Rules:
         disable_web_page_preview: true,
       });
 
-      return new Response(JSON.stringify({ success: true, message: 'Custom post sent live to @indiantimers!', tgRes }), {
+      return new Response(JSON.stringify({ success: true, tgRes }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 7. Broadcast Official Circular Alert (NTA / CBSE / UPSC)
+    if (action === 'broadcast_official_notice') {
+      const { authority, examName, title, examDate, documentUrl, examSlug } = body;
+      const cleanTitle = cleanTelegramHtml(title || 'Official Notification Released');
+      const cleanAuth = cleanTelegramHtml(authority || 'Official Examination Body');
+      const cleanExam = cleanTelegramHtml(examName || 'Competitive Examination');
+
+      let alertText = `🚨 <b>OFFICIAL CIRCULAR / NOTICE RELEASED</b> 🚨\n\n` +
+        `🏛️ <b>Authority:</b> ${cleanAuth}\n` +
+        `🎯 <b>Target Exam:</b> ${cleanExam}\n` +
+        `📢 <b>Notice Title:</b> ${cleanTitle}\n`;
+
+      if (examDate) {
+        alertText += `📅 <b>Confirmed Date:</b> <code>${examDate}</code>\n`;
+      }
+
+      alertText += `\n───────────────\n`;
+
+      if (documentUrl) {
+        alertText += `📄 <b>Official Document / Circular:</b>\n👉 <a href="${documentUrl}">Click to View / Download Official PDF</a>\n\n`;
+      }
+
+      const timerUrl = examSlug ? `https://indiantimers.com/exams/${examSlug}/` : 'https://indiantimers.com/';
+      alertText += `⏱️ <b>Live Real-Time Exam Countdown &amp; Tools:</b>\n👉 <a href="${timerUrl}">${timerUrl}</a>\n\n` +
+        `<i>Verified by IndianTimers Monitoring Desk</i>`;
+
+      const tgRes = await sendTelegram('sendMessage', {
+        chat_id: CHANNEL_ID,
+        text: alertText,
+        parse_mode: 'HTML',
+        disable_web_page_preview: false,
+      });
+
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: `Official Notice for ${cleanExam} broadcasted live to @indiantimers!`, 
+        tgRes 
+      }), {
         headers: { 'Content-Type': 'application/json' }
       });
     }

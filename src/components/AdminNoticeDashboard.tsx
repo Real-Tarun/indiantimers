@@ -604,7 +604,7 @@ export default function AdminNoticeDashboard() {
     showToast(`Checked ${sources.length} official notice sources. All endpoints responding with 200 OK.`);
   };
 
-  const handleApprove = (notice: DetectedNotice) => {
+  const handleApprove = async (notice: DetectedNotice, broadcastToTelegram: boolean = false) => {
     const res = adminStore.applyApproval(notice.id, adminEmail, {
       examDate: notice.proposedExamDate,
       dateStatus: 'official',
@@ -614,6 +614,32 @@ export default function AdminNoticeDashboard() {
     if (res.success) {
       loadData();
       showToast(`Approved ${notice.matchedExamName} as Official Confirmed.`);
+
+      if (broadcastToTelegram) {
+        try {
+          const q = typeof window !== 'undefined' ? window.location.search : '';
+          const bRes = await fetch('/api/admin/bot-broadcast' + q, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              action: 'broadcast_official_notice',
+              authority: notice.authority,
+              examName: notice.matchedExamName,
+              title: notice.title,
+              examDate: notice.proposedExamDate,
+              documentUrl: notice.documentUrl || notice.sourceUrl,
+              examSlug: notice.matchedExamId,
+            }),
+          });
+          const bData = await bRes.json();
+          if (bData.success) {
+            showToast(`🚀 Official Notice Alert broadcasted live to @indiantimers!`);
+          }
+        } catch {
+          showToast('Notice approved, but Telegram broadcast failed.');
+        }
+      }
     }
   };
 
@@ -1306,11 +1332,19 @@ export default function AdminNoticeDashboard() {
                         Edit & Approve
                       </button>
                       <button
-                        onClick={() => handleApprove(notice)}
-                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                        onClick={() => handleApprove(notice, true)}
+                        className="px-3.5 py-1.5 rounded-full text-xs font-black bg-blue-600 text-white hover:bg-blue-700 shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                        title="Approve and immediately broadcast an official breaking alert to @indiantimers"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Confirm &amp; Alert Telegram</span>
+                      </button>
+                      <button
+                        onClick={() => handleApprove(notice, false)}
+                        className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#D4FF4F] text-[#111406] hover:bg-[#c2f038] shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
                       >
                         <Check className="w-3.5 h-3.5" />
-                        <span>Confirm Official & Publish</span>
+                        <span>Confirm Official</span>
                       </button>
                     </div>
                   </div>
