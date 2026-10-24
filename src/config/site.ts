@@ -60,9 +60,9 @@ export const siteConfig: SiteConfig = {
   contactEmail: 'you.pncml123@gmail.com',
   navigation: [
     { name: 'All Exams', href: '/exams/' },
-    { name: '2027 Calendar', href: '/calendar/2027/', badge: 'Official' },
-    { name: 'Mock Timer', href: '/tools/mock-test-timer/', badge: 'Simulate' },
-    { name: 'My Exams', href: '/my-exams/', badge: 'Cockpit' },
+    { name: '2027 Calendar', href: '/calendar/2027/' },
+    { name: 'Mock Timer', href: '/tools/mock-test-timer/' },
+    { name: 'My Exams', href: '/my-exams/' },
   ],
   categories: [
     {
