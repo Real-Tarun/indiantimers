@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { soundService } from '../utils/audio';
-import { Play, Pause, RotateCcw, Flag, Maximize2, Minimize2 } from 'lucide-react';
+import { wakeLockService } from '../utils/wakeLock';
+import { Play, Pause, RotateCcw, Flag, Maximize2, Minimize2, Sun } from 'lucide-react';
 
 interface LapItem {
   id: number;
@@ -13,10 +14,31 @@ export default function Stopwatch() {
   const [isActive, setIsActive] = useState(false);
   const [laps, setLaps] = useState<LapItem[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isScreenAwake, setIsScreenAwake] = useState(wakeLockService.isActive());
 
   const startTimestampRef = useRef<number | null>(null);
   const accumulatedMsRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Screen Wake Lock subscription
+  useEffect(() => {
+    const unsub = wakeLockService.subscribe((active) => {
+      setIsScreenAwake(active);
+    });
+    return unsub;
+  }, []);
+
+  // Keep screen awake whenever stopwatch is running or in fullscreen
+  useEffect(() => {
+    if (isActive || isFullscreen) {
+      wakeLockService.acquire();
+    } else {
+      wakeLockService.release();
+    }
+    return () => {
+      wakeLockService.release();
+    };
+  }, [isActive, isFullscreen]);
 
   useEffect(() => {
     let animFrame: number;
@@ -68,6 +90,7 @@ export default function Stopwatch() {
     accumulatedMsRef.current = 0;
     setElapsedMs(0);
     setLaps([]);
+    wakeLockService.forceRelease();
   };
 
   const handleLap = () => {
@@ -120,13 +143,33 @@ export default function Stopwatch() {
         <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
           Precision Study Stopwatch
         </span>
-        <button
-          onClick={toggleFullscreen}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800"
-          title="Fullscreen Mode"
-        >
-          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              const next = !wakeLockService.isEnabled();
+              wakeLockService.setEnabled(next);
+              setIsScreenAwake(wakeLockService.isActive());
+            }}
+            className={`h-9 px-3 rounded-full flex items-center gap-1.5 text-xs font-semibold transition-all cursor-pointer ${
+              isScreenAwake
+                ? 'border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+            title={isScreenAwake ? 'Screen Keep-Awake is Active: Your screen will not turn off' : 'Screen Keep-Awake is Off: Click to enable'}
+            aria-label="Toggle Screen Keep-Awake"
+          >
+            <Sun className={`w-3.5 h-3.5 ${isScreenAwake ? 'text-amber-500' : 'text-slate-400'}`} />
+            <span className="hidden sm:inline text-[11px]">{isScreenAwake ? 'Screen Awake' : 'Awake Off'}</span>
+          </button>
+          <button
+            onClick={toggleFullscreen}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 transition-colors"
+            title="Fullscreen Mode"
+          >
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
       {/* Main Digits with millisecond precision */}

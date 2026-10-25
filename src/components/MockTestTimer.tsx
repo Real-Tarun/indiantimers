@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { soundService, type SoundType } from '../utils/audio';
 import { storageService } from '../utils/storage';
+import { wakeLockService } from '../utils/wakeLock';
 import {
   Play,
   Pause,
@@ -11,6 +12,8 @@ import {
   VolumeX,
   Clock,
   Bell,
+  Sun,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface MockPreset {
@@ -45,6 +48,7 @@ export default function MockTestTimer() {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
   const [soundType, setSoundType] = useState<SoundType>(soundService.getSoundType());
   const [isPlayingTestSound, setIsPlayingTestSound] = useState(false);
+  const [isScreenAwake, setIsScreenAwake] = useState(wakeLockService.isActive());
 
   // Non-drifting timestamp references
   const targetEndTimestampRef = useRef<number | null>(null);
@@ -53,6 +57,26 @@ export default function MockTestTimer() {
   const hasAlerted30mRef = useRef(false);
   const hasAlerted5mRef = useRef(false);
   const hasAlerted1mRef = useRef(false);
+
+  // Screen Wake Lock subscription & lifecycle
+  useEffect(() => {
+    const unsub = wakeLockService.subscribe((active) => {
+      setIsScreenAwake(active);
+    });
+    return unsub;
+  }, []);
+
+  // Keep screen awake whenever mock test is running or in fullscreen mode
+  useEffect(() => {
+    if (isActive || isFullscreen) {
+      wakeLockService.acquire();
+    } else {
+      wakeLockService.release();
+    }
+    return () => {
+      wakeLockService.release();
+    };
+  }, [isActive, isFullscreen]);
 
   const handleSelectPreset = (preset: MockPreset) => {
     soundService.unlockAudio();
@@ -103,6 +127,7 @@ export default function MockTestTimer() {
     hasAlerted30mRef.current = false;
     hasAlerted5mRef.current = false;
     hasAlerted1mRef.current = false;
+    wakeLockService.forceRelease();
   };
 
   const handleTestSound = () => {
@@ -492,8 +517,27 @@ export default function MockTestTimer() {
               </label>
             </div>
 
-            {/* Sound Mute/Unmute Toggle */}
-            <div className="flex items-center gap-3">
+            {/* Screen Awake & Sound Controls */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !wakeLockService.isEnabled();
+                  wakeLockService.setEnabled(next);
+                  setIsScreenAwake(wakeLockService.isActive());
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all cursor-pointer select-none ${
+                  isScreenAwake
+                    ? 'border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 shadow-2xs font-bold'
+                    : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                }`}
+                title={isScreenAwake ? 'Screen Keep-Awake is Active: Your screen will NOT sleep or turn off during the mock test' : 'Screen Keep-Awake is Off: Click to enable'}
+                aria-label="Toggle Screen Keep-Awake"
+              >
+                <Sun className={`w-3.5 h-3.5 ${isScreenAwake ? 'text-amber-500' : 'text-slate-400'}`} />
+                <span className="text-[11px]">{isScreenAwake ? 'Screen Awake: ON' : 'Screen Awake: OFF'}</span>
+              </button>
+
               <button
                 onClick={() => {
                   const nextMute = !isMuted;
@@ -586,6 +630,12 @@ export default function MockTestTimer() {
               : 'radial-gradient(circle at 50% 50%, rgba(250, 248, 245, 0.04) 0%, transparent 65%)',
           }}
         />
+
+        {/* Minimalist Floating Screen Awake Status (Top Left) */}
+        <div className="absolute top-6 left-6 sm:top-8 sm:left-8 z-50 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md text-[10px] sm:text-[11px] font-mono tracking-wider text-white/50 select-none">
+          <span className={`w-1.5 h-1.5 rounded-full ${isScreenAwake ? 'bg-amber-400 animate-pulse' : 'bg-white/20'}`} />
+          <span>{isScreenAwake ? 'SCREEN AWAKE · NO SLEEP' : 'SCREEN AWAKE OFF'}</span>
+        </div>
 
         {/* Minimalist Floating Exit Button (Top Right Only - Pure & Subtle) */}
         <button

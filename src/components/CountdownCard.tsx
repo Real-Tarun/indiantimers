@@ -5,6 +5,7 @@ import { calculateCountdown, type CountdownResult } from '../utils/countdown';
 import { storageService } from '../utils/storage';
 import { downloadICS } from '../utils/calendar';
 import { siteConfig } from '../config/site';
+import { wakeLockService } from '../utils/wakeLock';
 
 interface Props {
   exam: ExamRecord;
@@ -114,6 +115,18 @@ export default function CountdownCard({ exam: initialExam, compact = false, show
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  // Keep screen awake while fullscreen desk countdown clock is active
+  useEffect(() => {
+    if (isFullscreen) {
+      wakeLockService.acquire();
+    } else {
+      wakeLockService.release();
+    }
+    return () => {
+      wakeLockService.release();
+    };
   }, [isFullscreen]);
 
   const toggleFullscreen = (e?: React.MouseEvent) => {
