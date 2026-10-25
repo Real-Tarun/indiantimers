@@ -455,7 +455,7 @@ At **IndianTimers**, we categorize schedules into three actionable categories:
 - **Policy Standard**: CBSE policy permanently fixes February 15 as the commencement date for annual secondary examinations.
 
 ### 3. Engineering & Medical Entrance Cycles (NTA)
-- **JEE Main 2027 Session 1**: Tentative testing window spans late January 2027.
+- **JEE Main 2027 Session 1**: Officially Confirmed. Registration active on jeemain.nta.nic.in (Oct 24 to Nov 22, 2026). Exam scheduled for January 20–28, 2027.
 - **NEET UG 2027**: Tentative schedule aligns with the first Sunday of May (May 2, 2027), subject to final NTA notification.
 
 ---
@@ -530,8 +530,8 @@ The revised NEET pattern features **180 minutes (3 hours)** for 180 compulsory q
 ## Understanding the Two-Session JEE Main Framework
 
 The National Testing Agency administers JEE Main in two separate windows:
-1. **Session 1 (Winter Window)**: Late January 2027
-2. **Session 2 (Spring Window)**: Early April 2027
+1. **Session 1 (Winter Window)**: Officially Confirmed (January 20–28, 2027 · Registration Active)
+2. **Session 2 (Spring Window)**: Early April 2027 (Tentative)
 
 Appearing in both sessions is optional but highly recommended. The candidate's **best NTA percentile score** across the two sessions is retained for the All India Rank (AIR) calculation.
 
