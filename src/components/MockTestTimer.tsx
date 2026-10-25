@@ -11,7 +11,6 @@ import {
   VolumeX,
   Clock,
   Bell,
-  Sparkles,
 } from 'lucide-react';
 
 interface MockPreset {
@@ -46,22 +45,14 @@ export default function MockTestTimer() {
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
   const [soundType, setSoundType] = useState<SoundType>(soundService.getSoundType());
   const [isPlayingTestSound, setIsPlayingTestSound] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Non-drifting timestamp references
   const targetEndTimestampRef = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const fullscreenContainerRef = useRef<HTMLDivElement | null>(null);
   const hasAlerted30mRef = useRef(false);
   const hasAlerted5mRef = useRef(false);
   const hasAlerted1mRef = useRef(false);
-  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const showEphemeralToast = (msg: string) => {
-    setToastMessage(msg);
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    toastTimeoutRef.current = setTimeout(() => {
-      setToastMessage(null);
-    }, 1200);
-  };
 
   const handleSelectPreset = (preset: MockPreset) => {
     soundService.unlockAudio();
@@ -95,14 +86,12 @@ export default function MockTestTimer() {
     setIsActive(true);
     setIsCompleted(false);
     targetEndTimestampRef.current = Date.now() + remainingSeconds * 1000;
-    showEphemeralToast('Timer Started');
   };
 
   const handlePause = () => {
     soundService.unlockAudio();
     setIsActive(false);
     targetEndTimestampRef.current = null;
-    showEphemeralToast('Timer Paused');
   };
 
   const handleReset = () => {
@@ -114,7 +103,6 @@ export default function MockTestTimer() {
     hasAlerted30mRef.current = false;
     hasAlerted5mRef.current = false;
     hasAlerted1mRef.current = false;
-    showEphemeralToast('Timer Reset');
   };
 
   const handleTestSound = () => {
@@ -179,28 +167,73 @@ export default function MockTestTimer() {
     };
   }, [isActive, durationMinutes, selectedPresetName, warnAt30m, warnAt5m, warnAt1m]);
 
-  // Fullscreen toggle with smooth body lock and zero layout thrashing
-  const enterFullscreen = () => {
+  // ─────────────────────────────────────────────────────────────────────────────
+  // TRUE NATIVE BROWSER FULLSCREEN CONTROLLER
+  // Hides OS taskbar, browser tabs, and URL bar for 100% pure screen takeover.
+  // ─────────────────────────────────────────────────────────────────────────────
+  const requestTrueNativeFullscreen = async () => {
+    try {
+      const el = fullscreenContainerRef.current || document.documentElement;
+      if (el.requestFullscreen) {
+        await el.requestFullscreen();
+      } else if ((el as unknown as { webkitRequestFullscreen?: () => Promise<void> }).webkitRequestFullscreen) {
+        await (el as unknown as { webkitRequestFullscreen: () => Promise<void> }).webkitRequestFullscreen();
+      } else if ((el as unknown as { msRequestFullscreen?: () => Promise<void> }).msRequestFullscreen) {
+        await (el as unknown as { msRequestFullscreen: () => Promise<void> }).msRequestFullscreen();
+      }
+    } catch {
+      // Graceful fallback if restricted by browser security policies
+    }
+  };
+
+  const exitTrueNativeFullscreen = async () => {
+    try {
+      if (document.fullscreenElement || (document as unknown as { webkitFullscreenElement?: Element }).webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as unknown as { webkitExitFullscreen?: () => Promise<void> }).webkitExitFullscreen) {
+          await (document as unknown as { webkitExitFullscreen: () => Promise<void> }).webkitExitFullscreen();
+        }
+      }
+    } catch {
+      // Graceful fallback
+    }
+  };
+
+  const handleMaximize = () => {
     soundService.unlockAudio();
     setIsFullscreen(true);
     if (typeof document !== 'undefined') {
       document.body.style.overflow = 'hidden';
     }
+    requestTrueNativeFullscreen();
   };
 
-  const exitFullscreen = () => {
+  const handleMinimize = () => {
     soundService.unlockAudio();
     setIsFullscreen(false);
     if (typeof document !== 'undefined') {
       document.body.style.overflow = '';
     }
+    exitTrueNativeFullscreen();
   };
 
-  // Keyboard shortcut support: Esc to exit fullscreen, Spacebar to toggle Play/Pause
+  // Synchronize state with browser native fullscreen events (e.g. user presses Esc key)
   useEffect(() => {
+    const handleNativeFullscreenChange = () => {
+      const isNative = Boolean(
+        document.fullscreenElement ||
+        (document as unknown as { webkitFullscreenElement?: Element }).webkitFullscreenElement
+      );
+      setIsFullscreen(isNative);
+      if (!isNative && typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+      }
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
-        exitFullscreen();
+        handleMinimize();
       }
       if (e.code === 'Space' && isFullscreen) {
         e.preventDefault();
@@ -212,13 +245,17 @@ export default function MockTestTimer() {
       }
     };
 
+    document.addEventListener('fullscreenchange', handleNativeFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleNativeFullscreenChange);
     window.addEventListener('keydown', handleKeyDown);
+
     return () => {
+      document.removeEventListener('fullscreenchange', handleNativeFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleNativeFullscreenChange);
       window.removeEventListener('keydown', handleKeyDown);
       if (typeof document !== 'undefined') {
         document.body.style.overflow = '';
       }
-      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
   }, [isFullscreen, isActive]);
 
@@ -240,9 +277,9 @@ export default function MockTestTimer() {
   const isWarningTime = remainingSeconds <= 300; // Final 5 minutes
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       {/* ─────────────────────────────────────────────────────────────────────────
-          STANDARD INLINE VIEW: Beautiful Bento Card
+          STANDARD INLINE VIEW: Clean Bento Card
       ───────────────────────────────────────────────────────────────────────── */}
       <div className="p-6 sm:p-8 rounded-[26px] border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#171923] shadow-xs transition-all relative overflow-hidden">
         {/* Preset Badges Bar */}
@@ -398,9 +435,9 @@ export default function MockTestTimer() {
 
           {/* Maximize to Pure Aesthetic Fullscreen */}
           <button
-            onClick={enterFullscreen}
+            onClick={handleMaximize}
             className="p-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer active:scale-95 group"
-            title="Full Screen Aesthetic View"
+            title="Full Screen True Minimalist View"
             aria-label="Maximize Full Screen"
           >
             <Maximize2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -523,169 +560,97 @@ export default function MockTestTimer() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────────────────
-          AESTHETIC ZEN FULLSCREEN OVERLAY
-          Silky Smooth 60fps CSS Transition (Zero Unmounting, Zero Glitch)
+          MILLION-DOLLAR MINIMALIST LOFI FULLSCREEN OVERLAY
+          Pure Zen Typography, Zero AI Glitz, Zero Clutter, True Screen Takeover
       ───────────────────────────────────────────────────────────────────────── */}
       <div
-        className={`fixed inset-0 z-[999999] w-screen h-screen min-h-screen bg-[#07080B] text-white flex flex-col justify-between p-6 sm:p-10 select-none overflow-hidden transition-all duration-300 ease-out ${
+        ref={fullscreenContainerRef}
+        className={`fixed inset-0 z-[999999] w-screen h-screen min-h-screen bg-[#08090C] text-white flex flex-col items-center justify-center select-none overflow-hidden transition-all duration-300 ease-out ${
           isFullscreen
             ? 'opacity-100 pointer-events-auto scale-100'
-            : 'opacity-0 pointer-events-none scale-[0.97]'
+            : 'opacity-0 pointer-events-none scale-[0.98]'
         }`}
         style={{ willChange: 'opacity, transform' }}
         onClick={() => {
-          // Tap anywhere to toggle play/pause
+          // Tap anywhere to pause or play
           if (isActive) handlePause();
           else handleStart();
         }}
       >
-        {/* Dynamic Multi-Layer Animated Radial Aura */}
+        {/* Subtle, Peaceful Lofi Warm Vignette (Not cyber neon!) */}
         <div
-          className="absolute inset-0 pointer-events-none animate-ambient-breath transition-all duration-1000"
+          className="absolute inset-0 pointer-events-none transition-opacity duration-1000"
           style={{
             background: isWarningTime
-              ? 'radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.22) 0%, rgba(244, 63, 94, 0.12) 40%, transparent 70%)'
-              : 'radial-gradient(circle at 50% 50%, rgba(212, 255, 79, 0.16) 0%, rgba(79, 70, 229, 0.08) 45%, transparent 75%)',
+              ? 'radial-gradient(circle at 50% 50%, rgba(226, 153, 92, 0.07) 0%, transparent 65%)'
+              : 'radial-gradient(circle at 50% 50%, rgba(250, 248, 245, 0.04) 0%, transparent 65%)',
           }}
         />
 
-        {/* Ambient Subtle Vignette */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(0,0,0,0.75)_100%)]" />
+        {/* Minimalist Floating Exit Button (Top Right Only - Pure & Subtle) */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleMinimize();
+          }}
+          className="absolute top-6 right-6 sm:top-8 sm:right-8 z-50 p-3 sm:p-3.5 rounded-full text-white/35 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/[0.15] backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer group"
+          title="Exit Fullscreen (Esc)"
+          aria-label="Exit Fullscreen"
+        >
+          <Minimize2 className="w-5 h-5 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:scale-95" />
+        </button>
 
-        {/* TOP BAR: Minimalist Exam Preset Pill + Minimize Button */}
-        <header className="relative z-20 flex items-center justify-between w-full max-w-7xl mx-auto">
-          {/* Subtle Live Session Tag */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.1] backdrop-blur-md text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white/70">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                isActive
-                  ? isWarningTime
-                    ? 'bg-amber-400 animate-ping'
-                    : 'bg-[#D4FF4F] animate-pulse'
-                  : 'bg-white/30'
-              }`}
-            />
-            <span className="uppercase">{selectedPresetName}</span>
-            <span className="text-white/30">·</span>
-            <span>{durationMinutes}m</span>
-          </div>
-
-          {/* Minimalist Floating Exit Button (Top Right) */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              exitFullscreen();
-            }}
-            className="group flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.08] hover:bg-white/[0.16] text-white/80 hover:text-white border border-white/[0.14] backdrop-blur-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xl cursor-pointer"
-            title="Exit Fullscreen (Esc)"
-            aria-label="Exit Fullscreen"
-          >
-            <Minimize2 className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-xs font-mono font-bold tracking-wider text-white/70 group-hover:text-white">
-              MINIMIZE
-            </span>
-            <kbd className="hidden sm:inline-block px-1.5 py-0.2 text-[9px] font-mono rounded bg-white/10 text-white/50 border border-white/10">
-              ESC
-            </kbd>
-          </button>
-        </header>
-
-        {/* CENTERPIECE: The Pure Luminous Zen Clock */}
-        <main className="relative z-10 flex flex-col items-center justify-center my-auto px-4 w-full">
-          {/* Subtle Luminous Bloom behind digits */}
+        {/* CENTERPIECE: Pure, Elegant Architectural Typography */}
+        <div className="relative z-10 flex flex-col items-center justify-center px-4 w-full text-center">
+          {/* Majestic Lofi Digits (Clean Rounded Zeros, No Slashes, High Aesthetic) */}
           <div
-            className={`absolute -inset-10 sm:-inset-20 rounded-full blur-3xl pointer-events-none transition-all duration-1000 ${
-              isActive
-                ? isWarningTime
-                  ? 'bg-amber-500/25 scale-105'
-                  : 'bg-[#D4FF4F]/20 scale-100'
-                : 'bg-white/5 scale-95'
+            className={`lofi-digit font-[280] tracking-tight leading-none select-none transition-all duration-500 ${
+              !isActive && !isCompleted ? 'opacity-40' : 'opacity-100'
+            } ${
+              isWarningTime
+                ? 'text-[#F3BA78] lofi-glow-amber'
+                : 'text-[#FAF8F5] lofi-glow-ivory'
             }`}
-          />
-
-          {/* Majestic High-Precision Digits with Colon Pulse */}
-          <div
-            className="flex items-center justify-center font-mono font-black tracking-tight leading-none select-none text-center"
             style={{
-              fontSize: 'clamp(3.75rem, 15vw, 14.5rem)',
+              fontSize: 'clamp(4.2rem, 16vw, 15.5rem)',
               letterSpacing: '-0.04em',
             }}
           >
-            {/* Hours */}
-            <span className={`text-white transition-colors duration-300 ${isWarningTime ? 'zen-glow-amber' : 'zen-glow-white'}`}>
-              {hours.toString().padStart(2, '0')}
-            </span>
-
-            {/* Colon 1 */}
-            <span className={`animate-colon-pulse mx-1.5 sm:mx-3 md:mx-5 transition-colors duration-300 ${isWarningTime ? 'text-amber-400/60' : 'text-white/40'}`}>
+            <span>{hours.toString().padStart(2, '0')}</span>
+            <span className={`animate-colon-pulse mx-1 sm:mx-2 md:mx-3 font-[200] ${isWarningTime ? 'text-[#F3BA78]/40' : 'text-white/20'}`}>
               :
             </span>
-
-            {/* Minutes */}
-            <span className={`text-white transition-colors duration-300 ${isWarningTime ? 'zen-glow-amber' : 'zen-glow-white'}`}>
-              {minutes.toString().padStart(2, '0')}
-            </span>
-
-            {/* Colon 2 */}
-            <span className={`animate-colon-pulse mx-1.5 sm:mx-3 md:mx-5 transition-colors duration-300 ${isWarningTime ? 'text-amber-400/60' : 'text-white/40'}`}>
+            <span>{minutes.toString().padStart(2, '0')}</span>
+            <span className={`animate-colon-pulse mx-1 sm:mx-2 md:mx-3 font-[200] ${isWarningTime ? 'text-[#F3BA78]/40' : 'text-white/20'}`}>
               :
             </span>
-
-            {/* Seconds (Signature Accent Highlight) */}
-            <span
-              className={`transition-colors duration-300 ${
-                isWarningTime
-                  ? 'text-amber-400 zen-glow-amber'
-                  : 'text-[#D4FF4F] zen-glow-lime'
-              }`}
-            >
-              {seconds.toString().padStart(2, '0')}
-            </span>
+            <span>{seconds.toString().padStart(2, '0')}</span>
           </div>
 
-          {/* Ephemeral Toast (Fades in and out smoothly on interaction) */}
-          {toastMessage && (
-            <div className="mt-4 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-mono font-semibold text-white/90 animate-fade-in-up tracking-wider shadow-lg">
-              {toastMessage}
+          {/* Understated Zen Paused Caption */}
+          {!isActive && !isCompleted && (
+            <div className="text-[11px] sm:text-xs font-sans tracking-[0.25em] uppercase text-white/30 mt-6 sm:mt-8 select-none animate-pulse">
+              PAUSED · TAP TO RESUME
             </div>
           )}
 
-          {/* Paused State Indicator */}
-          {!isActive && !isCompleted && !toastMessage && (
-            <div className="mt-5 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-xs font-mono text-white/60 tracking-wider uppercase animate-pulse backdrop-blur-xs">
-              <Play className="w-3 h-3 fill-current text-[#D4FF4F]" />
-              <span>Paused · Tap screen or press Space to continue</span>
-            </div>
-          )}
-
-          {/* Completed State Celebration Banner */}
+          {/* Clean Concluded Notice */}
           {isCompleted && (
-            <div className="mt-6 px-6 py-2.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-sm sm:text-base font-bold font-mono tracking-wider animate-bounce">
-              🔔 Time Up · Examination Finished
+            <div className="text-xs sm:text-sm font-sans tracking-[0.2em] uppercase text-[#F3BA78] mt-6 sm:mt-8 select-none">
+              EXAMINATION CONCLUDED
             </div>
           )}
-        </main>
+        </div>
 
-        {/* BOTTOM SECTION: Ultra-Sleek Progress Track & Telemetry */}
-        <footer className="relative z-20 w-full max-w-2xl mx-auto pb-2">
-          {/* Progress Capsule Bar */}
-          <div className="w-full h-2 rounded-full bg-white/[0.08] p-0.5 border border-white/[0.1] backdrop-blur-md overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ease-out ${
-                isWarningTime
-                  ? 'bg-gradient-to-r from-amber-400 to-rose-500 shadow-[0_0_16px_rgba(245,158,11,0.7)]'
-                  : 'bg-gradient-to-r from-emerald-400 via-[#D4FF4F] to-emerald-300 shadow-[0_0_16px_rgba(212,255,79,0.7)]'
-              }`}
-              style={{ width: `${progressRatio * 100}%` }}
-            />
-          </div>
-
-          {/* Clean Monospace Telemetry */}
-          <div className="flex items-center justify-between mt-2.5 text-[11px] sm:text-xs font-mono text-white/45 px-1 tracking-wider">
-            <span>Elapsed: {formatHMS(elapsedSeconds)} ({(progressRatio * 100).toFixed(1)}%)</span>
-            <span>Target: {timePerQuestionSeconds.toFixed(1)}s / Q</span>
-          </div>
-        </footer>
+        {/* Understated Minimalist Hairline Progress Line at Bottom Edge */}
+        <div className="fixed bottom-0 left-0 right-0 h-[2px] bg-white/[0.04] z-20 pointer-events-none">
+          <div
+            className={`h-full transition-all duration-700 ease-out ${
+              isWarningTime ? 'bg-[#F3BA78]/40' : 'bg-white/25'
+            }`}
+            style={{ width: `${progressRatio * 100}%` }}
+          />
+        </div>
       </div>
     </div>
   );
