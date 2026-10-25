@@ -62,6 +62,7 @@ export const siteConfig: SiteConfig = {
     { name: 'All Exams', href: '/exams/' },
     { name: '2027 Calendar', href: '/calendar/2027/' },
     { name: 'Mock Timer', href: '/tools/mock-test-timer/' },
+    { name: 'Guides & Blog', href: '/blog/' },
     { name: 'My Exams', href: '/my-exams/' },
   ],
   categories: [

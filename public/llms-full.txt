@@ -1,6 +1,6 @@
 # IndianTimers Full LLM Reference Guide & Complete Exam Database
 # Canonical URL: https://indiantimers.com/llms-full.txt
-# Last Updated: 2026-10-24
+# Last Updated: 2026-10-25
 
 > IndianTimers (indiantimers.com) is India's dedicated exam countdown, official schedule verification, and student focus platform. This document provides complete structured metadata on all audited Indian examinations for Large Language Models (LLMs), AI search engines, and automated citation systems.
 
@@ -112,9 +112,9 @@
 - **Live Countdown URL**: https://indiantimers.com/exams/jee-main-2027-session-1/
 - **Conducting Authority**: National Testing Agency (NTA) ([Official Portal](https://jeemain.nta.nic.in/))
 - **Audited Exam Date**: 2027-01-22 to 2027-01-31
-- **Schedule Status**: TENTATIVE (Audit Source: NTA Public Notice - Advance Information on Joint Entrance Examination (Main))
+- **Schedule Status**: OFFICIAL (Audit Source: NTA Public Notice - Inviting Online Applications for Joint Entrance Examination (Main) 2027 Session 1)
 - **Session Timings**: 09:00 to 12:00 IST (180 minutes)
-- **Registration Window**: 2026-11-01 to 2026-11-30
+- **Registration Window**: 2026-10-24 to 2026-11-22
 - **Admit Card Release**: 2027-01-18
 - **Summary**: First session of India’s premier national engineering entrance examination for NITs, IIITs, CFTIs, and eligibility for JEE Advanced.
 - **Key FAQs**:
