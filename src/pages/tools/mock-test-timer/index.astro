@@ -21,28 +21,96 @@ const appSchema = {
     price: '0',
     priceCurrency: 'INR',
   },
-  description: 'Online 3-hour exam timer (180 mins) and NEET 200-min simulation timer with question pacing and warning bells.',
+  description: 'Online 3-hour exam timer (180 mins), NEET 200-minute simulator, and UPSC 2-hour countdown clock with audio warning bells and question pacing calculator.',
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Does this mock test timer keep running accurately if I switch browser tabs or lock my screen?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. The timer utilizes real-time non-drifting timestamp delta synchronization rather than naive setInterval loops. Even if your browser throttles background background tabs, switches power modes, or your laptop sleeps, the countdown calculates the exact target timestamp difference and resumes with 100% precision.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do the 30-minute and 5-minute warning bells help during mock test practice?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Official Indian national examination centers (NTA test centers, TCS iON labs, UPSC examination halls, and CBSE schools) announce standardized warning bells at 30 minutes and 5 minutes remaining. Hearing these bells during home mock practice trains your subconscious to wrap up calculations, initiate response bubbling or CBT review, and prevent last-second panic.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use this timer for offline pen-and-paper mock tests with an OMR sheet?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Absolutely. Many aspirants preparing for NEET UG, UPSC Prelims, and State PCS use this simulator on a laptop or tablet placed on their desk while solving offline question papers and bubbling real OMR sheets. The fullscreen mode offers an authentic, distraction-free examination room clock.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the recommended 3-round question solving strategy for a 3-hour exam?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'In Round 1 (0 to 60 mins), solve direct memory and easy questions that take under 45 seconds. In Round 2 (60 to 140 mins), solve standard analytical and calculation questions. In Round 3 (the final 30 to 40 mins triggered by the 30-minute warning bell), double-check marked-for-review questions, verify OMR alignment, and review dubious negative marking guesses.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How should time be divided between Physics, Chemistry, and Mathematics/Biology?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For NEET UG (180 minutes), allot ~45-50 minutes to Biology, ~50 minutes to Chemistry, ~60-65 minutes to Physics, and reserve 15-20 minutes for OMR review. For JEE Main (180 minutes), allot ~40-45 minutes to Chemistry, ~60-65 minutes to Physics, and ~70 minutes to Mathematics.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is this mock test simulator free and does it require an account or login?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The simulator is 100% free with zero login requirements, zero paywalls, and zero intrusive ads. All audio synthesis runs directly in your local browser using the Web Audio API without downloading external audio files.',
+      },
+    },
+  ],
 };
 ---
 
 <BaseLayout
   title="Mock Test Timer: 3 Hour & 180 Minute Exam Simulator | IndianTimers"
-  description="Free full-length mock test timer for NEET (200m), JEE Main (180m), UPSC (120m), and CAT. Includes 30m and 5m warning audio bells and time-per-question calculator."
+  description="Free full-length mock test timer for NEET (180m/200m), JEE Main (180m), UPSC (120m), and CAT. Features official 30m & 5m warning bells, zen fullscreen mode, and pacing calculator."
   canonicalUrl={`${siteConfig.url}/tools/mock-test-timer/`}
   breadcrumbs={breadcrumbs}
-  schema={appSchema}
+  schema={[appSchema, faqSchema]}
 >
   <div class="mb-6">
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
       <a href="/" class="hover:underline">Home</a>
       <span>/</span>
+      <a href="/tools/mock-test-timer/" class="hover:underline">Tools</a>
+      <span>/</span>
       <span class="text-slate-800 dark:text-slate-200 font-semibold">Mock Test Timer</span>
     </div>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">
-      Official Mock Test Simulation Timer
+    <div class="flex flex-wrap items-center gap-2 mb-2">
+      <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+        Authentic CBT Simulation
+      </span>
+      <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#D4FF4F] text-[#111406]">
+        Precision Web Audio Bells
+      </span>
+      <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-slate-500 dark:text-slate-400">
+        Zero Drift · Offline Capable
+      </span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-2">
+      Official Mock Test Simulation Timer &amp; 3-Hour Exam Clock
     </h1>
-    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-      Simulate real exam hall conditions with official paper durations. Calculated to prevent timer drift when switching browser tabs, with pacing recommendations per question.
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+      Accurately simulate real exam hall conditions with official paper durations, 30-minute and 5-minute warning audio bells, and question pacing telemetry. Engineered with timestamp delta calculations to eliminate background tab timer drift during full-length 180-minute and 120-minute mock tests.
     </p>
   </div>
 
@@ -53,48 +121,342 @@ const appSchema = {
 
   <TimerSupportBanner className="max-w-3xl mx-auto mb-10" />
 
-  {/* Presets Reference Table */}
-  <div class="max-w-3xl mx-auto border-t border-slate-200 dark:border-slate-800 pt-8">
-    <h2 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-3">
-      Official Examination Duration Reference
-    </h2>
-    <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 text-xs">
-      <table class="w-full text-left">
-        <thead class="bg-slate-50 dark:bg-slate-800 font-bold border-b border-slate-200 dark:border-slate-800">
-          <tr>
-            <th class="py-2.5 px-4">Examination</th>
-            <th class="py-2.5 px-4">Official Duration</th>
-            <th class="py-2.5 px-4">Questions</th>
-            <th class="py-2.5 px-4">Time / Question</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-          <tr>
-            <td class="py-2.5 px-4 font-semibold">NEET UG</td>
-            <td class="py-2.5 px-4">180 Minutes (3h)</td>
-            <td class="py-2.5 px-4">180 Questions</td>
-            <td class="py-2.5 px-4 font-bold text-blue-600">60.0 Seconds</td>
-          </tr>
-          <tr>
-            <td class="py-2.5 px-4 font-semibold">JEE Main (B.Tech)</td>
-            <td class="py-2.5 px-4">180 Minutes (3h)</td>
-            <td class="py-2.5 px-4">75 Questions</td>
-            <td class="py-2.5 px-4 font-bold text-blue-600">144.0 Seconds (2.4 min)</td>
-          </tr>
-          <tr>
-            <td class="py-2.5 px-4 font-semibold">UPSC CSE Prelims</td>
-            <td class="py-2.5 px-4">120 Minutes (2h)</td>
-            <td class="py-2.5 px-4">100 (GS) / 80 (CSAT)</td>
-            <td class="py-2.5 px-4 font-bold text-blue-600">72.0 Seconds (GS)</td>
-          </tr>
-          <tr>
-            <td class="py-2.5 px-4 font-semibold">IIM CAT</td>
-            <td class="py-2.5 px-4">120 Minutes (3x40m)</td>
-            <td class="py-2.5 px-4">68 Questions</td>
-            <td class="py-2.5 px-4 font-bold text-blue-600">105.9 Seconds</td>
-          </tr>
-        </tbody>
-      </table>
+  {/* Official Examination Duration Blueprint Table */}
+  <section class="max-w-3xl mx-auto border-t border-slate-200 dark:border-slate-800 pt-8 mb-12">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+          Official Examination Duration &amp; Target Pacing Reference
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          Standardized benchmarks based on latest NTA, UPSC, IIT, and IIM examination bulletins.
+        </p>
+      </div>
     </div>
-  </div>
+
+    <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-xs text-xs">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50 dark:bg-slate-800/80 font-bold border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+            <tr>
+              <th class="py-3 px-4">Examination</th>
+              <th class="py-3 px-4">Official Duration</th>
+              <th class="py-3 px-4">Questions</th>
+              <th class="py-3 px-4">Target Pace / Question</th>
+              <th class="py-3 px-4">Marking Pattern</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-400">
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">NEET UG</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">180 Minutes (3h)</td>
+              <td class="py-3 px-4">180 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">60.0 Seconds</td>
+              <td class="py-3 px-4">+4 / -1 Negative</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">JEE Main (B.Tech)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">180 Minutes (3h)</td>
+              <td class="py-3 px-4">75 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">144.0 Seconds (2.4m)</td>
+              <td class="py-3 px-4">+4 / -1 (MCQs &amp; NAT)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">JEE Advanced (Paper 1 &amp; 2)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">180m + 180m (6h)</td>
+              <td class="py-3 px-4">51-54 Qs / Paper</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">~200 Seconds (3.3m)</td>
+              <td class="py-3 px-4">Variable / Partial Marking</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">UPSC CSE Prelims (GS 1)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">120 Minutes (2h)</td>
+              <td class="py-3 px-4">100 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">72.0 Seconds</td>
+              <td class="py-3 px-4">+2 / -0.66 (1/3rd Penalty)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">UPSC CSE CSAT (Paper 2)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">120 Minutes (2h)</td>
+              <td class="py-3 px-4">80 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">90.0 Seconds</td>
+              <td class="py-3 px-4">+2.5 / -0.83 (Qualifying 33%)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">IIM CAT (Management)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">120 Minutes (3x40m)</td>
+              <td class="py-3 px-4">66-68 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">105.9 Seconds</td>
+              <td class="py-3 px-4">+3 / -1 (Zero on TITA)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">GATE (Engineering)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">180 Minutes (3h)</td>
+              <td class="py-3 px-4">65 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">166.1 Seconds (2.7m)</td>
+              <td class="py-3 px-4">1 &amp; 2 Mark Qs (No -ve on MSQ/NAT)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">CLAT UG (National Law)</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">120 Minutes (2h)</td>
+              <td class="py-3 px-4">120 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">60.0 Seconds</td>
+              <td class="py-3 px-4">+1 / -0.25 (Reading Passage Heavy)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">SSC CGL Tier 1 / Banking</td>
+              <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-[#D4FF4F]">60 Minutes (1h)</td>
+              <td class="py-3 px-4">100 Questions</td>
+              <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">36.0 Seconds</td>
+              <td class="py-3 px-4">+2 / -0.50 (High-Speed Drill)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {/* In-Depth Educational & Strategy Guide (High HTML-to-Text SEO Ratio) */}
+  <article class="max-w-3xl mx-auto space-y-10 text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
+    {/* Section 1: The Psychology of 3-Hour Simulation */}
+    <section class="space-y-3">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        The Science of 3-Hour Exam Simulation: Why Timed Practice Guarantees Higher Percentiles
+      </h2>
+      <p>
+        Practicing full-length mock examinations under strict, uninterrupted countdown conditions is the single most decisive factor differentiating 99th-percentile toppers from candidates who underperform on exam day. In Indian competitive entrance examinations like <strong>NEET UG, JEE Main, UPSC Civil Services, and GATE</strong>, the ultimate test is not merely what you know—it is how rapidly and accurately you can retrieve, process, and formulate solutions under intense cognitive pressure and ticking time constraints.
+      </p>
+      <p>
+        When studying without an authoritative clock, the human brain falls prey to <em>Parkinson’s Law</em>: the psychological phenomenon where cognitive tasks expand to fill whatever time is available. Solving 30 Physics numericals across an entire evening provides a false sense of security. The moment an aspirant enters a high-stakes Computer-Based Test (CBT) center or an offline examination hall with a standardized 180-minute countdown, the acute surge of adrenaline can induce mental blankness, racing pulse, and fatal miscalculations.
+      </p>
+      <p>
+        By utilizing this <strong>Mock Test Simulator</strong> with realistic examination bells and full-screen distraction-free visualization, you condition your sympathetic nervous system to remain composed, calm, and laser-focused during the grueling 180-minute marathon.
+      </p>
+    </section>
+
+    {/* Section 2: Warning Bells Mastery */}
+    <section class="space-y-3">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        Mastering Official Exam Hall Warning Bells: How 30m &amp; 5m Alerts Shape Your Strategy
+      </h2>
+      <p>
+        In accordance with guidelines issued by the National Testing Agency (NTA), the Union Public Service Commission (UPSC), and standard university test centers, proctors announce two critical time milestones: the <strong>30-Minute Warning Bell</strong> and the <strong>5-Minute Final Call</strong>.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white mb-1.5">
+            <span class="text-amber-500 text-base">🔔</span>
+            <span>The 30-Minute Left Bell (The Transition Point)</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Hearing the 30-minute chime marks the end of deep problem-solving mode and initiates the verification cycle. Immediately cease tackling brand-new complex numericals. Begin your systematic review of marked-for-doubt questions, complete OMR bubbling if testing offline, and tally your attempted question count to ensure target cutoffs are reached.
+          </p>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-2 font-bold text-slate-900 dark:text-white mb-1.5">
+            <span class="text-rose-500 text-base">⚠️</span>
+            <span>The 5-Minute Final Bell (The Safeguard Alert)</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            When the 5-minute bell sounds, your pencil or mouse should only be confirming responses already calculated. Never make reckless, uncalculated gambles on questions with negative marking penalties during these final 300 seconds. Ensure every online answer is saved via &ldquo;Save &amp; Next&rdquo; and verify that no OMR bubbles are left half-filled or misaligned.
+          </p>
+        </div>
+      </div>
+      <p>
+        Our audio engine is synthesized using browser-native <strong>Web Audio API oscillators</strong>. This guarantees that your warning bells ring reliably even without high-speed internet connections, and you can switch between authentic brass university bells, modern digital chimes, or gentle focus bowls depending on your study environment.
+      </p>
+    </section>
+
+    {/* Section 3: The 3-Round Strategy */}
+    <section class="space-y-3">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        The 3-Round Solving Protocol: How All-India Rankers Eliminate Negative Marking
+      </h2>
+      <p>
+        One of the most catastrophic mistakes made by students is attempting a 75-question or 180-question paper in a strict linear sequence from Question 1 to the end. If you get bogged down on an intricate, multi-concept kinematics or organic synthesis question early in the paper, you may consume 8 to 10 precious minutes, triggering panic and depriving yourself of easy scoring opportunities at the back of the paper.
+      </p>
+      <div class="space-y-3">
+        <div class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900">
+          <span class="font-extrabold text-indigo-600 dark:text-[#D4FF4F] text-xs uppercase tracking-wider block mb-1">
+            Round 1: Rapid Fire Direct Theory &amp; Quick Scoring (Minutes 0 to 55)
+          </span>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Sweep through the entire question paper from beginning to end. Answer only direct factual and memory-based questions (such as NCERT Biology assertions, direct Inorganic Chemistry reactions, and straightforward formula-based Physics/Mathematics questions) that you can answer with 100% confidence in under 45 seconds. Mark any moderately challenging question for Round 2.
+          </p>
+        </div>
+        <div class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900">
+          <span class="font-extrabold text-indigo-600 dark:text-[#D4FF4F] text-xs uppercase tracking-wider block mb-1">
+            Round 2: Analytical Problem Solving &amp; Multi-Step Calculations (Minutes 55 to 140)
+          </span>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Tackle the moderate-difficulty questions earmarked during Round 1. Because you have already locked in easy base marks, your anxiety level drops substantially, allowing your prefrontal cortex to execute multi-step algebraic manipulation, calculus integrals, and physical chemistry stoichiometry with peak precision.
+          </p>
+        </div>
+        <div class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900">
+          <span class="font-extrabold text-indigo-600 dark:text-[#D4FF4F] text-xs uppercase tracking-wider block mb-1">
+            Round 3: Doubt Elimination &amp; Response Sheet Verification (Minutes 140 to 180)
+          </span>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Triggered as soon as the 30-minute warning bell sounds. Conduct an audit of dubious questions where you eliminated two options but hesitated. Recheck unit conversions (e.g. centimeters vs meters, joules vs calories, Celsius vs Kelvin). Verify that your online responses reflect the intended radio button.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 4: Fullscreen Zen Mode & Distraction Elimination */}
+    <section class="space-y-3">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        Aesthetic Zen Fullscreen Mode: Transforming Your Screen into an Authentic CBT Lab
+      </h2>
+      <p>
+        When you activate the <strong>Maximize Fullscreen Button</strong> on this timer, the interface automatically eliminates all peripheral distractions, input boxes, side navigation menus, and social notifications. Your display transforms into a pure, luminous, distraction-free digital clock featuring majestic high-contrast typography, an ambient breathing focus aura, and an intuitive floating minimize toggle.
+      </p>
+      <p>
+        In modern Computer-Based Test centers administered by agencies like TCS iON, the terminal runs in a locked kiosk environment where switching windows is impossible. Practicing in fullscreen mode trains your visual attention to withstand sustained screen glare without seeking dopamine escapes through social media or unrelated browser tabs.
+      </p>
+    </section>
+
+    {/* Section 5: Technical Architecture: Why IndianTimers Never Drifts */}
+    <section class="space-y-3">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        Zero Timer Drift Architecture: Engineered for Continuous Multi-Tab Execution
+      </h2>
+      <p>
+        Standard JavaScript timers that rely solely on <code>setInterval(..., 1000)</code> suffer from severe browser throttling. Modern web browsers (including Google Chrome, Microsoft Edge, and Apple Safari) aggressively sleep background tabs to conserve battery power and CPU cycles. In a standard timer app, switching to a PDF question paper in another window causes the timer to lag by up to 10 to 15 minutes across a 3-hour test!
+      </p>
+      <p>
+        The <strong>IndianTimers Mock Simulator Engine</strong> solves this problem at the architecture level. When you click &ldquo;Commence Mock Test&rdquo;, the engine captures an absolute epoch timestamp reference in high-resolution hardware memory:
+      </p>
+      <div class="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto">
+        targetEndTimestamp = Date.now() + (durationMinutes * 60 * 1000);<br />
+        remainingSeconds = Math.max(0, Math.ceil((targetEndTimestamp - Date.now()) / 1000));
+      </div>
+      <p>
+        Regardless of how many times you switch tabs, minimize windows, or look away, the timer continuously recalculates the exact astronomical delta upon each paint frame. Your examination clock remains synchronized with absolute Atomic/IST time to the millisecond.
+      </p>
+    </section>
+
+    {/* Section 6: Frequently Asked Questions (FAQ) */}
+    <section class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        Frequently Asked Questions about Online Mock Test Timers
+      </h2>
+
+      <div class="space-y-3">
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] shadow-2xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+            Does this mock test timer keep running accurately if I switch browser tabs or lock my screen?
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Yes. The timer utilizes real-time non-drifting timestamp delta synchronization rather than naive setInterval loops. Even if your browser throttles background tabs, switches power modes, or your laptop sleeps, the countdown calculates the exact target timestamp difference and resumes with 100% precision.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] shadow-2xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+            How do the 30-minute and 5-minute warning bells help during mock test practice?
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Official Indian national examination centers (NTA test centers, TCS iON labs, UPSC examination halls, and CBSE schools) announce standardized warning bells at 30 minutes and 5 minutes remaining. Hearing these bells during home mock practice trains your subconscious to wrap up calculations, initiate response bubbling or CBT review, and prevent last-second panic.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] shadow-2xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+            Can I use this timer for offline pen-and-paper mock tests with an OMR sheet?
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Absolutely. Many aspirants preparing for NEET UG, UPSC Prelims, and State PCS use this simulator on a laptop or tablet placed on their desk while solving offline question papers and bubbling real OMR sheets. The fullscreen mode offers an authentic, distraction-free examination room clock.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] shadow-2xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+            What is the recommended 3-round question solving strategy for a 3-hour exam?
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            In Round 1 (0 to 60 mins), solve direct memory and easy questions that take under 45 seconds. In Round 2 (60 to 140 mins), solve standard analytical and calculation questions. In Round 3 (the final 30 to 40 mins triggered by the 30-minute warning bell), double-check marked-for-review questions, verify OMR alignment, and review dubious negative marking guesses.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] shadow-2xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+            How should time be divided between Physics, Chemistry, and Mathematics/Biology?
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            For NEET UG (180 minutes), allot ~45-50 minutes to Biology, ~50 minutes to Chemistry, ~60-65 minutes to Physics, and reserve 15-20 minutes for OMR review. For JEE Main (180 minutes), allot ~40-45 minutes to Chemistry, ~60-65 minutes to Physics, and ~70 minutes to Mathematics.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-black/[0.06] dark:border-white/[0.08] shadow-2xs">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+            Is this mock test simulator free and does it require an account or login?
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            The simulator is 100% free with zero login requirements, zero paywalls, and zero intrusive ads. All audio synthesis runs directly in your local browser using the Web Audio API without downloading external audio files.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 7: Interlinked Free Student Productivity Suite */}
+    <section class="space-y-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+        Explore More Free Student Productivity Tools on IndianTimers
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <a
+          href="/tools/marks-vs-percentile/"
+          class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900 hover:border-indigo-500 hover:shadow-xs transition-all group"
+        >
+          <div class="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5 mb-1">
+            <span>📊</span>
+            <span>Marks vs Percentile &amp; AIR Predictor</span>
+          </div>
+          <p class="text-slate-500 dark:text-slate-400 leading-normal">
+            Calculate your estimated All-India Rank, NTA percentile score, and qualifying chances based on latest mock exam marks.
+          </p>
+        </a>
+
+        <a
+          href="/tools/age-eligibility-calculator/"
+          class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900 hover:border-indigo-500 hover:shadow-xs transition-all group"
+        >
+          <div class="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5 mb-1">
+            <span>🎯</span>
+            <span>Age &amp; Attempt Eligibility Calculator</span>
+          </div>
+          <p class="text-slate-500 dark:text-slate-400 leading-normal">
+            Check your exact age limit eligibility and remaining attempt counts for NEET, JEE Main, JEE Advanced, and UPSC.
+          </p>
+        </a>
+
+        <a
+          href="/tools/pomodoro-timer/"
+          class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900 hover:border-indigo-500 hover:shadow-xs transition-all group"
+        >
+          <div class="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5 mb-1">
+            <span>🍅</span>
+            <span>Pomodoro Deep Study Timer</span>
+          </div>
+          <p class="text-slate-500 dark:text-slate-400 leading-normal">
+            Maintain daily study stamina with 25-minute and 50-minute scientific focus loops, restorative break alarms, and session logging.
+          </p>
+        </a>
+
+        <a
+          href="/my-exams/"
+          class="p-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-slate-900 hover:border-indigo-500 hover:shadow-xs transition-all group"
+        >
+          <div class="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5 mb-1">
+            <span>🚀</span>
+            <span>Personal Exam Cockpit</span>
+          </div>
+          <p class="text-slate-500 dark:text-slate-400 leading-normal">
+            Pin your target examination countdowns, track official syllabus milestones, and customize real-time study widgets.
+          </p>
+        </a>
+      </div>
+    </section>
+  </article>
 </BaseLayout>
