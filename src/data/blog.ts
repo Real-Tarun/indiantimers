@@ -302,95 +302,354 @@ The National Testing Agency has published the official fee matrix for both India
   </table>
 </div>
 
-> **Important Fee Policy Note:** The fee once paid is non-refundable under any circumstances. Payment processing charges and Goods and Services Tax (GST) are applicable over and above the examination fee as per prevailing government tax schedules.
+<div class="my-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 flex items-start gap-3">
+  <span class="text-xl shrink-0">⚠️</span>
+  <div class="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+    <strong class="font-bold">Important Fee Policy Note:</strong> The examination fee once paid is non-refundable under any circumstances. Payment processing charges and Goods and Services Tax (GST) are applicable over and above the examination fee as per prevailing government tax schedules.
+  </div>
+</div>
 
----
+<hr class="my-8 border-slate-200 dark:border-slate-800" />
 
-## Step-by-Step Guide: How to Fill JEE Main 2027 Application Form
+<div class="my-8">
+  <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mb-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+    Step-by-Step Guide: How to Fill JEE Main 2027 Application Form
+  </h2>
+  <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-6">
+    To avoid server timeout or document rejection, follow this exact step-by-step procedure verified from the official NTA Information Bulletin:
+  </p>
 
-To avoid server timeout or document rejection, follow this exact step-by-step procedure:
+  <div class="space-y-4">
+    <!-- Step 1 Card -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">1</span>
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">Step 1: Authentication & New Registration</h3>
+        </div>
+        <a
+          href="https://jeemain.nta.nic.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800 transition-colors"
+        >
+          <span>Official Portal: jeemain.nta.nic.in</span>
+          <span>↗</span>
+        </a>
+      </div>
 
-### Step 1: Authentication & New Registration
-1. Visit the verified portal: **[https://jeemain.nta.nic.in/](https://jeemain.nta.nic.in/)**.
-2. Click on the tab titled **"Online Application Form for JEE (Main) 2027 – Session 1"**.
-3. Select **"New Candidate Registration"** and choose your authentication mode:
-   - **Option A (Recommended)**: Login via **DigiLocker** or **ABC ID (Academic Bank of Credits / APAAR ID)**.
-   - **Option B**: Login via **Aadhaar Number** (instant biometric linkage).
-   - **Option C**: Login via Indian Passport, Non-Indian Passport, or PAN Card.
-4. Input your candidate name, father's name, mother's name, date of birth, mobile number, and active personal email ID.
-5. Create a secure password (8–13 characters with at least one uppercase, lowercase, numeric, and special character) and select a security question.
-6. Submit the form to generate your unique **12-digit Application Number**.
+      <div class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+          <p>Visit the verified portal <a href="https://jeemain.nta.nic.in/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">jeemain.nta.nic.in</a> and click on the tab titled <strong>"Online Application Form for JEE (Main) 2027 – Session 1"</strong>.</p>
+        </div>
 
-### Step 2: Filling Academic Details & Paper Selection
-1. Log in with your new **Application Number** and **Password**.
-2. **Category & Domicile**: Select your category (General, Gen-EWS, OBC-NCL, SC, ST) and State of Eligibility (where you appeared for Class 12).
-3. **Paper Selection**: Choose **Paper 1 (B.E./B.Tech)**, **Paper 2A (B.Arch)**, **Paper 2B (B.Planning)**, or combined papers.
-4. **Medium of Question Paper**: Select from 13 available languages (English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Odia, Punjabi, Tamil, Telugu, Urdu).
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+          <div class="w-full">
+            <p class="mb-2">Click <strong>"New Candidate Registration"</strong> and choose your primary digital identification mode:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+                <span class="block font-bold text-blue-700 dark:text-blue-300 mb-0.5">Option A (Recommended)</span>
+                <span class="text-slate-600 dark:text-slate-400">Login via <strong>DigiLocker</strong> or <strong>ABC ID / APAAR ID</strong> for fast auto-verification.</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <span class="block font-bold text-slate-900 dark:text-slate-100 mb-0.5">Option B</span>
+                <span class="text-slate-600 dark:text-slate-400">Login via <strong>Aadhaar Number</strong> (requires instant biometric mobile OTP).</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <span class="block font-bold text-slate-900 dark:text-slate-100 mb-0.5">Option C</span>
+                <span class="text-slate-600 dark:text-slate-400">Login via Indian Passport, Non-Indian Passport, or PAN Card.</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-### Step 3: Exam City Selection (Strategic Rule)
-- You must select **4 exam cities in order of priority** from your State of Permanent Address or State of Present Address.
-- **Tip**: Choose cities with direct rail or highway connectivity. NTA almost always allocates your Priority 1 choice if registered early.
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+          <p>Input candidate details: <strong>Candidate Name</strong>, <strong>Father's Name</strong>, <strong>Mother's Name</strong>, <strong>Date of Birth</strong>, <strong>Mobile Number</strong>, and <strong>Active Personal Email ID</strong>.</p>
+        </div>
 
-### Step 4: Uploading Scanned Documents (Strict Dimensions)
-NTA's automated document verification system will instantly reject images that do not meet these parameters:
-- **Recent Passport Photograph**:
-  - File format: **JPG/JPEG**
-  - File size: **10 KB to 200 KB**
-  - Dimensions: Clearly visible face (80% face coverage, ears visible), pure white background, no sunglasses or caps.
-- **Candidate Signature**:
-  - File format: **JPG/JPEG**
-  - File size: **4 KB to 30 KB**
-  - Drawn with blue/black ink on unruled white paper. Never upload signatures in ALL CAPITAL letters.
-- **Category / PwD Certificate (if applicable)**:
-  - File format: **PDF**
-  - File size: **50 KB to 300 KB**
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+          <p>Create a secure password (8–13 characters with at least one uppercase, lowercase, numeric, and special character) and select a security question.</p>
+        </div>
 
-### Step 5: Online Fee Payment & Confirmation Page
-1. Review the summary page thoroughly before the final submit.
-2. Select your payment gateway (SBI, HDFC, Canara Bank, ICICI) and pay via UPI, Net Banking, or Debit Card.
-3. **Crucial**: Once the transaction is successful, download and print at least **4 copies of the Confirmation Page**. This page is mandatory during JoSAA counselling and verification.
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">5</span>
+          <p>Submit registration to generate your unique <strong class="text-indigo-600 dark:text-indigo-400">12-digit Application Number</strong>. Note it down safely.</p>
+        </div>
+      </div>
+    </div>
 
----
+    <!-- Step 2 Card -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">2</span>
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">Step 2: Filling Academic Details & Paper Selection</h3>
+      </div>
+      <div class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+          <p>Log in to candidate portal using your newly generated <strong>Application Number</strong> and <strong>Password</strong>.</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+          <p><strong>Category & Domicile:</strong> Select your category (General, Gen-EWS, OBC-NCL, SC, ST) and State of Eligibility (where you appeared or are appearing for Class 12 exams).</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+          <p><strong>Paper Selection:</strong> Choose <strong>Paper 1 (B.E./B.Tech)</strong>, <strong>Paper 2A (B.Arch)</strong>, <strong>Paper 2B (B.Planning)</strong>, or combined papers depending on your engineering or architectural goals.</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+          <p><strong>Medium of Question Paper:</strong> Select from 13 available languages (English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Odia, Punjabi, Tamil, Telugu, Urdu).</p>
+        </div>
+      </div>
+    </div>
 
-## 7 Fatal Mistakes That Cause Application Rejection
+    <!-- Step 3 Card -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">3</span>
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">Step 3: Exam City Selection (Strategic Rule)</h3>
+      </div>
+      <div class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+        <p>You must select <strong>4 exam cities in order of priority</strong> strictly from your State of Permanent Address or State of Present Address.</p>
+        <div class="p-3.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs">
+          <strong class="font-bold">Strategic Tip:</strong> Choose cities with direct rail or highway connectivity. NTA almost always allocates your Priority 1 city choice if you register early in the application window.
+        </div>
+      </div>
+    </div>
 
-Every year, over 25,000 students face form rejection or examination center cancellation due to preventable procedural errors:
+    <!-- Step 4 Card -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">4</span>
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">Step 4: Uploading Scanned Documents (Strict Dimensions)</h3>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">
+        NTA's automated document verification system will instantly reject images that do not meet these parameters:
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+          <div class="font-bold text-slate-900 dark:text-slate-100 text-xs mb-1.5 flex items-center gap-1.5">
+            <span>📷</span> Recent Passport Photo
+          </div>
+          <ul class="text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
+            <li>• Format: <strong class="text-slate-800 dark:text-slate-200">JPG / JPEG</strong></li>
+            <li>• Size: <strong class="text-slate-800 dark:text-slate-200">10 KB to 200 KB</strong></li>
+            <li>• Specs: Clearly visible face (80% coverage, ears visible), pure white background, no sunglasses or caps.</li>
+          </ul>
+        </div>
+        <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+          <div class="font-bold text-slate-900 dark:text-slate-100 text-xs mb-1.5 flex items-center gap-1.5">
+            <span>✍️</span> Candidate Signature
+          </div>
+          <ul class="text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
+            <li>• Format: <strong class="text-slate-800 dark:text-slate-200">JPG / JPEG</strong></li>
+            <li>• Size: <strong class="text-slate-800 dark:text-slate-200">4 KB to 30 KB</strong></li>
+            <li>• Specs: Drawn with blue/black ink on unruled white paper. Never upload in ALL CAPITAL letters.</li>
+          </ul>
+        </div>
+        <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+          <div class="font-bold text-slate-900 dark:text-slate-100 text-xs mb-1.5 flex items-center gap-1.5">
+            <span>📄</span> Category / PwD Certificate
+          </div>
+          <ul class="text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
+            <li>• Format: <strong class="text-slate-800 dark:text-slate-200">PDF</strong></li>
+            <li>• Size: <strong class="text-slate-800 dark:text-slate-200">50 KB to 300 KB</strong></li>
+            <li>• Specs: Clearly legible scanned copy of certificate issued by competent authority (if applicable).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-1. **Aadhaar vs Class 10 Certificate Name Discrepancy**: Your name and Date of Birth on the NTA form must match your Class 10 Board certificate *letter-for-letter*. If your Aadhaar card has spelling differences or missing surnames, update Aadhaar before applying or submit an official gazetted name affidavit.
-2. **Outdated OBC-NCL or Gen-EWS Certificates**: Central institutes (NITs/IIITs) require category certificates issued in the current financial year (on or after April 1, 2026). State OBC certificates that are not on the Central OBC List are treated as General.
-3. **Casual Selfies / Filtered Photos**: Photos taken against domestic walls, dark backgrounds, or featuring spectacle glare are flagged by AI auditing. Always use a professional studio photograph with a clean white background.
-4. **Providing Coaching Center or Cyber Café Mobile Number**: All crucial NTA communications, OTPs for correction windows, city slip alerts, and response sheets are sent exclusively to your registered mobile and email. Always use your personal or parent's permanent mobile number.
-5. **Selecting Single Session by Mistake**: If you intend to take both January and April attempts, check both session boxes or ensure you mark your calendar to register for Session 2 in February.
-6. **Payment Debit without Confirmation Page Generation**: A bank SMS confirming debit does *not* mean your application is complete. Unless you see the green "Confirmation Page Generated" tick mark, your application remains unsubmitted.
-7. **Waiting for the Last 48 Hours**: On the final two days before November 22, the NTA server handles hundreds of concurrent requests per second, leading to gateway timeouts and failed payments. Complete your registration at least 7 days before the deadline.
+    <!-- Step 5 Card -->
+    <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">5</span>
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">Step 5: Online Fee Payment & Confirmation Page</h3>
+      </div>
+      <div class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+        <p>1. Review the summary page thoroughly before the final submit.</p>
+        <p>2. Select your payment gateway (SBI, HDFC, Canara Bank, ICICI) and pay via UPI, Net Banking, or Debit Card.</p>
+        <div class="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200 text-xs">
+          <strong class="font-bold">Crucial Step:</strong> Once the transaction is successful, download and print at least <strong>4 copies of the Confirmation Page</strong>. This page is mandatory during JoSAA counselling and verification.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
----
+<hr class="my-8 border-slate-200 dark:border-slate-800" />
 
-## Eligibility Criteria & The 75% Board Rule
+<div class="my-8">
+  <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mb-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+    7 Fatal Mistakes That Cause Application Rejection
+  </h2>
+  <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-6">
+    Every year, over 25,000 students face form rejection or examination center cancellation due to preventable procedural errors:
+  </p>
 
-Before paying your examination fee, ensure you satisfy all core eligibility conditions:
+  <div class="space-y-3">
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 1</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Aadhaar vs Class 10 Certificate Name Discrepancy</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        Your name and Date of Birth on the NTA form must match your Class 10 Board certificate <em>letter-for-letter</em>. If your Aadhaar card has spelling differences or missing surnames, update Aadhaar before applying or submit an official gazetted name affidavit.
+      </p>
+    </div>
 
-### 1. Age Limit
-- There is **no upper age limit** for candidates appearing in JEE (Main) 2027. Any candidate who has passed Class 12 or equivalent examination can appear regardless of age.
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 2</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Outdated OBC-NCL or Gen-EWS Certificates</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        Central institutes (NITs/IIITs) require category certificates issued in the current financial year (on or after April 1, 2026). State OBC certificates that are not on the Central OBC List are treated as General.
+      </p>
+    </div>
 
-### 2. Year of Appearance in Qualifying Examination (10+2)
-- Candidates must have passed Class 12 in **2025, 2026**, or be currently appearing in **2027**.
-- Candidates who passed Class 12 in 2024 or earlier are **not eligible** for JEE (Main) 2027.
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 3</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Casual Selfies / Filtered Photos</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        Photos taken against domestic walls, dark backgrounds, or featuring spectacle glare are flagged by AI auditing. Always use a professional studio photograph with a clean white background.
+      </p>
+    </div>
 
-### 3. The 75% Admission Criteria (JoSAA & CSAB)
-- While any passing student can write the JEE Main exam to obtain a percentile, admission to B.Tech / B.Arch seats in NITs, IIITs, and CFTIs requires:
-  - Minimum **75% aggregate marks** in the Class 12 examination (65% for SC/ST candidates), **OR**
-  - Ranking within the **Top 20 Percentile** of successful candidates in your respective Class 12 school board.
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 4</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Providing Coaching Center or Cyber Café Mobile Number</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        All crucial NTA communications, OTPs for correction windows, city slip alerts, and response sheets are sent exclusively to your registered mobile and email. Always use your personal or parent's permanent mobile number.
+      </p>
+    </div>
 
----
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 5</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Selecting Single Session by Mistake</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        If you intend to take both January and April attempts, check both session boxes or ensure you mark your calendar to register for Session 2 in February.
+      </p>
+    </div>
 
-## Session 1 vs Session 2 Strategy: Should You Apply for Both?
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 6</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Payment Debit without Confirmation Page Generation</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        A bank SMS confirming debit does <em>not</em> mean your application is complete. Unless you see the green "Confirmation Page Generated" tick mark, your application remains unsubmitted.
+      </p>
+    </div>
 
-We strongly recommend registering for **both Session 1 and Session 2**:
+    <div class="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300">Mistake 7</span>
+        <h4 class="font-bold text-rose-900 dark:text-rose-200 text-xs sm:text-sm">Waiting for the Last 48 Hours</h4>
+      </div>
+      <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        On the final two days before November 22, the NTA server handles hundreds of concurrent requests per second, leading to gateway timeouts and failed payments. Complete your registration at least 7 days before the deadline.
+      </p>
+    </div>
+  </div>
+</div>
 
-1. **No Negative Score Retention**: NTA only considers your **best NTA percentile score** out of the two attempts when preparing the final All India Rank (AIR) merit list. A lower score in one session will never degrade your rank.
-2. **First-Attempt Advantage**: Session 1 (January) historically features lower competition per shift because many Class 12 candidates are preoccupied with school pre-boards. Achieving a 99+ percentile in January allows you to dedicate February and March entirely to CBSE Board preparation and JEE Advanced.
-3. **Experience with the CBT Environment**: Practicing with our [Mock Test Simulator](/tools/mock-test-timer/) and experiencing the real January CBT shift eliminates exam-hall anxiety for the April attempt.
+<hr class="my-8 border-slate-200 dark:border-slate-800" />
+
+<div class="my-8">
+  <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mb-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+    Eligibility Criteria & The 75% Board Rule
+  </h2>
+  <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-6">
+    Before paying your examination fee, ensure you satisfy all core eligibility conditions:
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-sm mb-3">
+        🎂
+      </div>
+      <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">1. Age Limit</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        There is <strong class="text-slate-900 dark:text-slate-100">no upper age limit</strong> for candidates appearing in JEE (Main) 2027. Any candidate who has passed Class 12 or equivalent examination can appear regardless of age.
+      </p>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-sm mb-3">
+        🎓
+      </div>
+      <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">2. Year of Appearance (10+2)</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        Candidates must have passed Class 12 in <strong class="text-slate-900 dark:text-slate-100">2025, 2026</strong>, or be currently appearing in <strong class="text-slate-900 dark:text-slate-100">2027</strong>. Candidates who passed in 2024 or earlier are not eligible.
+      </p>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-sm mb-3">
+        📊
+      </div>
+      <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2">3. The 75% Admission Criteria</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        Admission to B.Tech / B.Arch seats in NITs, IIITs, and CFTIs requires minimum <strong class="text-slate-900 dark:text-slate-100">75% aggregate marks</strong> in Class 12 (65% for SC/ST) OR ranking within the <strong class="text-slate-900 dark:text-slate-100">Top 20 Percentile</strong> of your school board.
+      </p>
+    </div>
+  </div>
+</div>
+
+<hr class="my-8 border-slate-200 dark:border-slate-800" />
+
+<div class="my-8">
+  <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mb-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+    Session 1 vs Session 2 Strategy: Should You Apply for Both?
+  </h2>
+  <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-6">
+    We strongly recommend registering for <strong>both Session 1 and Session 2</strong>:
+  </p>
+
+  <div class="space-y-3">
+    <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+      <div>
+        <h4 class="font-bold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">No Negative Score Retention</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+          NTA only considers your <strong>best NTA percentile score</strong> out of the two attempts when preparing the final All India Rank (AIR) merit list. A lower score in one session will never degrade your rank.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+      <div>
+        <h4 class="font-bold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">First-Attempt Advantage</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+          Session 1 (January) historically features lower competition per shift because many Class 12 candidates are preoccupied with school pre-boards. Achieving a 99+ percentile in January allows you to dedicate February and March entirely to CBSE Board preparation and JEE Advanced.
+        </p>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+      <div>
+        <h4 class="font-bold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">Experience with the CBT Environment</h4>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+          Practicing with our <a href="/tools/mock-test-timer/" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline">Mock Test Simulator</a> and experiencing the real January CBT shift eliminates exam-hall anxiety for the April attempt.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="my-8 p-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
   <div>

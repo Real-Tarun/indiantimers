@@ -71,16 +71,32 @@ const faqSchema = post.faqs && post.faqs.length > 0 ? {
 const schemas = faqSchema ? [articleSchema, faqSchema] : [articleSchema];
 
 function renderArticleContent(content: string): string {
-  if (content.includes('<table') || content.includes('<div') || content.includes('<section')) {
-    return content
-      .replace(/^### (.*$)/gim, '<h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 mt-6 mb-2">$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mt-8 mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">$1</h2>');
+  let html = content;
+
+  // Headings
+  html = html.replace(/^### (.*$)/gim, '<h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 mt-6 mb-2">$1</h3>');
+  html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mt-8 mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">$1</h2>');
+
+  // Links [text](url)
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  // Bold & Italic
+  html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong class="font-bold text-slate-900 dark:text-slate-100"><em>$1</em></strong>');
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-slate-100">$1</strong>');
+  html = html.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+
+  // Blockquotes
+  html = html.replace(/^> (.*$)/gim, '<blockquote class="p-4 my-4 rounded-xl border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 text-slate-700 dark:text-slate-300 text-xs sm:text-sm">$1</blockquote>');
+
+  // Horizontal rules
+  html = html.replace(/^---$/gim, '<hr class="my-8 border-slate-200 dark:border-slate-800" />');
+
+  // Convert double newlines for pure markdown posts
+  if (!content.includes('<div') && !content.includes('<table') && !content.includes('<section')) {
+    html = html.replace(/\n\n/g, '<br/><br/>');
   }
 
-  return content
-    .replace(/^### (.*$)/gim, '<h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 mt-6 mb-2">$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 mt-8 mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">$1</h2>')
-    .replace(/\n\n/g, '<br/><br/>');
+  return html;
 }
 ---
 
