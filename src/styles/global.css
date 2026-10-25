@@ -446,6 +446,43 @@ html.dark .badge-live {
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes ambientBreath {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.08) translateZ(0);
+    opacity: 0.85;
+  }
+}
+
+.animate-ambient-breath {
+  animation: ambientBreath 5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes colonPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.2; }
+}
+
+.animate-colon-pulse {
+  animation: colonPulse 1s ease-in-out infinite;
+}
+
+.zen-glow-lime {
+  text-shadow: 0 0 35px rgba(212, 255, 79, 0.45), 0 0 80px rgba(212, 255, 79, 0.2);
+}
+
+.zen-glow-amber {
+  text-shadow: 0 0 35px rgba(245, 158, 11, 0.5), 0 0 80px rgba(244, 63, 94, 0.25);
+}
+
+.zen-glow-white {
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.35);
+}
+
 .anim-delay-1 { animation-delay: 0.06s; }
 .anim-delay-2 { animation-delay: 0.12s; }
 .anim-delay-3 { animation-delay: 0.18s; }
