@@ -43,6 +43,17 @@ export async function onRequest(context) {
     return Response.redirect(targetUrl.toString(), 301);
   }
 
+  // 2.3 Serve IndexNow verification key
+  if (url.pathname === '/0b70112e844148169c3cf57adb1988fd.txt') {
+    return new Response('0b70112e844148169c3cf57adb1988fd\n', {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400',
+      },
+    });
+  }
+
   // 2.5 Serve production robots.txt directly with all AI crawlers, search engines, and citations allowed
   if (url.pathname === '/robots.txt') {
     const robotsTxt = `# ==================================================

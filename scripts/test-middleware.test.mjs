@@ -76,6 +76,21 @@ describe('Cloudflare Pages Middleware Domain & Crawler Defense', () => {
     assert.strictEqual(body, 'ORIGINAL_CONTENT');
   });
 
+  test('serves IndexNow verification key file directly with utf-8 content', async () => {
+    let nextCalled = false;
+    const context = {
+      request: new Request('https://indiantimers.com/0b70112e844148169c3cf57adb1988fd.txt'),
+      next: async () => { nextCalled = true; return new Response('OK'); }
+    };
+
+    const response = await onRequest(context);
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(response.headers.get('Content-Type'), 'text/plain; charset=utf-8');
+    const body = (await response.text()).trim();
+    assert.strictEqual(body, '0b70112e844148169c3cf57adb1988fd');
+  });
+
   test('cloaks /admin on public indiantimers.com with 404 when unauthenticated', async () => {
     let nextCalled = false;
     const context = {
