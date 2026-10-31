@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "node --test scripts/test-exams.test.mjs scripts/test-middleware.test.mjs scripts/test-cockpit-features.test.mjs scripts/test-admin-monitoring.test.mjs scripts/test-support-donations.test.mjs scripts/test-wakelock.test.mjs && node scripts/validate_sitemap.mjs",
-    "validate:sitemap": "node scripts/validate_sitemap.mjs"
+    "validate:sitemap": "node scripts/validate_sitemap.mjs",
+    "indexnow": "node scripts/submit_indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.0",

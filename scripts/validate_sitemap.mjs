@@ -9,6 +9,7 @@ const REQUIRED_FILES = [
   'dist/llms.txt',
   'dist/_redirects',
   'dist/_headers',
+  'dist/0b70112e844148169c3cf57adb1988fd.txt',
   'functions/_middleware.js',
 ];
 
@@ -19,7 +20,15 @@ for (const file of REQUIRED_FILES) {
     process.exit(1);
   }
 }
-console.log('✓ All core discovery artifacts exist (sitemap.xml, robots.txt, llms.txt, _redirects, _headers, _middleware.js)');
+console.log('✓ All core discovery artifacts exist (sitemap.xml, robots.txt, llms.txt, IndexNow key, _redirects, _headers, _middleware.js)');
+
+// 1.1 Verify IndexNow key file content
+const indexNowContent = fs.readFileSync('dist/0b70112e844148169c3cf57adb1988fd.txt', 'utf-8').trim();
+if (indexNowContent !== '0b70112e844148169c3cf57adb1988fd') {
+  console.error(`FAIL: Invalid IndexNow key in dist/0b70112e844148169c3cf57adb1988fd.txt: ${indexNowContent}`);
+  process.exit(1);
+}
+console.log('✓ IndexNow key file verified (UTF-8, exact key match: 0b70112e844148169c3cf57adb1988fd)');
 
 // 2. Ensure obsolete split files are NOT present
 for (const obsolete of ['dist/sitemap-index.xml', 'dist/sitemap-0.xml', 'dist/sitemap.xsl']) {
